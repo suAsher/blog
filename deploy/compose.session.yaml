@@ -1,0 +1,53 @@
+# Run in the gateway directory alongside compose.yaml (+ compose.http.yaml for HTTP-01).
+# Reuses the blog runtime image: no new image download is needed on small servers.
+services:
+  auth:
+    image: ${BLOG_RUNTIME_IMAGE:-public.ecr.aws/docker/library/nginx:1.30.6-alpine-slim}
+    user: "101:101"
+    entrypoint: ["/app/auth-service"]
+    command: []
+    environment:
+      AUTH_DATA_DIR: /data/content
+      GOMEMLIMIT: 96MiB
+      GOMAXPROCS: "1"
+    volumes:
+      - type: bind
+        source: ./auth-service
+        target: /app/auth-service
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./private/session.json
+        target: /run/auth/config.json
+        read_only: true
+        bind:
+          create_host_path: false
+      # Documents and assets survive program upgrades and container recreation.
+      - type: bind
+        source: ../data/content
+        target: /data/content
+        bind:
+          create_host_path: false
+    networks:
+      - blog
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    cpus: 0.50
+    pids_limit: 32
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:9090/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "2"

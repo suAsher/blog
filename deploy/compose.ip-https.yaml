@@ -1,0 +1,52 @@
+# Copy into /srv/asher-knowledge/gateway with config/ and data/ prepared.
+# Requires the existing compose.prebuilt.yaml blog network.
+name: asher-knowledge-gateway
+
+services:
+  gateway:
+    image: ${BLOG_GATEWAY_IMAGE:-public.ecr.aws/docker/library/caddy:2.11.7-alpine}
+    user: "1000:1000"
+    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+    environment:
+      BLOG_IP: ${BLOG_IP:?Set BLOG_IP to the server public IP}
+    ports:
+      - "0.0.0.0:443:8443"
+    volumes:
+      - type: bind
+        source: ./config
+        target: /etc/caddy
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./data
+        target: /data
+        bind:
+          create_host_path: false
+    networks:
+      - blog
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m,mode=1777
+      - /config:size=8m,uid=1000,gid=1000,mode=700
+    mem_limit: 128m
+    cpus: 0.50
+    pids_limit: 64
+    cap_drop:
+      - ALL
+    # Official Caddy binary carries this file capability, even on port 8443.
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "2m"
+        max-file: "3"
+
+networks:
+  blog:
+    external: true
+    name: asher-knowledge_default

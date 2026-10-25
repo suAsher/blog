@@ -1,0 +1,28 @@
+node_modules/
+dist/
+.astro/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+.DS_Store
+# Deployment-local credentials and ACME state must never enter source archives.
+auth.caddy
+access.json
+runtime.env
+gateway/data/
+session.json
+auth/auth-service
+# Private live documents, uploads and credentials are backed up separately.
+/data/
+/secrets/
+/gateway/
+# Instance-specific operations and agent/local configuration stay private.
+/docs/deployments/
+/docs/plans/
+/.aws/
+/.agents/
+/.codex/
+/.codegraph/

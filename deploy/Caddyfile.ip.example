@@ -1,0 +1,30 @@
+# Public IP HTTPS. Keep auth.caddy and /data outside the source archive.
+{
+	admin off
+	persist_config off
+	auto_https disable_redirects
+	https_port 8443
+	default_sni {$BLOG_IP}
+	servers {
+		protocols h1 h2
+	}
+}
+
+https://{$BLOG_IP} {
+	# Explicit ACME issuer overrides Caddy's default local CA for IP addresses.
+	tls {
+		issuer acme {
+			dir https://acme-v02.api.letsencrypt.org/directory
+			profile shortlived
+			disable_http_challenge
+		}
+	}
+
+	encode zstd gzip
+	basic_auth {
+		import /etc/caddy/auth.caddy
+	}
+	reverse_proxy blog:8080 {
+		header_up -Authorization
+	}
+}

@@ -1,0 +1,65 @@
+---
+const year = new Date().getFullYear();
+---
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b1014" />
+    <meta name="description" content="登录 asher 的知识空间，回到阅读、探索与思考的安静角落。" />
+    <title>登录 · asher 知识空间</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/login-assets/login.css" />
+    <script is:inline>try { document.documentElement.dataset.theme = localStorage.getItem('asher-theme') === 'light' ? 'light' : 'dark'; } catch {}</script>
+    <script is:inline src="/login-assets/login.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#login-title">跳到登录表单</a>
+    <header class="login-header">
+      <a class="brand" href="/login/" aria-label="asher · 知识空间登录页"><span class="brand-symbol">a<span>✳</span></span><span>asher <i>·</i> <span class="brand-zh">知识空间</span></span></a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到浅色主题">
+        <svg class="theme-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg>
+        <svg class="theme-moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10Z" /></svg>
+      </button>
+    </header>
+
+    <main class="login-main">
+      <section class="intro" aria-labelledby="intro-title">
+        <p class="eyebrow intro-eyebrow"><span class="live-dot"></span> A SPACE FOR CURIOUS MINDS</p>
+        <h1 id="intro-title">让好奇有归处，<br />让思考<span>有回声。</span></h1>
+        <p class="intro-description">在信息的喧嚣之外，<br class="desktop-break" />为阅读、探索与理解，留一片安静的空间。</p>
+        <div class="orbit-art" aria-hidden="true">
+          <div class="art-grid"></div>
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div>
+          <span class="orbit-particle particle-one"></span><span class="orbit-particle particle-two"></span><span class="orbit-particle particle-three"></span>
+          <div class="art-core"><span>a<sup>✳</sup></span></div>
+          <div class="floating-note"><svg viewBox="0 0 40 40" width="35" height="35" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M10 5h21v29H10zM15 12h11m-11 5h11m-11 5h8" /><path d="m5 10 5-5v29l-5 3z" /></svg><span>ONE NOTE,<br />A NEW CONNECTION.</span></div>
+          <span class="art-label art-label-top">IDEAS IN ORBIT <span>↗</span></span>
+          <span class="art-label art-label-bottom"><i></i> READ. CONNECT. GROW.</span>
+        </div>
+        <p class="intro-footnote"><span class="small-star">✧</span> 知识不是收藏的终点，理解才是。</p>
+      </section>
+
+      <section class="login-card" aria-labelledby="login-title">
+        <div class="card-topline"><span class="eyebrow">YOUR QUIET CORNER</span><span class="private-mark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg> 私人空间</span></div>
+        <h2 id="login-title">欢迎回来<span>。</span></h2>
+        <p class="card-description">留一点时间，给值得深入的事。</p>
+        <p class="session-message" id="session-message" hidden>已安全退出，期待下一次探索。</p>
+        <form id="login-form" action="/auth/login" method="post" novalidate>
+          <div class="form-field"><label for="username">账号</label><div class="input-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></svg><input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="64" placeholder="输入你的账号" required /></div></div>
+          <div class="form-field"><label for="password">密码</label><div class="input-wrap password-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2" /></svg><input id="password" name="password" type="password" autocomplete="current-password" maxlength="1024" placeholder="输入访问密码" required /><button type="button" class="password-toggle" id="password-toggle" aria-label="显示密码" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /><path class="eye-slash" d="m3 3 18 18" /></svg></button></div><p id="caps-lock" class="caps-lock" hidden>大写锁定已开启</p></div>
+          <div class="form-options"><label class="remember-label"><input id="remember" name="remember" type="checkbox" /><span>保持登录 7 天</span></label><span class="local-session">仅在此设备</span></div>
+          <p id="login-error" class="form-error" role="alert" aria-live="polite" hidden></p>
+          <button class="submit-button" type="submit" id="login-submit"><span class="submit-label">进入知识空间</span><svg class="submit-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" /></svg><span class="submit-spinner" aria-hidden="true"></span></button>
+        </form>
+        <div class="card-footer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6l-9-4Z" /><path d="m8 12 3 3 5-6" /></svg><p>使用空间所有者提供的账号与密码访问。</p></div>
+        <noscript><p class="noscript-message">请启用 JavaScript 以安全登录此空间。</p></noscript>
+      </section>
+    </main>
+
+    <footer class="login-footer"><span>一个安静的角落，一座慢慢生长的知识花园。</span><span class="eyebrow">BUILT FOR THINKING <i>·</i> {year}</span></footer>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+# IP HTTPS with a custom login page and server-side opaque sessions.
+# This deployed example retains HTTP-01 validation through the existing proxy.
+{
+	admin off
+	persist_config off
+	auto_https disable_redirects
+	http_port 8081
+	https_port 8443
+	default_sni {$BLOG_IP}
+	servers {
+		protocols h1 h2
+	}
+}
+
+https://{$BLOG_IP} {
+	tls {
+		issuer acme {
+			dir https://acme-v02.api.letsencrypt.org/directory
+			profile shortlived
+			disable_tlsalpn_challenge
+		}
+	}
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy same-origin
+	}
+	# Public login routes contain no article content or search index.
+	# Exact asset paths prevent traversal via a public directory prefix.
+	@login path /login /login/ /login-assets/login.css /login-assets/login.js /favicon.svg
+	handle @login {
+		header Cache-Control no-store
+		reverse_proxy blog:8080 {
+			header_up -Authorization
+		}
+	}
+	handle /auth/* {
+		reverse_proxy auth:9090 {
+			header_up -Authorization
+		}
+	}
+	# API authenticates every request and verifies Origin on every write itself.
+	handle /api/* {
+		header >Cache-Control no-store
+		reverse_proxy auth:9090 {
+			header_up -Authorization
+		}
+	}
+	@live_article path_regexp live ^/articles/[a-f0-9]{32}/?$
+	handle @live_article {
+		header >Cache-Control no-store
+		route {
+			forward_auth auth:9090 {
+				uri /auth/verify
+				header_up -Authorization
+			}
+			rewrite * /reader/
+			reverse_proxy blog:8080 {
+				header_up -Authorization
+			}
+		}
+	}
+	handle {
+		# Apply after the static upstream: private content must not survive logout
+		# in the HTTP cache. Public login assets remain separately accessible.
+		header >Cache-Control no-store
+		forward_auth auth:9090 {
+			uri /auth/verify
+			header_up -Authorization
+		}
+		reverse_proxy blog:8080 {
+			header_up -Authorization
+		}
+	}
+}
+
+http://{$BLOG_IP}:8081 {
+	respond 404
+}

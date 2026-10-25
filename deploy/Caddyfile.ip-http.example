@@ -1,0 +1,35 @@
+# Alternative when the IP's TLS-ALPN validation path is unreliable.
+# An existing port-80 proxy must forward ONLY /.well-known/acme-challenge/.
+{
+	admin off
+	persist_config off
+	auto_https disable_redirects
+	http_port 8081
+	https_port 8443
+	default_sni {$BLOG_IP}
+	servers {
+		protocols h1 h2
+	}
+}
+
+https://{$BLOG_IP} {
+	tls {
+		issuer acme {
+			dir https://acme-v02.api.letsencrypt.org/directory
+			profile shortlived
+			disable_tlsalpn_challenge
+		}
+	}
+	encode zstd gzip
+	basic_auth {
+		import /etc/caddy/auth.caddy
+	}
+	reverse_proxy blog:8080 {
+		header_up -Authorization
+	}
+}
+
+# Caddy intercepts valid ACME tokens before this handler. No blog on HTTP.
+http://{$BLOG_IP}:8081 {
+	respond 404
+}

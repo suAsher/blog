@@ -1,0 +1,8 @@
+# Insert INSIDE the existing port-80 server block after taking a backup.
+# Replace DOCKER_BRIDGE_ADDRESS with that proxy network's private gateway.
+location ^~ /.well-known/acme-challenge/ {
+    proxy_pass http://DOCKER_BRIDGE_ADDRESS:18080;
+    proxy_set_header Host $host;
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 10s;
+}

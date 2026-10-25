@@ -1,0 +1,12 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, readingMinutes } from '../lib/content';
+import Icon from './Icon.astro';
+interface Props { article: CollectionEntry<'articles'>; index?: number }
+const { article, index = 0 } = Astro.props;
+const { data, id, body = '' } = article;
+---
+<article class="article-card" data-article-card={id} style={`--card-delay:${index * 60}ms`}>
+  <a class="card-cover" href={`/articles/${id}/`} tabindex="-1" aria-hidden="true"><img src={data.cover} alt="" width="600" height="340" loading="lazy" /><span class="cover-label">{data.category || 'NOTE'}</span><span class="cover-number mono">0{index + 1}</span></a>
+  <div class="card-content"><div class="card-meta"><span class="demo-mark">{data.demo ? '示例文章' : (data.category || '文章')}</span><span>{readingMinutes(body)} 分钟阅读</span></div><h3><a href={`/articles/${id}/`}>{data.title}</a></h3><p>{data.description}</p><div class="card-bottom"><time datetime={data.date.toISOString()}>{formatDate(data.date)}</time><button class="icon-button bookmark-button" data-bookmark={id} aria-label={`收藏：${data.title}`} aria-pressed="false"><Icon name="bookmark" size={18} /></button></div></div>
+</article>

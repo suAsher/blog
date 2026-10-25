@@ -1,0 +1,6 @@
+# Overlay for compose.ip-https.yaml. Bind to the existing proxy's Docker
+# bridge gateway address, never to a public interface or 0.0.0.0.
+services:
+  gateway:
+    ports:
+      - "${BLOG_CHALLENGE_BIND:?Set the private Docker bridge address}:18080:8081"

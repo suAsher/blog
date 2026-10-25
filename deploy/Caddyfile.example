@@ -1,0 +1,12 @@
+# Copy to /etc/caddy/Caddyfile after setting /etc/caddy/blog.env.
+# Caddy runs on the host, alongside the Docker service bound to loopback.
+{$BLOG_DOMAIN} {
+    encode zstd gzip
+
+    # Applies to every path, including /search-index.json and all static assets.
+    basic_auth {
+        {$BLOG_USER} {$BLOG_PASSWORD_HASH}
+    }
+
+    reverse_proxy 127.0.0.1:8080
+}
