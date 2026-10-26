@@ -37,4 +37,6 @@ try {
     await context.close();
   }
   console.log(JSON.stringify({ screenshots: captures, output }));
+} catch {
+  throw new Error('Example-only capture failed; request details were not retained.');
 } finally { await browser.close(); }

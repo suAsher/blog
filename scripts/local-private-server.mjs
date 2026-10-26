@@ -4,7 +4,7 @@ import { request as requestHTTP, get } from 'node:http';
 import { createServer as createTCPServer } from 'node:net';
 import { spawn, execFileSync } from 'node:child_process';
 import { randomBytes, pbkdf2Sync } from 'node:crypto';
-import { mkdtemp, writeFile, readFile, rm, realpath, lstat } from 'node:fs/promises';
+import { mkdtemp, writeFile, readFile, rm, realpath, lstat, cp } from 'node:fs/promises';
 import { resolve, join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -41,25 +41,29 @@ export async function startPrivateServer(options = {}) {
   let stopping;
   let ownsFixture = false;
   const stop = () => stopping ??= (async () => {
+    for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, onSignal);
     if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
     await Promise.all(children.map(child => new Promise(done => {
-      if (child.exitCode !== null || child.signalCode !== null) return done();
+      if (!child.pid || child.exitCode !== null || child.signalCode !== null) return done();
       child.once('exit', done); child.kill('SIGTERM');
       const timer = setTimeout(() => child.kill('SIGKILL'), 3000); timer.unref();
     })));
     if (ownsFixture) await rm(fixture, { force: true });
     await rm(temporary, { recursive: true, force: true });
   })();
+  const onSignal = async () => { await stop(); process.exit(0); };
+  for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, onSignal);
   const launch = (command, args, env = {}) => {
     const child = spawn(command, args, { cwd: root, env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
     // Do not pipe child logs or request details into test artifacts.
+    child.once('error', () => {});
     child.stdout.resume(); child.stderr.resume(); children.push(child);
     return child;
   };
   const waitReady = async (address, child) => {
     for (let attempt = 0; attempt < 300; attempt++) {
-      if (child.exitCode !== null || child.signalCode !== null) throw new Error('Local QA upstream failed to start.');
-      const ready = await new Promise(done => { const req = get(address, response => { response.resume(); done(true); }); req.once('error', () => done(false)); });
+      if (!child.pid || child.exitCode !== null || child.signalCode !== null) throw new Error('Local QA upstream failed to start.');
+      const ready = await new Promise(done => { const req = get(address, response => { response.resume(); done(true); }); req.once('error', () => done(false)); req.setTimeout(1000, () => req.destroy()); });
       if (ready) return;
       await new Promise(done => setTimeout(done, 200));
     }
@@ -78,14 +82,15 @@ export async function startPrivateServer(options = {}) {
     while (previewPort === authPort) previewPort = await availablePort();
     const compiled = spawn('go', ['build', '-o', join(temporary, 'auth-service'), '.'], { cwd: join(root, 'auth'), env: { ...process.env, GOCACHE: '/tmp/asher-go-build', GOMODCACHE: '/tmp/asher-go-mod' }, stdio: 'ignore' });
     children.push(compiled);
-    if (await new Promise(done => compiled.once('exit', done)) !== 0) throw new Error('Local Go service build failed.');
+    if (await new Promise((done, fail) => { compiled.once('exit', done); compiled.once('error', () => fail(new Error('Go 1.26+ is required for local QA.'))); }) !== 0) throw new Error('Local Go service build failed.');
     const auth = launch(join(temporary, 'auth-service'), [], { AUTH_CONFIG: join(temporary, 'auth.json'), AUTH_DATA_DIR: join(temporary, 'content'), AUTH_LISTEN: `127.0.0.1:${authPort}` });
     const previewArgs = [join(root, 'node_modules/astro/bin/astro.mjs'), 'preview', '--host', '127.0.0.1', '--port', String(previewPort), '--ignore-lock'];
-    if (options.dist ?? process.env.BLOG_TEST_LOCAL_DIST) {
-      const config = join(temporary, 'astro.config.mjs');
-      await writeFile(config, `export default { outDir: ${JSON.stringify(resolve(options.dist ?? process.env.BLOG_TEST_LOCAL_DIST) + '/')} };`);
-      previewArgs.push('--config', relative(root, config));
-    }
+    // Freeze the built files for this run so a later build cannot replace active assets.
+    const snapshot = join(temporary, 'site');
+    await cp(resolve(options.dist ?? process.env.BLOG_TEST_LOCAL_DIST ?? join(root, 'dist')), snapshot, { recursive: true });
+    const config = join(temporary, 'astro.config.mjs');
+    await writeFile(config, `export default { outDir: ${JSON.stringify(snapshot + '/')} };`);
+    previewArgs.push('--config', relative(root, config));
     const preview = launch(process.execPath, previewArgs, { ASTRO_TELEMETRY_DISABLED: '1' });
     await Promise.all([waitReady(`http://127.0.0.1:${authPort}/healthz`, auth), waitReady(`http://127.0.0.1:${previewPort}/login/`, preview)]);
     const upstream = (req, res, upstreamPort, path = req.url) => {
@@ -117,5 +122,4 @@ export async function startPrivateServer(options = {}) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const service = await startPrivateServer();
   console.log(`Local private QA ready at ${service.origin}`);
-  for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, async () => { await service.stop(); process.exit(0); });
 }

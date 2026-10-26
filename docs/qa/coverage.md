@@ -1,0 +1,20 @@
+# Frontend unit coverage scope
+
+`npm run test:coverage` measures eight explicitly selected library modules using Vitest's V8 provider. The 2026-10-26 stage-one run passed 73 tests across eight test files:
+
+| Metric | Covered / total | Coverage |
+| --- | --- | --- |
+| Statements | 248 / 249 | 99.59% |
+| Branches | 272 / 280 | 97.14% |
+| Functions | 64 / 64 | 100% |
+| Lines | 184 / 184 | 100% |
+
+The scope is `commands.ts`, `content-blocks.ts`, `documents.ts`, `motion-capabilities.ts`, `reading-preferences.ts`, `search.ts`, `storage.ts`, and `writing-tools.ts`, under `src/lib/`. These percentages describe that scope. They do not measure Astro components, DOM scripts, the entire application, or Go code. Browser regressions and Go tests provide separate evidence.
+
+## Why four module rows initially appeared absent
+
+Vitest 4.1.12 detects agent environments and sets the text reporter's `skipFull` option to `true` unless the reporter explicitly overrides it. This hides files whose statement, branch, and function coverage are all 100%. The HTML report and total denominators already included all eight modules; collection and source maps were working correctly.
+
+The configuration now explicitly sets `['text', { skipFull: false }]`, retaining the existing V8 provider, selected modules, and 80% thresholds. It also writes `coverage/coverage-summary.json` so module membership and denominator counts can be checked without relying on terminal formatting. The rerun displays all eight rows and retains the same totals. No test, coverage exclusion, or threshold was weakened.
+
+The provider's local formatter implementation is in `node_modules/vitest/dist/chunks/coverage.*.js`, in the `isAgent` reporter branch. Generated reports remain ignored by Git.

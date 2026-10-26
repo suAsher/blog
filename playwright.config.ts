@@ -54,7 +54,7 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 180000,
   } : {
-    command: 'npm run preview -- --port 4390',
+    command: 'npm run preview -- --port 4390 --ignore-lock',
     url: 'http://127.0.0.1:4390',
     reuseExistingServer: false,
   },

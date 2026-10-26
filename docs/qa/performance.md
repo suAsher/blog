@@ -9,7 +9,7 @@ Measured 2026-10-26 against the preserved pre-upgrade production build. Chrome 1
 | Home `/` | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 527 / 528 |
 | Example article | Desktop | 100 / 100 | 96 / 96 | 100 / 100 | 409 / 409 |
 
-The example article is `/articles/build-a-learning-system/`. The controlled dataset contains 30 generated published documents, each with 80 repeated sample sentences. Real Go authentication and document APIs run against a disposable `/tmp` store. The HTTPS reverse proxy listens only on `127.0.0.1`, uses a one-day self-signed certificate, and follows the deployed private route/authentication shape. No SSH, deployment credentials, or user documents are used. Browser cookies and raw Lighthouse reports are never written to the aggregate report.
+The example article is `/articles/build-a-learning-system/`. The controlled dataset contains 30 generated published documents, each with 80 repeated sample sentences. Real Go authentication and document APIs run against a disposable `/tmp` store. Each run snapshots the selected production build into its temporary directory so a later build cannot replace active assets. The HTTPS reverse proxy listens only on `127.0.0.1`, uses a one-day self-signed certificate, and follows the deployed private route/authentication shape. No SSH, deployment credentials, or user documents are used. Browser cookies and raw Lighthouse reports are never written to the aggregate report.
 
 Mobile uses a 390×844 viewport with Lighthouse's simulated mobile network/CPU defaults. Desktop uses 1440×1000, simulated 40ms RTT, 10240kbps throughput, and no CPU slowdown. Chrome runs headlessly, with extensions and background networking disabled. This localhost baseline controls transport and dataset; it does not represent Internet latency or a production hardware capacity test.
 
@@ -42,3 +42,43 @@ BLOG_CAPTURE_BASE_URL=http://127.0.0.1:4321 \
 ```
 
 Captures are restricted to generated example routes. To capture the local private server, keep that server running, set `BLOG_TEST_LOCAL_AUTH=1`, `BLOG_TEST_LOCAL_FIXTURE` to its temporary fixture, and `BLOG_CAPTURE_BASE_URL` to its exact HTTPS origin. The script never enumerates or captures private document IDs.
+
+## Stage-one comparison
+
+The complete stage-one browser suite passed 219 tests with zero skips, across the three device projects. The first comparable cold-cache measurement used the same Chrome, Lighthouse, dataset and sample count as the baseline:
+
+| Page | Device | Performance | Accessibility | Best practices | LCP (ms) |
+| --- | --- | --- | --- | --- | --- |
+| Home `/` | Mobile | 97 / 87 | 100 / 100 | 100 / 100 | 2333 / 2553 |
+| Example article | Mobile | 100 / 99 | 100 / 100 | 100 / 100 | 1507 / 1658 |
+| Home `/` | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 568 / 575 |
+| Example article | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 427 / 428 |
+
+The mobile home samples scored 87, 98 and 97. The 87 remains part of the result; the median does not mean every cold startup exceeds 90.
+
+## Mobile startup diagnostic follow-up
+
+A separate three-sample cold-cache study of the preserved stage-one build added timing diagnostics. It does not replace or pool with the comparison above:
+
+| Sample | Performance | FCP (ms) | LCP (ms) | TBT (ms) | Script bootup (ms) | Main-thread work (ms) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 97 | 1732 | 2386 | 51 | 308 | 841 |
+| 2 | 98 | 1903 | 2032 | 0 | 111 | 629 |
+| 3 | 98 | 1903 | 2032 | 0 | 100 | 607 |
+
+All three measured CLS at approximately 0.000105. The LCP element was `main#main > section.hero > div.hero-copy > h1`, rather than the decorative canvas. JavaScript transferred 61,421 bytes across seven requests; all resources totaled 84,148 bytes across twelve requests, with no third-party requests.
+
+The first sample attributed 198ms of script evaluation to the nebula chunk. The same chunk did not exceed Lighthouse's 50ms per-URL reporting threshold in the later samples. The shared visual runtime attributed 81–91ms to script evaluation and 323–351ms to total work per sample. This supports investigating initial WebGL setup and visual-runtime startup. The original 87 was not reproduced in this follow-up, and its missing TBT trace cannot be reconstructed; GPU setup remains a candidate rather than a proven explanation for that earlier result.
+
+For a later optimization phase, first test deferring optional engine initialization until an idle window after visible content paints, while retaining the existing CSS artwork. Also test loading Lenis only for the smooth-scroll policy: the shared runtime currently imports it even when mobile's coarse pointer disables smooth scrolling. Preserve pause, offscreen, visibility, reduced-motion, and failed-context behavior. Compare three fresh mobile samples, record the worst result, and retain the accessibility and lifecycle gates. No application optimization was made during this diagnostic task.
+
+Reproduce a focused diagnostic without changing the current application build:
+
+```sh
+BLOG_TEST_LOCAL_DIST=/tmp/asher-blog-stage1-dist \
+  BLOG_PERF_DEVICES=mobile BLOG_PERF_PATHS=/ \
+  BLOG_PERF_OUTPUT=/tmp/asher-blog-stage1-mobile-diagnostics.json \
+  node scripts/audit-performance.mjs
+```
+
+`BLOG_PERF_DEVICES` defaults to `mobile,desktop`. The aggregate now records FCP, TBT, CLS, speed index, script bootup, main-thread categories, sanitized local script paths and the LCP selector. It retains neither raw traces, HTML, request headers, cookies nor page text. LCP insight subparts are observed trace timings; headline paint metrics use Lighthouse simulation and should not be equated to the sum of those subparts.
