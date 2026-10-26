@@ -154,6 +154,12 @@ function commands(): Command[] {
       href: "/manage/?import=1",
     },
     {
+      title: "知识图谱",
+      detail: "沿着引用与关联探索文档",
+      aliases: ["graph", "连接", "双链", "图谱"],
+      href: "/graph/",
+    },
+    {
       title: "我的书架",
       detail: "查看阅读与收藏",
       aliases: ["library", "书架"],

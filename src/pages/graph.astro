@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+<Layout title="知识星图" active="graph" description="在知识星图里看见文章、笔记与想法之间真实生长的连接。">
+  <section class="graph-page shell">
+    <header class="graph-heading">
+      <div><span class="eyebrow">A MAP OF CONNECTED IDEAS</span><h1>知识星图<span>。</span></h1><p>每一颗光点都是已发布的知识，连线来自正文中的 Wiki 链接与手动选择的相关文档。</p></div>
+      <dl class="graph-stats"><div><dt id="graph-node-count">—</dt><dd>知识节点</dd></div><div><dt id="graph-edge-count">—</dt><dd>真实连接</dd></div></dl>
+    </header>
+    <div class="graph-workspace">
+      <aside class="graph-panel">
+        <label for="graph-search">搜索知识节点</label>
+        <div class="graph-search"><Icon name="search" size={16}/><input id="graph-search" type="search" autocomplete="off" placeholder="输入文章标题…" /></div>
+        <p class="graph-guide">悬停节点会突出它的直接邻居；拖动节点整理局部，拖动空白处移动视野。</p>
+        <div id="graph-node-list" class="graph-node-list" aria-label="知识节点列表"></div>
+      </aside>
+      <div class="graph-stage" id="graph-stage" data-layout-mode="force">
+        <canvas id="knowledge-graph-canvas" aria-label="知识连接图；请使用旁边的节点列表进行键盘导航"></canvas>
+        <div class="graph-controls" aria-label="图谱缩放"><button id="graph-zoom-in" aria-label="放大图谱">＋</button><button id="graph-zoom-out" aria-label="缩小图谱">−</button><button id="graph-reset">复位</button></div>
+        <div class="graph-state" id="graph-state" role="status">正在梳理知识之间的连接…</div>
+        <button class="button" id="graph-retry" hidden>重新读取</button>
+        <span class="graph-truncated" id="graph-truncated" hidden>已显示最近 300 个节点</span>
+      </div>
+    </div>
+  </section>
+  <script>import '../scripts/graph/main';</script>
+</Layout>

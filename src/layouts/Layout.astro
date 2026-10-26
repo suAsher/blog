@@ -3,6 +3,7 @@ import Icon from '../components/Icon.astro';
 import NavigationTransitions from '../components/NavigationTransitions.astro';
 import QuickCapture from '../components/daily/QuickCapture.astro';
 import '../styles/global.css';
+import '../styles/graph.css';
 interface Props { title?: string; description?: string; active?: string; article?: boolean }
 const { title, description = '一个安静的角落，用来探索技术、连接知识，也留住思考。', active = '', article = false } = Astro.props;
 ---
@@ -50,7 +51,7 @@ const { title, description = '一个安静的角落，用来探索技术、连�
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="/" aria-label="asher · 知识空间首页"><span class="brand-symbol" aria-hidden="true" data-glyph="a"><span data-glyph="✳"></span></span><span>asher <i>·</i> <span class="brand-zh">知识空间</span></span></a>
-        <nav aria-label="主导航"><a href="/" aria-current={active === 'home' ? 'page' : undefined}>探索</a><a href="/articles/" aria-current={active === 'articles' ? 'page' : undefined}>文章</a><a href="/library/" aria-current={active === 'library' ? 'page' : undefined}>我的书架</a><a href="/manage/" aria-current={active === 'manage' ? 'page' : undefined}>写作</a><a href="/lab/" aria-current={active === 'lab' ? 'page' : undefined}>实验室</a><a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>关于</a></nav>
+        <nav aria-label="主导航"><a href="/" aria-current={active === 'home' ? 'page' : undefined}>探索</a><a href="/articles/" aria-current={active === 'articles' ? 'page' : undefined}>文章</a><a href="/graph/" aria-current={active === 'graph' ? 'page' : undefined}>图谱</a><a href="/library/" aria-current={active === 'library' ? 'page' : undefined}>我的书架</a><a href="/manage/" aria-current={active === 'manage' ? 'page' : undefined}>写作</a><a href="/lab/" aria-current={active === 'lab' ? 'page' : undefined}>实验室</a><a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>关于</a></nav>
         <div class="header-tools">
           <button class="search-trigger" data-open-search aria-label="搜索文章"><Icon name="search" size={17} /><span>搜索文章</span><kbd aria-hidden="true" data-label="⌘ K"></kbd></button>
           <button class="quick-capture-trigger" type="button" data-open-capture aria-label="新建随手记">
