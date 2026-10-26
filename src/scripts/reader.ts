@@ -1,4 +1,6 @@
 import { getState, patchEntry, toast } from './shared';
+import { initReadingTools } from './reading-tools';
+import { enhanceContent } from './content-blocks';
 
 export function initReader() {
 
@@ -7,6 +9,7 @@ const id = root?.dataset.readingArticle || '';
 if (!root || !id || root.dataset.readerReady === 'true') return;
 root.dataset.readerReady = 'true';
 const body = document.getElementById('article-body');
+if (body) { initReadingTools(body); enhanceContent(body); }
 const bar = document.getElementById('reading-progress-bar');
 const percent = document.getElementById('reading-percent');
 const mark = document.getElementById('mark-read');
@@ -49,6 +52,7 @@ document.addEventListener('keydown', event => {
 });
 
 document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(pre => {
+  if (pre.closest('.content-widget') || pre.querySelector('code.language-mermaid,code.language-chart')) return;
   const wrapper = document.createElement('div'); wrapper.className = 'code-container';
   pre.before(wrapper); wrapper.append(pre);
   const copy = document.createElement('button'); copy.className = 'code-copy'; copy.textContent = '复制代码'; copy.setAttribute('aria-label', '复制代码');
@@ -60,6 +64,7 @@ document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(pre => {
   });
 });
 document.querySelectorAll<HTMLTableElement>('.prose table').forEach(table => {
+  if (table.closest('.chart-data,.table-wrap')) return;
   const wrapper = document.createElement('div'); wrapper.className = 'table-wrap'; wrapper.tabIndex = 0; wrapper.setAttribute('role', 'region'); wrapper.setAttribute('aria-label', '文章表格，可左右滚动'); table.before(wrapper); wrapper.append(table);
 });
 

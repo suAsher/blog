@@ -27,6 +27,7 @@ type Store struct {
 	mu            sync.RWMutex
 	capacityMu    sync.Mutex
 	reservedBytes int64
+	search        *searchCache
 	freeBytes     func() (int64, error)
 }
 
@@ -69,7 +70,7 @@ func NewStore(root string) (*Store, error) {
 	default:
 		// A second Store in the same process must not erase a live import.
 	}
-	s := &Store{root: root}
+	s := &Store{root: root, search: newSearchCache(searchCacheBudget)}
 	s.freeBytes = func() (int64, error) {
 		var stat syscall.Statfs_t
 		if err := syscall.Statfs(root, &stat); err != nil {
@@ -215,6 +216,7 @@ func (s *Store) saveLocked(d *record) error {
 	if err = os.Rename(name, filepath.Join(directory, d.ID+".json")); err != nil {
 		return bad(500, "文档尚未保存，请重试。")
 	}
+	s.search.invalidate(d.ID)
 	dir, err := os.Open(directory)
 	if err != nil {
 		return bad(500, "无法确认文档保存状态，请重新加载核对。")
@@ -366,6 +368,7 @@ func (s *Store) Delete(id string, version int) error {
 	if os.Remove(filepath.Join(s.root, "documents", id+".json")) != nil {
 		return bad(500, "删除失败，请重试。")
 	}
+	s.search.invalidate(id)
 	dir, err := os.Open(filepath.Join(s.root, "documents"))
 	if err != nil {
 		return bad(500, "无法确认删除状态。")

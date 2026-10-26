@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import { blockTemplate } from '../lib/content-blocks';
+import '../styles/article.css';
+import '../styles/lab.css';
+const diagram = blockTemplate('mermaid')!.replace(/^```mermaid\n|\n```$/g, '');
+const chart = blockTemplate('chart')!.replace(/^```chart\n|\n```$/g, '');
+---
+<Layout title="内容实验室" active="lab" description="让流程、数据和想法变成可以探索的内容。所有交互组件本地运行，复制 Markdown 即可带回写作空间。">
+  <div class="shell lab-shell">
+    <header class="lab-heading"><div><span class="eyebrow">SMALL TOOLS. BIGGER IDEAS.</span><h1>让想法，<br />变得<span class="gradient-text">触手可及。</span></h1><p>内容不必止于文字。画出关系、探索数据，<br class="lab-desktop-break" />给每一次理解，多一个可以动手的入口。</p></div><div class="lab-mark" aria-hidden="true"><span></span><span></span><span></span><i>✳</i><small>THINK · PLAY · CREATE</small></div></header>
+    <div class="lab-intro"><span class="demo-pill">交互演示</span><p>以下均为演示内容，不代表真实经历或指标。组件本地运行，无在线 API；复制定义或带入草稿后，替换成自己的内容。</p></div>
+    <nav class="lab-index" aria-label="实验室内容"><a href="#diagram">01 <span>把关系画出来</span> ↗</a><a href="#chart">02 <span>让数据自己说话</span> ↗</a><a href="#callout">03 <span>给重点一个位置</span> ↗</a><a href="#motion">04 <span>一束克制的微光</span> ↗</a></nav>
+    <section class="lab-section" id="diagram"><div class="lab-section-heading"><div><span class="eyebrow">01 / CONNECT THE DOTS</span><h2>把关系，画出来<span>。</span></h2><p>用一段 Mermaid 语法组织思路。放大细节，缩回全貌，原文始终在旁边。</p></div><div class="lab-actions"><button class="button" data-copy-template="mermaid"><Icon name="copy" size={14} />复制模板</button><a class="button button-primary" href="/manage/?template=mermaid">带入草稿 <Icon name="arrow" size={15} /></a></div></div><div class="prose lab-content" id="lab-diagram"><pre><code class="language-mermaid">{diagram}</code></pre></div><p class="lab-footnote">支持流程图、时序图、类图、状态图、关系图与思维导图。图表按需加载，定义不包含脚本、HTML 或外部资源。</p></section>
+    <section class="lab-section" id="chart"><div class="lab-section-heading"><div><span class="eyebrow">02 / FIND THE SIGNAL</span><h2>让数据，自己说话<span>。</span></h2><p>点击图例切换系列，悬停或聚焦数据点查看数值；完整表格始终可读。</p></div><div class="lab-actions"><button class="button" data-copy-template="chart"><Icon name="copy" size={14} />复制模板</button><a class="button button-primary" href="/manage/?template=chart">带入草稿 <Icon name="arrow" size={15} /></a></div></div><div class="prose lab-content" id="lab-chart"><pre><code class="language-chart">{chart}</code></pre></div><p class="lab-footnote">用 <code>chart</code> 围栏包裹 JSON。支持 line / bar、最多 6 组系列与 60 个标签；数据始终保存在 Markdown 原文里。</p></section>
+    <section class="lab-section" id="callout"><div class="lab-section-heading"><div><span class="eyebrow">03 / A LITTLE EMPHASIS</span><h2>给重点，一个位置<span>。</span></h2><p>为笔记、技巧和注意事项留出呼吸感。仍然是普通 Markdown 引用，随时可以迁移。</p></div><div class="lab-actions"><button class="button" data-copy-template="note"><Icon name="copy" size={14} />复制模板</button><a class="button button-primary" href="/manage/?template=note">带入草稿 <Icon name="arrow" size={15} /></a></div></div><div class="prose lab-callouts lab-content"><blockquote><p>[!NOTE] 留给下次回访的线索<br />先写背景，再记录证据。这里是可以继续生长的思考。</p></blockquote><blockquote><p>[!TIP]<br />把一个复杂问题拆成一张流程图，往往比再写三段解释更清楚。</p></blockquote><blockquote><p>[!WARNING]<br />这里是演示提示。发布之前，请检查配图、结论与仍未验证的假设。</p></blockquote></div></section>
+    <section class="lab-section" id="motion"><div class="lab-section-heading"><div><span class="eyebrow">04 / MOTION, WITH INTENTION</span><h2>一束克制的微光<span>。</span></h2><p>动效服务于注意力。试着移动指针或用键盘切换光轨；暂停后，内容依然清楚。</p></div><button class="button" id="toggle-lab-motion" aria-pressed="false">暂停动效</button></div><div class="lab-motion" id="lab-motion" data-mode="orbit"><div class="lab-motion-controls" role="group" aria-label="动效样式"><button type="button" data-lab-mode="orbit" aria-pressed="true">星轨</button><button type="button" data-lab-mode="scan" aria-pressed="false">光幕</button><button type="button" data-lab-mode="breathe" aria-pressed="false">呼吸</button></div><div class="lab-motion-art" aria-hidden="true"><span class="motion-ring ring-one"></span><span class="motion-ring ring-two"></span><span class="motion-core">✳</span><span class="motion-beam"></span></div><p>MAKE ROOM FOR A LITTLE WONDER.</p><span class="lab-motion-status" id="lab-motion-status">指针移动时，微光会轻轻跟随。</span></div><p class="lab-footnote">仅使用 transform / opacity 过渡；离开页面后无后台渲染。开启系统“减少动态效果”后自动停用装饰动画。</p></section>
+    <div class="lab-closing"><Icon name="spark" size={25} /><p>组件是工具，<span>理解才是目的。</span></p><a class="quiet-link mint" href="/manage/">回到写作空间 <Icon name="arrow" size={16} /></a></div>
+    <div id="lab-copy-status" class="sr-only" role="status" aria-live="polite"></div>
+  </div>
+  <script>
+    import { enhanceContent } from '../scripts/content-blocks';
+    import { blockTemplate } from '../lib/content-blocks';
+    document.querySelectorAll<HTMLElement>('.lab-content').forEach(enhanceContent);
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-template]').forEach(button => button.addEventListener('click', async () => {
+      const template = blockTemplate(button.dataset.copyTemplate || ''); if (!template) return;
+      const status = document.querySelector('#lab-copy-status')!;
+      try { await navigator.clipboard.writeText(template); status.textContent = 'Markdown 模板已复制。'; const old = button.textContent; button.textContent = '已复制 ✓'; setTimeout(() => { button.textContent = old; }, 1800); }
+      catch { status.textContent = '浏览器未允许复制，请展开原文手动选择复制。'; button.textContent = '请从原文复制'; }
+    }));
+    const motion = document.querySelector<HTMLElement>('#lab-motion')!;
+    const toggle = document.querySelector<HTMLButtonElement>('#toggle-lab-motion')!;
+    const status = document.querySelector<HTMLElement>('#lab-motion-status')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    let paused = reduced.matches;
+    const sync = () => { toggle.disabled = reduced.matches; motion.classList.toggle('motion-paused', paused || reduced.matches); toggle.setAttribute('aria-pressed', String(paused)); toggle.textContent = reduced.matches ? '系统已减少动效' : paused ? '继续动效' : '暂停动效'; status.textContent = reduced.matches ? '已遵循系统偏好：减少动态效果。' : paused ? '微光已暂停，按需继续。' : '指针移动时，微光会轻轻跟随。'; };
+    sync(); reduced.addEventListener('change', sync);
+    const visibility = () => motion.classList.toggle('motion-document-hidden', document.hidden);
+    visibility(); document.addEventListener('visibilitychange', visibility);
+    motion.classList.add('motion-offscreen');
+    const observer = new IntersectionObserver(entries => motion.classList.toggle('motion-offscreen', !entries[0]?.isIntersecting));
+    observer.observe(motion);
+    toggle.addEventListener('click', () => { paused = !paused; sync(); });
+    document.querySelectorAll<HTMLButtonElement>('[data-lab-mode]').forEach(button => button.addEventListener('click', () => { motion.dataset.mode = button.dataset.labMode; document.querySelectorAll('[data-lab-mode]').forEach(other => other.setAttribute('aria-pressed', String(other === button))); }));
+    let pending = 0;
+    motion.addEventListener('pointermove', event => { if (paused || reduced.matches || event.pointerType !== 'mouse' || pending) return; const box = motion.getBoundingClientRect(); const x = (event.clientX - box.left) / box.width, y = (event.clientY - box.top) / box.height; pending = requestAnimationFrame(() => { motion.style.setProperty('--pointer-x', `${x * 100}%`); motion.style.setProperty('--pointer-y', `${y * 100}%`); pending = 0; }); });
+  </script>
+</Layout>

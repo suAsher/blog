@@ -1,4 +1,7 @@
 import { ApiError, documentHref, jsonRequest, requestJSON, type DocumentContent, type DocumentDetail, type Quota } from '../../lib/documents';
+import { commandSnippet, imageValidationMessage, mapSelection, slashCommand, writingCommands, type SelectionRange } from '../../lib/writing-tools';
+import { enhanceContent } from '../content-blocks';
+import '../../styles/content-blocks.css';
 
 const input = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const fields = {
@@ -24,6 +27,8 @@ export class DocumentEditor {
   private previewVersion = 0;
   private mode = 'write';
   private imageTarget: 'source' | 'cover' = 'source';
+  private imageAnchor: (SelectionRange & { value: string }) | undefined;
+  private slashRange: SelectionRange | undefined;
   constructor(private callbacks: Callbacks) {
     Object.values(fields).forEach(field => field.addEventListener('input', () => this.changed()));
     input<HTMLButtonElement>('save-document').addEventListener('click', () => void this.flush());
@@ -36,17 +41,17 @@ export class DocumentEditor {
     input<HTMLButtonElement>('upload-cover').addEventListener('click', () => this.chooseImage('cover'));
     input<HTMLInputElement>('editor-image-input').addEventListener('change', event => {
       const file = (event.target as HTMLInputElement).files?.[0];
-      if (!file || !this.current || this.current.status === 'trash' || this.locked || this.uploading) return;
-      const target = this.imageTarget;
-      const tracked = this.uploadImage(file, target).finally(() => {
-        if (this.uploading === tracked) { this.uploading = undefined; this.syncImageButtons(); }
-      });
-      this.uploading = tracked;
-      this.syncImageButtons();
+      if (file) this.startImageUpload(file, this.imageTarget);
     });
+    this.setupInsertionMenu(); this.setupImageTransfers();
+    input<HTMLButtonElement>('focus-writing').addEventListener('click', () => this.focusWriting());
     window.addEventListener('beforeunload', event => { if (this.dirty || this.uploading) event.preventDefault(); });
     document.addEventListener('keydown', event => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's' && this.current) { event.preventDefault(); void this.flush(); }
+      if (event.key === 'Escape' && !event.isComposing && !document.querySelector('dialog[open]')) {
+        if (!input('insert-menu').hidden) { event.preventDefault(); this.closeInsertionMenu(); fields.source.focus(); }
+        else if (document.body.classList.contains('writing-focus')) this.focusWriting(false);
+      }
     });
   }
   get dirty() { return this.sequence !== this.savedSequence; }
@@ -74,6 +79,7 @@ export class DocumentEditor {
     clearTimeout(this.saveTimer); clearTimeout(this.previewTimer); ++this.previewVersion;
     this.current = null; this.sequence = this.savedSequence = 0; this.conflict = false;
     input('editor-panel').hidden = true; input('editor-empty').hidden = false;
+    this.closeInsertionMenu(); this.focusWriting(false);
   }
   lock(value: boolean) {
     this.locked = value;
@@ -102,6 +108,7 @@ export class DocumentEditor {
   }
   private changed() {
     if (!this.current || this.current.status === 'trash') return;
+    if (this.imageAnchor) this.imageAnchor = { ...mapSelection(this.imageAnchor.value, fields.source.value, this.imageAnchor), value: fields.source.value };
     ++this.sequence; this.backup(); this.wordCount();
     this.saveStatus('有未保存的修改', true);
     clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => { if (!this.conflict) void this.flush(); }, 800);
@@ -188,6 +195,7 @@ export class DocumentEditor {
       const result = await requestJSON<Preview>('/api/preview', jsonRequest('POST', { source: fields.source.value, documentId: id }));
       if (version !== this.previewVersion || this.current?.id !== id) return;
       input('document-preview').innerHTML = result.html;
+      enhanceContent(input('document-preview'));
       input('preview-status').textContent = `约 ${result.readingMinutes} 分钟阅读`;
     } catch (error) { if (version === this.previewVersion) input('preview-status').textContent = errorMessage(error); }
   }
@@ -195,13 +203,94 @@ export class DocumentEditor {
     if (!this.current || this.current.status === 'trash' || this.locked) return;
     const field = fields.source, start = field.selectionStart, end = field.selectionEnd;
     const selected = field.value.slice(start, end);
-    const insert = kind === 'heading' ? `\n## ${selected || '小节标题'}\n` : kind === 'bold' ? `**${selected || '重点内容'}**` : kind === 'code' ? `\n\`\`\`text\n${selected || '在这里写代码'}\n\`\`\`\n` : `[${selected || '链接说明'}](https://example.com)`;
+    const insert = commandSnippet(kind, selected);
+    if (!insert) return;
     field.setRangeText(insert, start, end, 'end'); field.focus(); this.changed();
+  }
+  private focusWriting(enabled = !document.body.classList.contains('writing-focus')) {
+    document.body.classList.toggle('writing-focus', enabled);
+    const button = input<HTMLButtonElement>('focus-writing'); button.setAttribute('aria-pressed', String(enabled));
+    button.textContent = enabled ? '退出专注 Esc' : '专注写作';
+    if (enabled) input('editor-panel').scrollIntoView({ block: 'start', behavior: 'instant' });
+  }
+  private setupInsertionMenu() {
+    const menu = input('insert-menu'), toggle = input<HTMLButtonElement>('open-insert-menu');
+    toggle.addEventListener('click', () => {
+      if (!menu.hidden) { this.closeInsertionMenu(); return; }
+      this.slashRange = undefined; this.showInsertionMenu(); menu.querySelector<HTMLButtonElement>('button')?.focus();
+    });
+    fields.source.addEventListener('input', event => {
+      if ((event as InputEvent).isComposing || this.locked || this.current?.status === 'trash') return;
+      const command = slashCommand(fields.source.value, fields.source.selectionStart, fields.source.selectionEnd);
+      if (!command) { this.closeInsertionMenu(); return; }
+      this.slashRange = command; this.showInsertionMenu(command.query);
+    });
+    fields.source.addEventListener('keydown', event => {
+      if (menu.hidden || event.isComposing) return;
+      if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab'].includes(event.key)) { this.closeInsertionMenu(); return; }
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault(); const buttons = menu.querySelectorAll<HTMLButtonElement>('button');
+        buttons[event.key === 'ArrowDown' ? 0 : buttons.length - 1]?.focus();
+      } else if (event.key === 'Enter' && this.slashRange) {
+        const first = menu.querySelector<HTMLButtonElement>('button'); if (first) { event.preventDefault(); first.click(); }
+      }
+    });
+    fields.source.addEventListener('click', () => this.closeInsertionMenu());
+    menu.addEventListener('keydown', event => {
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key) || event.isComposing) return;
+      event.preventDefault(); const buttons = [...menu.querySelectorAll<HTMLButtonElement>('button')];
+      const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[next]?.focus();
+    });
+    document.addEventListener('click', event => { if (event.target instanceof Element && !event.target.closest('.insert-menu-anchor') && event.target !== fields.source) this.closeInsertionMenu(); });
+  }
+  private showInsertionMenu(query = '') {
+    const menu = input('insert-menu'); menu.replaceChildren();
+    const matches = writingCommands.filter(command => `${command.label} ${command.hint}`.toLocaleLowerCase().includes(query));
+    for (const command of matches) {
+      const button = document.createElement('button'); button.type = 'button'; button.setAttribute('role', 'menuitem');
+      const label = document.createElement('span'); label.textContent = command.label;
+      const hint = document.createElement('small'); hint.textContent = command.id;
+      button.append(label, hint); button.addEventListener('click', () => {
+        if (this.slashRange) fields.source.setSelectionRange(this.slashRange.start, this.slashRange.end);
+        this.insertFormat(command.id); this.closeInsertionMenu();
+      }); menu.append(button);
+    }
+    if (!matches.length) { const message = document.createElement('p'); message.textContent = '没有匹配的内容块，继续输入或按 Esc。'; menu.append(message); }
+    menu.hidden = false; input('open-insert-menu').setAttribute('aria-expanded', 'true');
+  }
+  private closeInsertionMenu() { input('insert-menu').hidden = true; input('open-insert-menu').setAttribute('aria-expanded', 'false'); this.slashRange = undefined; }
+  private setupImageTransfers() {
+    fields.source.addEventListener('paste', event => {
+      const files = [...(event.clipboardData?.files || [])]; if (!files.length) return;
+      if (files.length !== 1) { this.callbacks.notice('一次可粘贴一张图片，多张图片请使用导入文档。', true); return; }
+      if (this.startImageUpload(files[0], 'source')) event.preventDefault();
+    });
+    fields.source.addEventListener('dragover', event => { if (event.dataTransfer?.types.includes('Files')) { event.preventDefault(); fields.source.classList.add('is-image-dragging'); } });
+    fields.source.addEventListener('dragleave', () => fields.source.classList.remove('is-image-dragging'));
+    fields.source.addEventListener('drop', event => {
+      fields.source.classList.remove('is-image-dragging');
+      const files = [...(event.dataTransfer?.files || [])]; if (!files.length) return;
+      event.preventDefault();
+      if (files.length !== 1) { this.callbacks.notice('一次可插入一张图片，多文件请使用导入文档。', true); return; }
+      this.startImageUpload(files[0], 'source');
+    });
+  }
+  private startImageUpload(file: File, target: 'source' | 'cover'): boolean {
+    if (!this.current || this.current.status === 'trash' || this.locked) return false;
+    if (this.uploading) { this.callbacks.notice('上一张图片仍在上传，请等待完成后再插入。', true); return false; }
+    const invalid = imageValidationMessage(file); if (invalid) { this.callbacks.notice(invalid, true); return false; }
+    this.closeInsertionMenu();
+    this.imageAnchor = target === 'source' ? { value: fields.source.value, start: fields.source.selectionStart, end: fields.source.selectionEnd } : undefined;
+    const tracked = this.uploadImage(file, target).finally(() => {
+      if (this.uploading === tracked) { this.uploading = undefined; this.imageAnchor = undefined; this.syncImageButtons(); }
+    });
+    this.uploading = tracked; this.syncImageButtons(); return true;
   }
   private chooseImage(target: 'source' | 'cover') { if (!this.current || this.current.status === 'trash' || this.locked || this.uploading) return; this.imageTarget = target; const file = input<HTMLInputElement>('editor-image-input'); file.value = ''; file.click(); }
   private async uploadImage(file: File, target: 'source' | 'cover'): Promise<boolean> {
     if (!this.current) return false;
-    if (file.size > 8 * 1024 * 1024) { this.callbacks.notice('单张图片不能超过 8 MB。', true); return false; }
     const id = this.current.id, form = new FormData(); form.append('files', file);
     this.callbacks.notice('正在上传图片…');
     try {
@@ -209,7 +298,12 @@ export class DocumentEditor {
       if (this.current?.id !== id || !result.assets[0]) { this.callbacks.notice('图片未能写入当前文档，请重新上传。', true); return false; }
       const asset = result.assets[0];
       if (target === 'cover') fields.cover.value = asset.url;
-      else { const name = file.name.replace(/[\[\]\n\r]/g, ''); fields.source.setRangeText(`![${name}](${asset.url})`, fields.source.selectionStart, fields.source.selectionEnd, 'end'); fields.source.focus(); }
+      else {
+        const name = file.name.replace(/[\[\]\n\r]/g, ''), anchor = this.imageAnchor;
+        fields.source.setRangeText(`![${name}](${asset.url})`, anchor?.start ?? fields.source.selectionStart, anchor?.end ?? fields.source.selectionEnd, 'preserve');
+        this.imageAnchor = undefined;
+        if (document.activeElement === input('editor-image-input') || document.activeElement === document.body) fields.source.focus();
+      }
       this.changed(); this.callbacks.quota(result.quota); this.callbacks.notice('图片已上传，将随文档一起保存。');
       return true;
     } catch (error) { this.callbacks.notice(errorMessage(error), true); this.saveStatus('图片上传失败 · 请重试', true); return false; }

@@ -30,6 +30,8 @@ npm run preview
 
 ## 功能和数据
 
+本轮体验升级增加了[内容实验室与交互 Markdown](docs/interactive-content.md)：本地按需绘制的流程图、可切换系列的数据图表、提示块、图片放大和阅读排版设置。编辑器可快捷插入内容块、粘贴/拖入图片、专注写作；命令搜索支持快捷操作、键盘选择和安全命中高亮。首页与卡片使用克制的星轨、光晕和入场，遵循减少动画偏好。服务端增加16MiB预算的派生搜索缓存，保留既有存储格式和发布快照隔离。
+
 - 站内 Markdown 编辑、自动保存草稿、对照预览、发布/撤回与发布快照隔离。
 - 批量导入 Markdown、TXT 与配套图片，保留目录关系；Markdown 和含配图 ZIP 导出。
 - 首页、文章列表、文章详情、服务端全文搜索、标签筛选与真实空状态。
@@ -261,9 +263,9 @@ BLOG_TEST_BASE_URL=https://YOUR_PUBLIC_IP BLOG_TEST_SSH_TARGET=YOUR_SERVER npm r
 
 该模式不启动本地服务器，仅通过 SSH 将 `/srv/asher-knowledge/secrets/access.json` 读入测试进程内存，校验目标 HTTPS origin 后由测试 fixture 调用 `/auth/login` 建立 Cookie 会话。不会导出密码文件，配置中不再使用 HTTP Basic 凭据，并关闭 trace、视频与 HTML 报告。已有部署需保持相同的凭据文件格式与路径。登录与内容端到端用例仅在显式指定 SSH 目标时运行，本地静态预览不会被当作认证或文档服务器。内容测试只创建和清理自身随机 QA 文档，不操作用户已有文档。
 
-macOS 已安装 Google Chrome 时测试会自动复用；其他环境默认使用 Playwright Chromium，也可通过 `PLAYWRIGHT_CHANNEL` 指定浏览器通道。首次安装 Playwright 浏览器需要网络；Linux 上可能还需 `npx playwright install --with-deps chromium`。端到端测试针对 Chromium 的桌面、手机和平板视口；这不等同于真实 Safari/iOS 设备认证。覆盖率门槛为搜索、浏览器存储与文档请求助手的核心逻辑的语句、分支、函数、行均不低于 80%，不声称该数字代表全部 UI 代码。
+macOS 已安装 Google Chrome 时测试会自动复用；其他环境默认使用 Playwright Chromium，也可通过 `PLAYWRIGHT_CHANNEL` 指定浏览器通道。首次安装 Playwright 浏览器需要网络；Linux 上可能还需 `npx playwright install --with-deps chromium`。端到端测试针对 Chromium 的桌面、手机和平板视口；这不等同于真实 Safari/iOS 设备认证。覆盖率门槛覆盖搜索、浏览器存储、文档请求、命令匹配、阅读偏好、写作辅助及内容块解析的核心逻辑的语句、分支、函数、行均不低于 80%，不声称该数字代表全部 UI 代码。
 
-本轮通过 36 项前端单元测试、43 项 Go 竞态测试、36 项公网内容测试和 84 项公网阅读/登录回归（桌面、手机、平板）。另用独立临时容器实测 128 MiB 限制下，精确 2 MiB Markdown、发布快照和图片在容器重建后持久保留。覆盖率、截图和未验证范围见 [验证记录](docs/qa/verification.md)。不要把静态构建成功当作完整服务部署成功，也不要把首次证书签发视为跨周期续期验收。公开仓库只保留通用配置；实例地址、真实凭据、内容数据和实际运维记录应由部署者私下保管。
+本轮通过68项前端单元测试、51项Go竞态测试，以及162项完整公网浏览器验收（桌面、手机、平板，无跳过或重试）。已实测资源503恢复、未保存草稿等待保存后刷新，以及128MiB容器内缓存淘汰、2MiB文档与图片重建持久化。覆盖率、真实截图、基准数据和未验证范围见[验证记录](docs/qa/verification.md)。公开仓库只保留通用配置；实例地址、真实凭据、内容数据和私有运维记录应由部署者私下保管。
 
 ```text
 src/content/articles/    明确标注的静态示例

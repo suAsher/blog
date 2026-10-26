@@ -16,6 +16,20 @@ const { title, description = '一个安静的角落，用来探索技术、连�
     <title>{title ? `${title} · asher 知识空间` : 'asher · 知识空间 — 让思考发光'}</title>
     <script is:inline>try { document.documentElement.dataset.theme = localStorage.getItem('asher-theme') === 'light' ? 'light' : 'dark'; } catch {}</script>
     <script is:inline>
+      try {
+        const raw = localStorage.getItem('asher-reading-preferences-v1');
+        if (raw && raw.length <= 2048) {
+          const preferences = JSON.parse(raw);
+          if (preferences && typeof preferences === 'object' && !Array.isArray(preferences)) {
+            const style = document.documentElement.style;
+            if ([17, 19, 21].includes(preferences.fontSize)) style.setProperty('--reading-font-size', preferences.fontSize + 'px');
+            if ([680, 760, 860].includes(preferences.width)) style.setProperty('--reading-column', preferences.width + 'px');
+            if ([1.8, 2, 2.2].includes(preferences.lineHeight)) style.setProperty('--reading-line-height', String(preferences.lineHeight));
+          }
+        }
+      } catch { /* Invalid or unavailable preferences keep the CSS defaults. */ }
+    </script>
+    <script is:inline>
       // Navigation is available before deferred modules finish downloading.
       // Capture its context synchronously so fast clicks keep their filters.
       document.addEventListener('click', event => {
@@ -33,7 +47,7 @@ const { title, description = '一个安静的角落，用来探索技术、连�
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="/" aria-label="asher · 知识空间首页"><span class="brand-symbol">a<span>✳</span></span><span>asher <i>·</i> <span class="brand-zh">知识空间</span></span></a>
-        <nav aria-label="主导航"><a href="/" aria-current={active === 'home' ? 'page' : undefined}>探索</a><a href="/articles/" aria-current={active === 'articles' ? 'page' : undefined}>文章</a><a href="/library/" aria-current={active === 'library' ? 'page' : undefined}>我的书架</a><a href="/manage/" aria-current={active === 'manage' ? 'page' : undefined}>写作</a><a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>关于</a></nav>
+        <nav aria-label="主导航"><a href="/" aria-current={active === 'home' ? 'page' : undefined}>探索</a><a href="/articles/" aria-current={active === 'articles' ? 'page' : undefined}>文章</a><a href="/library/" aria-current={active === 'library' ? 'page' : undefined}>我的书架</a><a href="/manage/" aria-current={active === 'manage' ? 'page' : undefined}>写作</a><a href="/lab/" aria-current={active === 'lab' ? 'page' : undefined}>实验室</a><a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>关于</a></nav>
         <div class="header-tools"><button class="search-trigger" data-open-search aria-label="搜索文章"><Icon name="search" size={17} /><span>搜索灵感…</span><kbd>⌘ K</kbd></button><span class="tool-divider"></span><button class="icon-button theme-toggle" data-theme-toggle aria-label="切换到浅色主题"><Icon name="sun" size={19} /></button><button class="icon-button" type="button" data-logout aria-label="退出登录" title="退出登录"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H4v16h6m5-13 5 5-5 5m-6-5h11" /></svg></button></div>
       </div>
     </header>
@@ -41,9 +55,9 @@ const { title, description = '一个安静的角落，用来探索技术、连�
     <footer class="site-footer shell"><a class="footer-brand" href="/">asher <span>· 知识空间</span></a><p>保持好奇，持续生长。<span class="footer-dot">✳</span></p><span class="mono">BUILT FOR THINKING · {new Date().getFullYear()}</span></footer>
     <dialog id="search-dialog" aria-labelledby="search-title">
       <div class="dialog-top"><div><span class="eyebrow">FIND YOUR NEXT IDEA</span><h2 id="search-title">在知识里，找一点灵感</h2></div><button class="icon-button" data-close-search aria-label="关闭搜索"><Icon name="close" /></button></div>
-      <form id="quick-search-form" action="/articles/"><label class="sr-only" for="quick-search">全文搜索</label><div class="search-input-wrap"><Icon name="search" /><input id="quick-search" type="search" name="q" placeholder="搜索标题、正文、标签…" autocomplete="off" /><kbd>ESC</kbd></div></form>
+      <form id="quick-search-form" action="/articles/"><label class="sr-only" for="quick-search">全文搜索</label><div class="search-input-wrap"><Icon name="search" /><input id="quick-search" type="search" name="q" placeholder="搜索全文，或输入 > 执行操作…" autocomplete="off" aria-controls="quick-results" /><kbd>ESC</kbd></div></form>
       <div id="quick-results" aria-live="polite"><p class="search-hint">输入一个关键词，发现相关的笔记。</p></div>
-      <div class="dialog-footer"><span>搜索包含文章全文</span><span><kbd>Tab</kbd> 选择 · <kbd>↵</kbd> 打开</span></div>
+      <div class="dialog-footer"><span id="quick-search-status" role="status">搜索全文，或输入 > 执行操作</span><span><kbd>↑ ↓</kbd> 选择 · <kbd>↵</kbd> 打开</span></div>
     </dialog>
     <div id="toast" role="status" aria-live="polite"></div>
     <script>import '../scripts/app';</script>

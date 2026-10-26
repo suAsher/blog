@@ -1,6 +1,7 @@
 import { formatBytes, jsonRequest, requestJSON, type DocumentDetail, type DocumentList, type DocumentSummary, type ImportReport, type Quota } from '../../lib/documents';
 import { DocumentEditor, errorMessage, today } from './editor';
 import { DocumentImporter } from './import';
+import { draftTemplate, manageIntent, type DraftTemplate } from '../../lib/writing-tools';
 
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 let status = 'all';
@@ -21,6 +22,12 @@ function quota(value: Quota) {
 const editor = new DocumentEditor({
   saved: doc => { documents = documents.map(item => item.id === doc.id ? doc : item); renderList(); clearTimeout(refreshTimer); refreshTimer = setTimeout(() => void loadList(), 700); },
   quota, notice,
+});
+// A failed split module needs a fresh document module map. Complete the existing
+// serialized save/upload chain before allowing that explicit recovery action.
+document.addEventListener('content:before-reload', event => {
+  const detail = (event as CustomEvent<{ waitUntil(task: Promise<boolean>): void }>).detail;
+  if (typeof detail?.waitUntil === 'function') detail.waitUntil(editor.flush());
 });
 const importer = new DocumentImporter({ quota, imported: async (result: ImportReport) => {
   status = 'draft'; query = ''; element<HTMLInputElement>('manage-search').value = ''; syncTabs(); await loadList();
@@ -74,15 +81,16 @@ async function selectDocument(id: string) {
   } catch (error) { notice(errorMessage(error), true); }
   finally { busy = false; editor.lock(false); }
 }
-async function createDocument() {
+async function createDocument(template?: DraftTemplate) {
   if (busy) return;
   busy = true; editor.lock(true); const button = element<HTMLButtonElement>('new-document'); button.disabled = true;
   try {
     if (!await editor.flush()) return;
-    const doc = await requestJSON<DocumentDetail>('/api/documents', jsonRequest('POST', { title: '未命名文档', description: '', date: today(), tags: [], category: '', cover: '', source: '' }));
+    const content = template ? draftTemplate(template) : { title: '未命名文档', description: '', source: '' };
+    const doc = await requestJSON<DocumentDetail>('/api/documents', jsonRequest('POST', { ...content, date: today(), tags: [], category: '', cover: '' }));
     editor.open(doc); status = 'draft'; query = ''; element<HTMLInputElement>('manage-search').value = ''; syncTabs();
     history.replaceState(null, '', `/manage/?id=${doc.id}`); await loadList();
-    element<HTMLInputElement>('document-title').focus(); element<HTMLInputElement>('document-title').select(); notice('新文档已创建，接下来的修改会自动保存为草稿。');
+    element<HTMLInputElement>('document-title').focus(); element<HTMLInputElement>('document-title').select(); notice(template ? '演示模板已放入新草稿。替换为自己的内容，预览后即可发布。' : '新文档已创建，接下来的修改会自动保存为草稿。');
   } catch (error) { notice(errorMessage(error), true); }
   finally { busy = false; editor.lock(false); button.disabled = false; }
 }
@@ -145,7 +153,11 @@ document.addEventListener('click', event => {
 }, { capture: true });
 void (async () => {
   await loadList();
-  const params = new URLSearchParams(location.search), id = params.get('id');
-  if (id && /^[a-f0-9]{32}$/.test(id)) await selectDocument(id);
-  if (params.get('import') === '1') importer.open();
+  const intent = manageIntent(new URLSearchParams(location.search));
+  if (intent?.kind === 'document') await selectDocument(intent.id);
+  if (intent?.kind === 'new' || intent?.kind === 'template') {
+    // Consume before the request: a reload must never repeat a create intent.
+    history.replaceState(null, '', '/manage/'); await createDocument(intent.kind === 'template' ? intent.template : undefined);
+  }
+  if (intent?.kind === 'import') importer.open();
 })();

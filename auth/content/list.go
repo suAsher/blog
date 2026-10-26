@@ -31,32 +31,36 @@ func facetList(counts map[string]int) []Facet {
 	})
 	return result
 }
-func snippet(source string, tokens []string) string {
-	text := strings.Join(strings.Fields(source), " ")
-	runes := []rune(text)
+
+// Slice only a short rune window after locating a normalized token. This avoids
+// allocating a complete rune/whitespace copy of a multi-megabyte document.
+func snippet(source, indexed string, tokens []string) string {
 	start := 0
-	normalizedText := normalized(text)
 	for _, token := range tokens {
-		if at := strings.Index(normalizedText, token); at >= 0 {
-			start = utf8.RuneCountInString(normalizedText[:at]) - 50
+		if at := strings.Index(indexed, token); at >= 0 {
+			start = utf8.RuneCountInString(indexed[:at]) - 50
 			if start < 0 {
 				start = 0
 			}
 			break
 		}
 	}
-	end := start + 220
-	if end > len(runes) {
-		end = len(runes)
+	byteStart, byteEnd, count := 0, len(source), 0
+	for at := range source {
+		if count == start {
+			byteStart = at
+		}
+		if count == start+220 {
+			byteEnd = at
+			break
+		}
+		count++
 	}
-	if start > len(runes) {
-		start = 0
-	}
-	value := string(runes[start:end])
-	if start > 0 {
+	value := strings.Join(strings.Fields(source[byteStart:byteEnd]), " ")
+	if byteStart > 0 {
 		value = "…" + value
 	}
-	if end < len(runes) {
+	if byteEnd < len(source) {
 		value += "…"
 	}
 	return value
@@ -101,11 +105,11 @@ func (s *Store) List(options ListOptions) (ListData, error) {
 		if !strings.HasSuffix(name, ".json") || !documentID.MatchString(strings.TrimSuffix(name, ".json")) {
 			continue
 		}
-		d, err := s.loadLocked(strings.TrimSuffix(name, ".json"))
+		d, err := s.searchRecordLocked(strings.TrimSuffix(name, ".json"), options.Status == "published", len(tokens) > 0)
 		if err != nil {
 			return ListData{}, err
 		}
-		switch d.Status {
+		switch d.status {
 		case "draft":
 			stats.Draft++
 		case "published":
@@ -113,16 +117,17 @@ func (s *Store) List(options ListOptions) (ListData, error) {
 		case "trash":
 			stats.Trash++
 		}
-		if (options.Status == "all" && d.Status == "trash") || (options.Status != "all" && options.Status != d.Status) {
+		if (options.Status == "all" && d.status == "trash") || (options.Status != "all" && options.Status != d.status) {
 			continue
 		}
-		c := d.Working
+		view := d.working
 		if options.Status == "published" {
-			if d.Published == nil {
+			if d.published == nil {
 				continue
 			}
-			c = *d.Published
+			view = d.published
 		}
+		c := view.summary
 		for _, tag := range c.Tags {
 			tags[tag]++
 		}
@@ -144,31 +149,11 @@ func (s *Store) List(options ListOptions) (ListData, error) {
 		if options.Category != "" && normalized(c.Category) != normalized(options.Category) {
 			continue
 		}
-		title := normalized(c.Title)
-		description := normalized(c.Description)
-		text := title + "\n" + description + "\n" + normalized(strings.Join(c.Tags, " ")) + "\n" + normalized(c.Source)
-		score := 0
-		found := true
-		for _, token := range tokens {
-			if !strings.Contains(text, token) {
-				found = false
-				break
-			}
-			if strings.Contains(title, token) {
-				score += 10
-			}
-			if strings.Contains(description, token) {
-				score += 3
-			}
-		}
+		score, found := view.matches(tokens)
 		if !found {
 			continue
 		}
-		item := summary(d, c)
-		if len(tokens) > 0 {
-			item.Body = snippet(c.Source, tokens)
-		}
-		matches = append(matches, match{item, score})
+		matches = append(matches, match{view.summary, score})
 	}
 	sort.SliceStable(matches, func(i, j int) bool {
 		if matches[i].score != matches[j].score {
@@ -193,7 +178,20 @@ func (s *Store) List(options ListOptions) (ListData, error) {
 	}
 	documents := []Summary{}
 	for _, item := range matches[start:end] {
-		documents = append(documents, item.summary)
+		summary := item.summary
+		summary.Tags = append([]string{}, summary.Tags...)
+		if len(tokens) > 0 {
+			record, err := s.searchRecordLocked(summary.ID, options.Status == "published", true)
+			if err != nil {
+				return ListData{}, err
+			}
+			view := record.working
+			if options.Status == "published" {
+				view = record.published
+			}
+			summary.Body = snippet(view.source, view.body, tokens)
+		}
+		documents = append(documents, summary)
 	}
 	return ListData{Documents: documents, Total: total, Tags: facetList(tags), Categories: facetList(categories), Stats: stats, Quota: s.quota()}, nil
 }
