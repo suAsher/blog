@@ -1,14 +1,17 @@
-import { gsap } from "gsap";
-import Lenis from "lenis";
-import "lenis/dist/lenis.css";
+import {
+  createAnimationClock,
+  createTickerClock,
+  type AnimationClock,
+} from "../../lib/animation-clock";
 import { shouldAnimate } from "../../lib/motion-capabilities";
 import type { motionPolicy } from "../../lib/motion-capabilities";
 import type { mountEffects } from "./effects";
 import type { mountNebula } from "./nebula";
+import type { mountSmoothScroll } from "./smooth-scroll";
 
 type Policy = ReturnType<typeof motionPolicy>;
 
-/** This surface owns the GSAP ticker; it advances Lenis, pointer effects and OGL. */
+/** This surface owns exactly one clock; optional engines only provide adapters. */
 export async function mountVisualRuntime(
   policy: Policy,
   signal: AbortSignal,
@@ -20,11 +23,13 @@ export async function mountVisualRuntime(
   let scene: ReturnType<typeof mountNebula> | undefined;
   let effects: ReturnType<typeof mountEffects> | undefined;
   let effectsFactory: typeof mountEffects | undefined;
+  let scrollFactory: typeof mountSmoothScroll | undefined;
+  let smoothScroll: ReturnType<typeof mountSmoothScroll> | undefined;
+  let clock: AnimationClock | undefined;
   let sceneVisible = true;
   let disposed = false;
   let mounted = false;
   let active: boolean | undefined;
-  let lenis: Lenis | undefined;
   let intersection: IntersectionObserver | undefined;
   const sceneAllowed = () =>
     shouldAnimate({
@@ -44,15 +49,15 @@ export async function mountVisualRuntime(
     if (disposed) return;
     disposed = true;
     active = false;
-    gsap.ticker.remove(tick);
     intersection?.disconnect();
-    effects?.dispose();
     destroyScroll();
     scene?.dispose();
     scene = undefined;
+    effects?.dispose();
+    effects = undefined;
+    clock?.stop();
     if (host) host.dataset.sceneState = "fallback";
     delete html.dataset.visualRuntime;
-    gsap.ticker.sleep();
   };
   signal.addEventListener("abort", dispose, { once: true });
   if (signal.aborted) {
@@ -69,48 +74,38 @@ export async function mountVisualRuntime(
       fallback();
     }
   }
-  if (policy.effects) {
-    try {
-      const module = await import("./effects");
-      if (signal.aborted) {
-        scene?.dispose();
-        return;
-      }
-      effectsFactory = module.mountEffects;
-    } catch (error) {
-      scene?.dispose();
-      throw error;
-    }
+  try {
+    const [effectsModule, scrollModule] = await Promise.all([
+      policy.effects ? import("./effects") : Promise.resolve(undefined),
+      policy.smooth ? import("./smooth-scroll") : Promise.resolve(undefined),
+    ]);
+    if (signal.aborted) return;
+    effectsFactory = effectsModule?.mountEffects;
+    scrollFactory = scrollModule?.mountSmoothScroll;
+    clock = effectsModule
+      ? createTickerClock(tick, effectsModule.motionTicker)
+      : createAnimationClock(tick);
+  } catch (error) {
+    if (signal.aborted) return;
+    scene?.dispose();
+    scene = undefined;
+    throw error;
   }
   const createScroll = () => {
-    if (!policy.smooth || lenis) return;
-    lenis = new Lenis({
-      autoRaf: false,
-      smoothWheel: true,
-      syncTouch: false,
-      lerp: 0.11,
-      allowNestedScroll: true,
-      anchors: true,
-      prevent: (node) =>
-        !!node.closest(
-          'dialog,[data-lenis-prevent],textarea,select,[contenteditable="true"]',
-        ),
-      virtualScroll: (data) =>
-        !data.event.ctrlKey && !document.querySelector("dialog[open]"),
-    });
-    lenis.on("scroll", () => effects?.updateScroll());
+    if (!policy.smooth || smoothScroll || !scrollFactory) return;
+    smoothScroll = scrollFactory(() => effects?.updateScroll());
     html.dataset.smoothScroll = "active";
   };
   function destroyScroll() {
-    lenis?.destroy();
-    lenis = undefined;
+    smoothScroll?.destroy();
+    smoothScroll = undefined;
     delete html.dataset.smoothScroll;
   }
-  function tick(time: number) {
+  function tick(seconds: number) {
     if (!active || disposed) return;
-    lenis?.raf(time * 1000);
+    smoothScroll?.raf(seconds);
     effects?.frame();
-    if (sceneAllowed()) scene?.render(time);
+    if (sceneAllowed()) scene?.render(seconds);
   }
   function sync() {
     if (disposed || signal.aborted) return;
@@ -129,13 +124,11 @@ export async function mountVisualRuntime(
       if (effectsFactory && !effects) effects = effectsFactory(signal);
       createScroll();
       effects?.resume();
-      gsap.ticker.add(tick);
-      gsap.ticker.wake();
+      clock?.start();
     } else {
-      gsap.ticker.remove(tick);
       effects?.pause();
       destroyScroll();
-      gsap.ticker.sleep();
+      clock?.stop();
     }
   }
   intersection = art

@@ -67,8 +67,9 @@ async function mount() {
       signal,
       () => paused || reducedMotion,
     );
-    if (!signal.aborted) syncState();
+    if (!signal.aborted && version === generation) syncState();
   } catch {
+    if (signal.aborted || version !== generation) return;
     // Content and the CSS constellation are already present if optional chunks fail.
     html.dataset.visualRuntime = "fallback";
     const scene = document.querySelector<HTMLElement>("[data-hero-scene]");

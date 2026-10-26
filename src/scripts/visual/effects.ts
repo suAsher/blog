@@ -7,6 +7,8 @@ gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.disable(false);
 gsap.ticker.sleep();
 
+export const motionTicker = gsap.ticker;
+
 const cardSelector =
   ".article-card,.featured-card,.continue-card,.lab-invitation";
 
@@ -221,6 +223,7 @@ export function mountEffects(signal: AbortSignal) {
         if (originalLabel === null) title.removeAttribute("aria-label");
         else if (originalLabel) title.setAttribute("aria-label", originalLabel);
       }
+      gsap.ticker.sleep();
     },
   };
 }
