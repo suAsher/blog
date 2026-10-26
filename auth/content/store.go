@@ -45,7 +45,7 @@ func NewStore(root string) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, dir := range []string{root, filepath.Join(root, "documents"), filepath.Join(root, "assets"), filepath.Join(root, "tmp")} {
+	for _, dir := range []string{root, filepath.Join(root, "documents"), filepath.Join(root, "assets"), filepath.Join(root, "tmp"), filepath.Join(root, "state")} {
 		if err := os.MkdirAll(dir, 0700); err != nil {
 			return nil, err
 		}
@@ -331,6 +331,10 @@ func (s *Store) update(id string, c Content, version int, present metadataPresen
 	if d.Status == "trash" {
 		return Detail{}, bad(409, "请先从垃圾箱恢复文档。")
 	}
+	nextVersion, err := nextDocumentVersion(d.Version)
+	if err != nil {
+		return Detail{}, err
+	}
 	c, err = normalizeContent(preserveMetadata(c, d.Working, present))
 	if err != nil {
 		return Detail{}, err
@@ -347,7 +351,7 @@ func (s *Store) update(id string, c Content, version int, present metadataPresen
 		d.WorkingTitleAliases = rememberTitle(d.WorkingTitleAliases, d.Working.Title)
 	}
 	d.Working = c
-	d.Version++
+	d.Version = nextVersion
 	d.UpdatedAt = s.now().UTC().Format(time.RFC3339Nano)
 	if err := s.saveLocked(d); err != nil {
 		return Detail{}, err
@@ -403,7 +407,11 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 	default:
 		return Detail{}, bad(404, "操作不存在。")
 	}
-	d.Version++
+	nextVersion, err := nextDocumentVersion(d.Version)
+	if err != nil {
+		return Detail{}, err
+	}
+	d.Version = nextVersion
 	d.UpdatedAt = s.now().UTC().Format(time.RFC3339Nano)
 	if err := s.saveLocked(d); err != nil {
 		return Detail{}, err

@@ -55,6 +55,12 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	path := r.URL.Path
 	switch {
+	case path == "/api/offline-revisions":
+		h.offlineRevisions(w, r)
+	case path == "/api/reading-state":
+		h.readingState(w, r)
+	case path == "/api/reviews":
+		h.reviews(w, r)
 	case path == "/api/graph" || path == "/api/link-targets" || path == "/api/random":
 		h.knowledge(w, r, path)
 	case path == "/api/dashboard":

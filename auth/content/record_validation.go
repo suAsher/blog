@@ -11,7 +11,7 @@ import (
 // edits must not bypass the same source and metadata limits as HTTP writes.
 // Missing optional fields remain valid for documents written by older versions.
 func validateStoredRecord(d *record) error {
-	if !documentID.MatchString(d.ID) || d.Version < 1 {
+	if !documentID.MatchString(d.ID) || d.Version < 1 || int64(d.Version) > maxSafeRevision {
 		return bad(400, "文档标识或版本无效。")
 	}
 	if d.Status != "draft" && d.Status != "published" && d.Status != "trash" {
@@ -74,4 +74,11 @@ func validateStoredRecord(d *record) error {
 		}
 	}
 	return validateRecordBudget(d)
+}
+
+func nextDocumentVersion(current int) (int, error) {
+	if current < 1 || int64(current) >= maxSafeRevision {
+		return 0, &apiError{Status: 503, Code: "DOCUMENT_VERSION_LIMIT", Message: "文档版本已达安全上限，请先导出备份，再新建文档继续编辑。"}
+	}
+	return current + 1, nil
 }

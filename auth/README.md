@@ -76,6 +76,8 @@ docker compose --env-file runtime.env -f compose.yaml -f compose.http.yaml -f co
 
 保存草稿不会改变正式阅读内容。发布将当前工作稿保存为发布快照，首页、列表和搜索读取快照；继续修改只改变工作稿，重新发布后才更新阅读。版本号用于乐观锁，冲突返回 409，不能用陈旧标签页静默覆盖新内容。垃圾箱是软删除，恢复为草稿；永久删除仅允许对垃圾箱文档操作。
 
+文档版本限定为 1 至 JavaScript 安全整数上限 `9007199254740991`，恢复数据在读取与保存时也需满足此范围。达到上限后，继续编辑、发布、撤回、回收或恢复返回 503 `DOCUMENT_VERSION_LIMIT` 且不写入；文档仍可读取或导出备份，再新建文档继续维护，避免浏览器丢失版本精度或整数溢出。
+
 可选元数据 `kind`（`article` / `note`）、`maturity`（空 / `growing` / `evergreen`）、`series` 和 `related` 与正文一起保存、导入、导出和发布；`related` 使用稳定文档 ID，最多 32 个。生命周期 `status` 仍为 `draft` / `published` / `trash`，与成长状态独立。旧客户端 PUT 省略这些新字段时保留原值；显式空字符串或空列表清空，`null` 会被拒绝。旧格式文件可以直接读取，发布快照与工作稿分别保存新字段。升级应先更新兼容后端，再更新前端；不要用旧后端重新保存含新字段的数据，否则旧程序可能丢弃扩展字段。
 
 写作活动与文档同一次原子落盘，每篇最多保留 400 个 UTC 日的真实创建/编辑首末时间。今日面板展示最近 366 个配置时区日期，每日数量是当天实际创建或修改过正文的文档数，同一天反复自动保存只算一篇。仅非空正文创建、正文改变且新正文非空时记录活动；仅修改标题、标签、系列等元数据，以及空白正文、相同内容重复保存、发布、撤回和回收操作不计入写作。旧文档不会通过 `createdAt` / `updatedAt` 补造历史；`historyComplete` 固定为 `false`，`activitySince` 是当前保留记录中最早真实活动日，没有活动时为 `null`。永久删除文档同时移除其活动记录，回收站中的记录仍保留。修改展示时区会重新按真实 UTC 时间计算，不重写文档时间。
@@ -93,6 +95,22 @@ docker compose --env-file runtime.env -f compose.yaml -f compose.http.yaml -f co
 连接索引是可重建派生缓存，单进程只保留一个视图，最多 4 MiB，独立于现有 16 MiB 搜索缓存。扫描采用分批读取，空间超过 8192 个文档记录或索引估算超限时，连接查询返回 503 `LINK_INDEX_BUDGET`；正文保存、普通阅读与随机文章仍可用。文章中的 Wiki 此时显示索引不可用文本，不把成功落盘误报为保存失败。图谱最多输出 300 个节点，仅包含选中节点之间的边；边预算为请求节点数的八倍且最多 2400 条，`totalNodes` / `totalEdges` 仍为完整索引总数，`truncated` 表示是否被裁剪。反向链接最多返回标题排序后的 300 篇，超出时同样返回 `truncated:true`；出链最多 288 项、未解析 Wiki 最多 256 项。
 
 默认图谱、反向链接、目标补全只读取发布快照，包括已发布随手记；作者补全与预览明确使用 `view=working`，含草稿、排除垃圾箱。`/api/random` 只从已发布文章中随机选择，不选随手记；空空间返回 `null`。所有连接 API 继承会话、限流、只读方法和不缓存策略。
+
+## 阅读同步与复习
+
+`state/reading.json` 保存单个空间所有者的收藏、已读、进度和复习计划，无需数据库。文件为 `0600`，位于 `0700` 目录；使用目录句柄限制访问范围，拒绝符号链接、非普通文件、过宽权限、未知格式或损坏记录，不能静默重置数据。写入使用同一内容锁、容量预留、临时文件、fsync 和原子替换。备份整个 `data/content/` 即包含同步状态；仅部署一个 Go 写入实例，进程锁不支持多副本共同写盘。
+
+`GET /api/reading-state` 返回 `{revision,entries}`；每条包含 `bookmarked`、`read`、`progress`（0–100）、服务器毫秒 `updatedAt`、四个字段各自的 `fieldRevisions`，以及可选 `review`。新条目的字段版本为零。状态最多 10000 个键、序列化文件最多 4 MiB；键最多 240 个 UTF-8 字节，禁止控制字符、原型键和穿越路径片段。浏览器原有记录仍可作为首次迁移来源，不直接信任客户端时间决定覆盖顺序。
+
+`POST /api/reading-state` 接收 `{operations:[{opId,key,base,patch}]}`，每批 1–32 个操作、最多 32 KiB。`opId` 为 UUID，`base` 必须精确包含 patch 对应字段的安全非负整数版本。`bookmarked` / `read` 为布尔值，`progress` 为数值；复习通过 `patch.reviewAction` 的 `enable` / `complete` / `disable` 操作，对应 `base.review`。不接收 `null`、未知字段或批内重复 UUID。
+
+服务器对每个字段分别比较版本：匹配的接受、冲突的保留服务器值；接受字段的操作递增一次全局版本，为其字段赋相同新版本，纯冲突不递增。返回 `{revision,results:[{opId,key,applied,conflicts,entry}]}`，业务冲突保持 HTTP 200；`entry` 总为本批完成后的规范服务器值。同一 UUID 的最近 256 个回执及规范请求摘要持久保存，原样重试不会重复应用，返回可选 `replayed:true`；UUID 被不同内容复用返回 409 `OP_ID_REUSE`。回执淘汰后，原始字段 CAS 仍防止旧操作覆盖新状态。整个批次先验证、一次落盘；任何格式、容量或领域错误均不产生部分写入。
+
+复习启用后 1 天到期；完成复习依次安排 3、7、30 天，随后每 30 天。间隔由服务器 UTC 时钟计算；禁用清除下次到期时间但保留最近复习时间。未启用计划时提交完成返回 409 `REVIEW_DISABLED`。`GET /api/reviews?limit=20` 返回 `{due:[{key,dueAt,step}],total}`，仅返回到期键、时间和阶段，不附带草稿正文；按到期时间和键排序，limit 为 1–100。阅读界面需将结果与可见发布文章连接，隐藏已撤回或不存在的文章。
+
+断网或登录过期时浏览器应保留待同步操作；恢复后用原始基础版本提交，冲突需要明确选择重新应用本机值。不要用客户端时间戳强行覆盖其他设备，也不要将每次滚动都发送服务器。现有会话、精确 Origin、每 IP 每分钟 600 次和 `no-store` 边界对新接口同样适用；同步并不等于离线认证。
+
+已加密保存的离线副本在线检查使用 `GET /api/offline-revisions?ids=<32hex>,<32hex>`，一次 1–20 个唯一 ID，路径与查询合计最多 1024 字节。只允许一个 `ids` 参数，拒绝未知参数、重复 ID、坏编码或格式；超长地址返回 414，其余参数错误返回 400。响应仅为 `{revisions:[{id,available:boolean,version?:number}]}`，按请求顺序返回。不存在、未发布或回收的文档为 `available:false`，不返回版本；已发布文档仅返回现有 Detail 的当前记录版本，不包含标题、正文或草稿元数据。草稿编辑也递增该版本，因此会保守地使旧离线副本失效。版本检查直接读取已校验的存储记录，不进行 Markdown 渲染、链接解析或图谱重建，避免每次上线重新下载二十份全文；仍需会话、限流且不缓存。
 
 Markdown 使用 Goldmark/GFM 渲染，不启用不安全原始 HTML，也不由服务器抓取外部图片。配图导入按所选根目录中的相对路径匹配，缺图会报告；目录上传不会以别的目录同名图片静默替代。只有完全平铺选择且文件名唯一时，系统可报告按文件名匹配的警告。SVG 不接受；支持 PNG、JPEG、GIF、WebP 并校验格式与尺寸。
 
@@ -125,6 +143,9 @@ Markdown 使用 Goldmark/GFM 渲染，不启用不安全原始 HTML，也不由�
 | `GET /api/documents/{id}/links?view=published` | 已解析出链、反向链接及 missing / ambiguous 目标；作者可指定 working |
 | `GET /api/graph?view=published&limit=300` | 节点、Wiki / related 关系与裁剪统计；limit 为 1–300 |
 | `GET /api/random` | 已发布文章随机漫步；空空间返回 null |
+| `GET/POST /api/reading-state` | 私有收藏/阅读/进度/复习的按字段 CAS 同步与幂等批次 |
+| `GET /api/reviews?limit=20` | 已到期复习计划；limit 为 1–100，不返回正文 |
+| `GET /api/offline-revisions?ids=<32hex>,...` | 1–20 个离线副本的已发布可用性与版本；不返回标题或正文 |
 | `POST /api/preview` | 与正式阅读一致的安全 Markdown 预览 |
 | `POST /api/import`、`POST /api/assets` | 文档/目录导入与单独图片上传 |
 | `GET /api/assets/{hash}.{ext}` | 登录后的私有图片读取 |
