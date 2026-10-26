@@ -13,12 +13,12 @@ import {
   commandSnippet,
   imageValidationMessage,
   mapSelection,
-  slashCommand,
-  writingCommands,
   type SelectionRange,
 } from "../../lib/writing-tools";
 import { enhanceContent } from "../content-blocks";
-import { fields, setEditorFieldsLocked } from "./fields";
+import { fields, relatedFields, setEditorFieldsLocked } from "./fields";
+import { setupInsertionMenu, setupWikiLinkCompletion } from "./link-completion";
+import { RelatedDocumentSelector } from "./related-selector";
 import "../../styles/content-blocks.css";
 
 const input = <T extends HTMLElement>(id: string) =>
@@ -45,7 +45,9 @@ export class DocumentEditor {
   private mode = "write";
   private imageTarget: "source" | "cover" = "source";
   private imageAnchor: (SelectionRange & { value: string }) | undefined;
-  private slashRange: SelectionRange | undefined;
+  private closeInsertionMenu: () => void = () => undefined;
+  private closeWikiCompletion: () => void = () => undefined;
+  private relatedSelector: RelatedDocumentSelector;
   constructor(private callbacks: Callbacks) {
     Object.values(fields).forEach((field) =>
       field.addEventListener("input", () => this.changed()),
@@ -93,7 +95,26 @@ export class DocumentEditor {
         if (file) this.startImageUpload(file, this.imageTarget);
       },
     );
-    this.setupInsertionMenu();
+    this.closeInsertionMenu = setupInsertionMenu({
+      source: fields.source,
+      menu: input("insert-menu"),
+      toggle: input<HTMLButtonElement>("open-insert-menu"),
+      unavailable: () => this.locked || this.current?.status === "trash",
+      insert: (id) => this.insertFormat(id),
+    }).close;
+    this.closeWikiCompletion = setupWikiLinkCompletion(
+      fields.source,
+      input("wiki-link-suggestions"),
+      () => this.changed(),
+      () => this.current?.id || "",
+    ).close;
+    this.relatedSelector = new RelatedDocumentSelector(
+      relatedFields.search,
+      relatedFields.suggestions,
+      relatedFields.chips,
+      () => this.changed(),
+      () => this.current?.id || "",
+    );
     this.setupImageTransfers();
     input<HTMLButtonElement>("focus-writing").addEventListener("click", () =>
       this.focusWriting(),
@@ -149,7 +170,7 @@ export class DocumentEditor {
       kind: fields.kind.value as "article" | "note",
       maturity: fields.maturity.value as "" | "growing" | "evergreen",
       series: fields.series.value.trim(),
-      related: [...(this.current?.related || [])],
+      related: this.relatedSelector.values,
     };
   }
   open(doc: DocumentDetail) {
@@ -169,6 +190,8 @@ export class DocumentEditor {
     fields.kind.value = doc.kind || "article";
     fields.maturity.value = doc.maturity || "";
     fields.series.value = doc.series || "";
+    this.closeWikiCompletion();
+    void this.relatedSelector.setValues(doc.related || []);
     input("editor-empty").hidden = true;
     input("editor-panel").hidden = false;
     input("editor-problem").hidden = true;
@@ -185,11 +208,13 @@ export class DocumentEditor {
     clearTimeout(this.previewTimer);
     ++this.previewVersion;
     this.current = null;
+    void this.relatedSelector.setValues([]);
     this.sequence = this.savedSequence = 0;
     this.conflict = false;
     input("editor-panel").hidden = true;
     input("editor-empty").hidden = false;
     this.closeInsertionMenu();
+    this.closeWikiCompletion();
     this.focusWriting(false);
   }
   lock(value: boolean) {
@@ -197,6 +222,7 @@ export class DocumentEditor {
     const readonly = value || this.current?.status === "trash";
     input("editor-panel").setAttribute("aria-busy", String(value));
     setEditorFieldsLocked(Boolean(readonly));
+    this.relatedSelector.setLocked(Boolean(readonly));
     input("editor-panel").classList.toggle(
       "editor-readonly",
       Boolean(readonly),
@@ -407,6 +433,10 @@ export class DocumentEditor {
       fields.tags.value = saved.content.tags
         .filter((tag: unknown) => typeof tag === "string")
         .join("，");
+      if (Array.isArray(saved.content.related))
+        void this.relatedSelector.setValues(
+          saved.content.related.filter((id: unknown) => typeof id === "string"),
+        );
       ++this.sequence;
       this.conflict = saved.version !== this.current.version;
       this.problem(
@@ -514,126 +544,6 @@ export class DocumentEditor {
         block: "start",
         behavior: "instant",
       });
-  }
-  private setupInsertionMenu() {
-    const menu = input("insert-menu"),
-      toggle = input<HTMLButtonElement>("open-insert-menu");
-    toggle.addEventListener("click", () => {
-      if (!menu.hidden) {
-        this.closeInsertionMenu();
-        return;
-      }
-      this.slashRange = undefined;
-      this.showInsertionMenu();
-      menu.querySelector<HTMLButtonElement>("button")?.focus();
-    });
-    fields.source.addEventListener("input", (event) => {
-      if (
-        (event as InputEvent).isComposing ||
-        this.locked ||
-        this.current?.status === "trash"
-      )
-        return;
-      const command = slashCommand(
-        fields.source.value,
-        fields.source.selectionStart,
-        fields.source.selectionEnd,
-      );
-      if (!command) {
-        this.closeInsertionMenu();
-        return;
-      }
-      this.slashRange = command;
-      this.showInsertionMenu(command.query);
-    });
-    fields.source.addEventListener("keydown", (event) => {
-      if (menu.hidden || event.isComposing) return;
-      if (
-        ["ArrowLeft", "ArrowRight", "Home", "End", "Tab"].includes(event.key)
-      ) {
-        this.closeInsertionMenu();
-        return;
-      }
-      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-        event.preventDefault();
-        const buttons = menu.querySelectorAll<HTMLButtonElement>("button");
-        buttons[event.key === "ArrowDown" ? 0 : buttons.length - 1]?.focus();
-      } else if (event.key === "Enter" && this.slashRange) {
-        const first = menu.querySelector<HTMLButtonElement>("button");
-        if (first) {
-          event.preventDefault();
-          first.click();
-        }
-      }
-    });
-    fields.source.addEventListener("click", () => this.closeInsertionMenu());
-    menu.addEventListener("keydown", (event) => {
-      if (
-        !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key) ||
-        event.isComposing
-      )
-        return;
-      event.preventDefault();
-      const buttons = [...menu.querySelectorAll<HTMLButtonElement>("button")];
-      const index = buttons.indexOf(
-        document.activeElement as HTMLButtonElement,
-      );
-      const next =
-        event.key === "Home"
-          ? 0
-          : event.key === "End"
-            ? buttons.length - 1
-            : (index + (event.key === "ArrowDown" ? 1 : -1) + buttons.length) %
-              buttons.length;
-      buttons[next]?.focus();
-    });
-    document.addEventListener("click", (event) => {
-      if (
-        event.target instanceof Element &&
-        !event.target.closest(".insert-menu-anchor") &&
-        event.target !== fields.source
-      )
-        this.closeInsertionMenu();
-    });
-  }
-  private showInsertionMenu(query = "") {
-    const menu = input("insert-menu");
-    menu.replaceChildren();
-    const matches = writingCommands.filter((command) =>
-      `${command.label} ${command.hint}`.toLocaleLowerCase().includes(query),
-    );
-    for (const command of matches) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.setAttribute("role", "menuitem");
-      const label = document.createElement("span");
-      label.textContent = command.label;
-      const hint = document.createElement("small");
-      hint.textContent = command.id;
-      button.append(label, hint);
-      button.addEventListener("click", () => {
-        if (this.slashRange)
-          fields.source.setSelectionRange(
-            this.slashRange.start,
-            this.slashRange.end,
-          );
-        this.insertFormat(command.id);
-        this.closeInsertionMenu();
-      });
-      menu.append(button);
-    }
-    if (!matches.length) {
-      const message = document.createElement("p");
-      message.textContent = "没有匹配的内容块，继续输入或按 Esc。";
-      menu.append(message);
-    }
-    menu.hidden = false;
-    input("open-insert-menu").setAttribute("aria-expanded", "true");
-  }
-  private closeInsertionMenu() {
-    input("insert-menu").hidden = true;
-    input("open-insert-menu").setAttribute("aria-expanded", "false");
-    this.slashRange = undefined;
   }
   private setupImageTransfers() {
     fields.source.addEventListener("paste", (event) => {

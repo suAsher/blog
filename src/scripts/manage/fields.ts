@@ -19,6 +19,12 @@ export const selectFields = {
 
 export const fields = { ...textFields, ...selectFields };
 
+export const relatedFields = {
+  search: element<HTMLInputElement>("document-related-search"),
+  suggestions: element<HTMLElement>("related-suggestions"),
+  chips: element<HTMLElement>("related-chips"),
+};
+
 export function setEditorFieldsLocked(locked: boolean): void {
   Object.values(textFields).forEach((field) => {
     field.readOnly = locked;
