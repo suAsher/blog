@@ -3,7 +3,7 @@ import '../styles/tokens.css';
 import '../styles/offline.css';
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +14,7 @@ import '../styles/offline.css';
     <title>离线阅读 · asher 知识空间</title>
     <link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
-    <script is:inline>document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';</script>
+    <script is:inline>try { document.documentElement.dataset.theme = localStorage.getItem('asher-theme') === 'light' ? 'light' : 'dark'; } catch {}</script>
   </head>
   <body>
     <header class="offline-header">

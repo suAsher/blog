@@ -257,8 +257,17 @@ test.describe("encrypted private offline PWA", () => {
     if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) await page.reload();
     await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
 
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.evaluate(() => localStorage.setItem("asher-theme", "dark"));
     await page.goto("/offline/");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await expect(page.locator("#vault-count")).toContainText("1 个加密资料包");
+    await page.getByLabel("此设备的离线口令", { exact: true }).fill("local-only passphrase 2026");
+    await page.getByRole("button", { name: "解锁离线资料", exact: true }).click();
+    await expect(page.getByRole("link", { name: new RegExp(title) })).toBeVisible();
+    await page.evaluate(() => localStorage.setItem("asher-theme", "light"));
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
     await page.getByLabel("此设备的离线口令", { exact: true }).fill("local-only passphrase 2026");
     await page.getByRole("button", { name: "解锁离线资料", exact: true }).click();
     await expect(page.getByRole("link", { name: new RegExp(title) })).toBeVisible();
