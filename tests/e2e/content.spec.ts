@@ -14,7 +14,7 @@ const test = authenticatedTest.extend<{ content: ContentHarness }>({
 });
 
 test.describe('real document writing and import', () => {
-  test.skip(!process.env.BLOG_TEST_SSH_TARGET, 'Requires an explicitly authorized deployment with the persistent document API.');
+  test.skip(!process.env.BLOG_TEST_SSH_TARGET && process.env.BLOG_TEST_LOCAL_AUTH !== '1', 'Requires an explicitly authorized deployment with the persistent document API.');
 
   test('the writing workspace creates, autosaves, previews and publishes a real document', async ({ page, content }) => {
     const title = uniqueName('站内写作');

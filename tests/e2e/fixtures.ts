@@ -1,10 +1,25 @@
 import { test as base, expect, type BrowserContext, type Page } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
+import { lstatSync, readFileSync } from 'node:fs';
 
 interface DeploymentCredentials { origin: string; username: string; password: string }
 let cached: DeploymentCredentials | undefined;
 
 export function loadDeploymentCredentials(baseURL: string | undefined): DeploymentCredentials | undefined {
+  if (process.env.BLOG_TEST_LOCAL_AUTH === '1') {
+    try {
+      const origin = new URL(baseURL || '');
+      const path = process.env.BLOG_TEST_LOCAL_FIXTURE || '';
+      if (origin.protocol !== 'https:' || origin.hostname !== '127.0.0.1' || origin.pathname !== '/' ||
+          origin.username || origin.password || origin.search || origin.hash || !/^\/tmp\/[^/]+\.json$/.test(path)) throw new Error();
+      const stat = lstatSync(path);
+      if (!stat.isFile() || stat.isSymbolicLink() || (stat.mode & 0o077) || stat.uid !== process.getuid?.()) throw new Error();
+      const value = JSON.parse(readFileSync(path, 'utf8')) as DeploymentCredentials;
+      if (value.origin !== origin.origin || typeof value.username !== 'string' || !value.username.trim() ||
+          /[:\r\n]/.test(value.username) || typeof value.password !== 'string' || !value.password.trim()) throw new Error();
+      return value;
+    } catch { throw new Error('Unable to load local QA credentials for the configured HTTPS origin.'); }
+  }
   const target = process.env.BLOG_TEST_SSH_TARGET;
   if (target === undefined) return undefined;
   try {
@@ -59,7 +74,7 @@ export async function establishSession(context: BrowserContext, baseURL: string 
 
 export async function submitRealLogin(page: Page, baseURL: string | undefined, remember = false) {
   const credentials = loadDeploymentCredentials(baseURL);
-  if (!credentials) throw new Error('Deployment login requires an explicit SSH target.');
+  if (!credentials) throw new Error('Login requires an explicit local QA mode or deployment SSH target.');
   try {
     await page.locator('#username').evaluate((element, value) => {
       (element as HTMLInputElement).value = value;

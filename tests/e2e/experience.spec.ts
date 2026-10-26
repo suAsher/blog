@@ -183,7 +183,7 @@ test.describe('interactive reading and discovery', () => {
 });
 
 test.describe('real accelerated writing and content publishing', () => {
-  test.skip(!process.env.BLOG_TEST_SSH_TARGET, 'Requires an explicitly authorized deployment with the persistent document API.');
+  test.skip(!process.env.BLOG_TEST_SSH_TARGET && process.env.BLOG_TEST_LOCAL_AUTH !== '1', 'Requires an explicitly authorized deployment with the persistent document API.');
 
   test('the new-document action creates one real draft and refreshing never repeats creation', async ({ page, content }) => {
     let creations = 0;

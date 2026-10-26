@@ -7,7 +7,7 @@ const title = '把碎片知识，连成自己的系统';
 const cookieName = '__Host-asher_session';
 
 test.describe('deployed cookie login', () => {
-  test.skip(!process.env.BLOG_TEST_SSH_TARGET, 'Requires an explicitly authorized deployment SSH target and HTTPS endpoint.');
+  test.skip(!process.env.BLOG_TEST_SSH_TARGET && process.env.BLOG_TEST_LOCAL_AUTH !== '1', 'Requires an explicitly authorized deployment SSH target and HTTPS endpoint.');
 
   test('anonymous article, index and image redirect to the custom login without a native challenge', async ({ page, request }) => {
     for (const path of [article, '/search-index.json', '/images/orbit.svg']) {
@@ -128,7 +128,7 @@ test.describe('deployed cookie login', () => {
 
   test('a separate browser context cannot inherit another context session', async ({ context, browser, baseURL }) => {
     await establishSession(context, baseURL);
-    const isolated = await browser.newContext({ baseURL });
+    const isolated = await browser.newContext({ baseURL, ignoreHTTPSErrors: process.env.BLOG_TEST_LOCAL_AUTH === '1' });
     try {
       const response = await isolated.request.get('/search-index.json', { maxRedirects: 0 });
       expect(response.status()).toBe(302);
