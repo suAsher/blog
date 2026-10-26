@@ -27,6 +27,8 @@ The audit script starts and cleans up its own server and creates random credenti
 
 The default E2E run uses the real local private service (Go 1.26+ and OpenSSL are required). Set `BLOG_TEST_STATIC_ONLY=1` to run only the static preview on port 4390, with authentication/content cases skipped. Explicit `BLOG_TEST_BASE_URL` and optional SSH target retain the deployment workflow. Tests refuse to reuse an unrelated local preview.
 
+The local proxy gives each authenticated session one stable synthetic IPv6 ULA client address, derived in memory from the opaque cookie. Sessions represent independent test devices, so unrelated browser contexts do not consume a single shared loopback request budget. Anonymous login attempts retain the same loopback address. The real Go authentication, Origin checks and per-client API limit remain active; no cookie or derived identity is persisted in reports. Four unit checks cover stable identity, session separation, anonymous identity and exact cookie-name matching.
+
 The local E2E mode uses a mode-0600 credential fixture directly under `/tmp`, scoped to the exact HTTPS origin. Traces, screenshots, and video are disabled in this mode. All 162 existing baseline E2E tests passed across desktop, mobile, and tablet with three workers (49.8 seconds), including the 78 cases previously skipped without an SSH target. No existing assertion was removed.
 
 The new axe WCAG 2.0/2.1 AA checks intentionally exercise both themes and core pages. The original build reports label/name mismatches on the brand and search control; these are tracked separately from Lighthouse's aggregate accessibility score. Automated checks complement keyboard, reduced-motion, responsive, and real document lifecycle tests.
@@ -41,7 +43,7 @@ BLOG_CAPTURE_BASE_URL=http://127.0.0.1:4321 \
   node scripts/capture-preview.mjs
 ```
 
-Captures are restricted to generated example routes. To capture the local private server, keep that server running, set `BLOG_TEST_LOCAL_AUTH=1`, `BLOG_TEST_LOCAL_FIXTURE` to its temporary fixture, and `BLOG_CAPTURE_BASE_URL` to its exact HTTPS origin. The script never enumerates or captures private document IDs.
+Captures are restricted to generated example routes. To capture the local private server, keep that server running, set `BLOG_TEST_LOCAL_AUTH=1`, `BLOG_TEST_LOCAL_FIXTURE` to its temporary fixture, and `BLOG_CAPTURE_BASE_URL` to its exact HTTPS origin. The script never enumerates or captures user-owned document IDs. `BLOG_CAPTURE_MODE=today` requires the temporary local auth fixture, creates four generated QA notes/articles through the real API, captures the default Today homepage, its generated published listing, and one generated published article in the selected themes/viewports, then removes only those generated documents. Example capture remains the default.
 
 ## Stage-one comparison
 
@@ -82,3 +84,24 @@ BLOG_TEST_LOCAL_DIST=/tmp/asher-blog-stage1-dist \
 ```
 
 `BLOG_PERF_DEVICES` defaults to `mobile,desktop`. The aggregate now records FCP, TBT, CLS, speed index, script bootup, main-thread categories, sanitized local script paths and the LCP selector. It retains neither raw traces, HTML, request headers, cookies nor page text. LCP insight subparts are observed trace timings; headline paint metrics use Lighthouse simulation and should not be equated to the sum of those subparts.
+
+## Stage-two validation
+
+The final stage-two build (2026-10-26 17:08:09 local time) passed all 234 browser tests with zero skips and three workers, including the original regressions, Today capture and metadata publishing, long-title layout, engine-download budgets, and private authentication/document workflows. The local proxy retains real Go rate limits while isolating independent browser-session client identities.
+
+Six new cold-cache homepage audits used the same Chrome 155.0.8059.85, Lighthouse 13.5.0, 30 generated published documents and network/CPU settings. Each device has three samples; the article page was not re-audited in this stage.
+
+| Device | Performance (median / worst) | Accessibility | Best practices | LCP (ms, median / worst) | TBT (ms, median / worst) |
+| --- | --- | --- | --- | --- | --- |
+| Mobile | 98 / 98 | 100 / 100 | 100 / 100 | 2127 / 2128 | 0 / 112 |
+| Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 457 / 494 | 0 / 0 |
+
+Mobile scores were 98, 98 and 99; CLS was approximately 0.000105. Desktop scored 100 in all three runs. The earlier stage-one 87 remains recorded above. These results support the mobile engine-loading change without claiming it reconstructs the cause of that earlier outlier.
+
+The Today screenshot dataset is separate: four generated QA documents, consisting of two published articles and two private drafts. The capture also exercises the prior-year review using a generated article date, without inventing prior writing activity. Eighteen views were captured across Today, its generated published listing and one generated published article in both themes and three viewports. Only the six Today homepage views are saved in this repository; the twelve other generated views remain temporary.
+
+- [Desktop dark](evolution-stage2-home-desktop-dark.png), [desktop light](evolution-stage2-home-desktop-light.png)
+- [Tablet dark](evolution-stage2-home-tablet-dark.png), [tablet light](evolution-stage2-home-tablet-light.png)
+- [Mobile dark](evolution-stage2-home-mobile-dark.png), [mobile light](evolution-stage2-home-mobile-light.png)
+
+All screenshot content was generated for local QA. The capture removes its own documents, and the wrapper shuts down the local auth/proxy/preview processes and removes temporary credentials/data. No real account, remote server or private notes were accessed.

@@ -1,6 +1,6 @@
 # Frontend unit coverage scope
 
-`npm run test:coverage` measures eight explicitly selected library modules using Vitest's V8 provider. The 2026-10-26 stage-one run passed 73 tests across eight test files:
+`npm run test:coverage` measures explicitly selected library modules using Vitest's V8 provider. The 2026-10-26 stage-one run measured eight modules and passed 73 tests across eight test files:
 
 | Metric | Covered / total | Coverage |
 | --- | --- | --- |
@@ -10,6 +10,19 @@
 | Lines | 184 / 184 | 100% |
 
 The scope is `commands.ts`, `content-blocks.ts`, `documents.ts`, `motion-capabilities.ts`, `reading-preferences.ts`, `search.ts`, `storage.ts`, and `writing-tools.ts`, under `src/lib/`. These percentages describe that scope. They do not measure Astro components, DOM scripts, the entire application, or Go code. Browser regressions and Go tests provide separate evidence.
+
+## Stage two: expanded scope
+
+The scope now also includes `animation-clock.ts`, `daily.ts`, and `quick-note.ts`, for eleven modules. The latest run passes 92 tests across twelve files (including local test-harness checks). The measured eleven-module coverage is:
+
+| Metric | Covered / total | Coverage |
+| --- | --- | --- |
+| Statements | 317 / 325 | 97.53% |
+| Branches | 327 / 343 | 95.33% |
+| Functions | 89 / 94 | 94.68% |
+| Lines | 267 / 272 | 98.16% |
+
+Separate `go test -race -cover ./...` reports authentication 87.7% and content service 88.0%. No thresholds were lowered to admit new features.
 
 ## Why four module rows initially appeared absent
 

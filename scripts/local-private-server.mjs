@@ -3,13 +3,21 @@ import { createServer as createHTTPS } from 'node:https';
 import { request as requestHTTP, get } from 'node:http';
 import { createServer as createTCPServer } from 'node:net';
 import { spawn, execFileSync } from 'node:child_process';
-import { randomBytes, pbkdf2Sync } from 'node:crypto';
+import { randomBytes, pbkdf2Sync, createHash } from 'node:crypto';
 import { mkdtemp, writeFile, readFile, rm, realpath, lstat, cp } from 'node:fs/promises';
 import { resolve, join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const defaultFixture = (port = 4443) => `/tmp/asher-blog-private-${process.getuid?.() ?? 'user'}-${port}.json`;
+
+/** Local browser sessions represent independent clients while retaining Go's real per-IP limits. */
+export function localClientAddress(cookieHeader, fallback = '127.0.0.1') {
+  const token = typeof cookieHeader === 'string' ? cookieHeader.match(/(?:^|;\s*)__Host-asher_session=([^;]+)/)?.[1] : undefined;
+  if (!token) return fallback;
+  const address = 'fd' + createHash('sha256').update(token).digest('hex').slice(0, 30);
+  return address.match(/.{4}/g).join(':');
+}
 
 async function availablePort() {
   const server = createTCPServer();
@@ -94,7 +102,7 @@ export async function startPrivateServer(options = {}) {
     const preview = launch(process.execPath, previewArgs, { ASTRO_TELEMETRY_DISABLED: '1' });
     await Promise.all([waitReady(`http://127.0.0.1:${authPort}/healthz`, auth), waitReady(`http://127.0.0.1:${previewPort}/login/`, preview)]);
     const upstream = (req, res, upstreamPort, path = req.url) => {
-      const headers = { ...req.headers, host: `127.0.0.1:${upstreamPort}`, 'x-forwarded-uri': req.url, 'x-forwarded-proto': 'https', 'x-forwarded-for': req.socket.remoteAddress };
+      const headers = { ...req.headers, host: `127.0.0.1:${upstreamPort}`, 'x-forwarded-uri': req.url, 'x-forwarded-proto': 'https', 'x-forwarded-for': localClientAddress(req.headers.cookie, req.socket.remoteAddress) };
       delete headers.authorization;
       const proxy = requestHTTP({ host: '127.0.0.1', port: upstreamPort, path, method: req.method, headers }, response => {
         res.writeHead(response.statusCode, { ...response.headers, 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY', 'referrer-policy': 'same-origin' });
