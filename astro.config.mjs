@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import { readFile, writeFile } from 'node:fs/promises';
+import { privatePWA } from './src/build/pwa-integration.mjs';
 
 // The anonymous login page may load only its exact public asset paths. Share
 // canonical tokens without exposing the authenticated /_astro/ asset tree.
@@ -36,7 +37,7 @@ const publicLoginStyles = {
 };
 
 export default defineConfig({
-  integrations: [publicLoginStyles],
+  integrations: [publicLoginStyles, privatePWA()],
   output: 'static',
   trailingSlash: 'always',
   markdown: {

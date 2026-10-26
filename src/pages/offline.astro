@@ -1,0 +1,57 @@
+---
+import '../styles/tokens.css';
+import '../styles/offline.css';
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#090d16" />
+    <meta name="description" content="读取此设备上经过加密的离线资料。" />
+    <title>离线阅读 · asher 知识空间</title>
+    <link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <script is:inline>document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';</script>
+  </head>
+  <body>
+    <header class="offline-header">
+      <a class="offline-brand" href="/">asher <span>· 离线阅读</span></a>
+      <div class="offline-actions">
+        <button type="button" id="vault-lock" hidden>锁定</button>
+        <button type="button" id="vault-clear">清除此设备资料</button>
+      </div>
+    </header>
+    <main>
+      <section class="offline-intro" id="offline-locked" aria-labelledby="offline-title">
+        <p class="eyebrow">ENCRYPTED ON THIS DEVICE</p>
+        <h1 id="offline-title">离线，也只由你打开。</h1>
+        <p>正文与配图以 AES-GCM 加密保存在此设备。离线口令独立于站点登录密码，不会保存，也无法找回。</p>
+        <p id="vault-count" class="vault-count" role="status">正在检查此设备…</p>
+        <form id="unlock-form" class="unlock-card">
+          <label for="offline-passphrase">此设备的离线口令</label>
+          <input id="offline-passphrase" type="password" minlength="10" maxlength="1024" autocomplete="off" required />
+          <label id="confirm-row" for="offline-confirm" hidden>再次输入离线口令</label>
+          <input id="offline-confirm" type="password" minlength="10" maxlength="1024" autocomplete="off" hidden />
+          <label id="consent-row" class="consent" hidden><input id="offline-consent" type="checkbox" /> <span>我知道离线状态无法发现服务器上的撤回或删除；系统会在恢复联网后验证版本，且 7 天有效期依赖此设备时钟。</span></label>
+          <p id="unlock-error" class="form-error" role="alert" hidden></p>
+          <button type="submit" id="unlock-submit">解锁离线资料</button>
+        </form>
+      </section>
+      <section id="offline-library" hidden aria-labelledby="library-title">
+        <div class="library-heading"><div><p class="eyebrow">SAVED FOR SEVEN DAYS</p><h1 id="library-title">此设备的资料</h1></div><p id="library-status" role="status"></p></div>
+        <ul id="offline-list" class="offline-list"></ul>
+      </section>
+      <article id="offline-reader" hidden>
+        <a href="/offline/" class="back-link">← 返回离线资料</a>
+        <header class="reader-heading"><p id="offline-meta" class="eyebrow"></p><h1 id="offline-document-title"></h1><p id="offline-description"></p><div id="offline-tags" class="offline-tags"></div><img id="offline-cover" alt="" hidden /></header>
+        <nav id="offline-toc" aria-label="文章目录"></nav>
+        <div id="offline-body" class="offline-prose"></div>
+        <p id="offline-reader-status" class="reader-status" role="status"></p>
+      </article>
+    </main>
+    <script>import '../scripts/pwa/offline';</script>
+  </body>
+</html>

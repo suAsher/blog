@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "asher · 知识空间",
+  "short_name": "知识空间",
+  "description": "一个可安装、可加密离线阅读的私人知识空间。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "icons": [
+    { "src": "/icons/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/app-icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "随手记", "short_name": "随手记", "description": "快速记录一个想法", "url": "/?capture=1" },
+    { "name": "离线阅读", "short_name": "离线", "description": "打开此设备的加密离线资料", "url": "/offline/" }
+  ]
+}

@@ -2,7 +2,7 @@ import { test as base, expect, type BrowserContext, type Page } from '@playwrigh
 import { execFileSync } from 'node:child_process';
 import { lstatSync, readFileSync } from 'node:fs';
 
-interface DeploymentCredentials { origin: string; username: string; password: string }
+interface DeploymentCredentials { origin: string; username: string; password: string; certificateSPKI?: string }
 let cached: DeploymentCredentials | undefined;
 
 export function loadDeploymentCredentials(baseURL: string | undefined): DeploymentCredentials | undefined {
@@ -93,6 +93,13 @@ export async function submitRealLogin(page: Page, baseURL: string | undefined, r
 }
 
 export const test = base.extend({
+  launchOptions: [async ({ launchOptions }, use) => {
+    if (process.env.BLOG_TEST_LOCAL_AUTH !== '1') return use(launchOptions);
+    const origin = `https://127.0.0.1:${Number(process.env.BLOG_TEST_LOCAL_PORT || 4443)}`;
+    const pin = loadDeploymentCredentials(origin)?.certificateSPKI;
+    if (!pin || !/^[A-Za-z0-9+/]{43}=$/.test(pin)) throw new Error('The temporary local QA certificate pin is unavailable.');
+    await use({ ...launchOptions, args: [...(launchOptions.args || []), `--ignore-certificate-errors-spki-list=${pin}`] });
+  }, { scope: 'worker' }],
   context: async ({ context, baseURL }, use) => {
     await establishSession(context, baseURL);
     await use(context);

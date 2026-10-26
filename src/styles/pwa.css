@@ -1,0 +1,41 @@
+#device-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .45rem;
+}
+.device-tool {
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: 1;
+  padding: .55rem .75rem;
+  text-decoration: none;
+}
+.device-tool:hover,
+.device-tool:focus-visible { border-color: var(--accent); color: var(--accent); }
+.device-tool:disabled { cursor: wait; opacity: .55; }
+.device-warning { color: var(--danger); font-size: var(--text-sm); }
+.device-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text);
+  padding: 1.4rem;
+}
+.device-dialog::backdrop { background: rgb(4 8 14 / .75); }
+.device-dialog h2 { margin: 0 0 .65rem; font-size: 1.15rem; }
+.device-dialog p { color: var(--muted); line-height: 1.65; }
+.device-dialog .device-tool { margin-top: .5rem; }
+.offline-save-dialog form { display: grid; gap: var(--space-3); }
+.offline-save-dialog label { color: var(--muted); font-size: var(--text-sm); line-height: 1.6; }
+.offline-save-dialog input[type="password"] { min-height: 2.75rem; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--input); color: var(--text); padding: var(--space-3); }
+.offline-save-dialog .consent { display: flex; align-items: flex-start; gap: var(--space-2); }
+.offline-save-dialog .form-error { color: var(--danger); }
