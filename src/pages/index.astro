@@ -3,22 +3,24 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import Orbit from '../components/Orbit.astro';
 import TodaySection from '../components/daily/TodaySection.astro';
+import { exampleContentEnabled } from '../lib/examples';
+const includeExamples = exampleContentEnabled(process.env.BLOG_INCLUDE_EXAMPLES);
 ---
 <Layout active="home">
   <section class="hero shell">
     <div class="hero-copy"><span class="hero-kicker"><span class="live-dot"></span> A SPACE FOR CURIOUS MINDS</span><h1>让知识生长，<br />让思考<span class="gradient-text">发光。</span></h1><p>探索技术的深处，也记录思考的沿途。<br />这里是 asher 的数字书房，一座慢慢生长的知识花园。</p><div class="hero-actions"><a class="button button-primary" href="/articles/">开始探索 <Icon name="arrow" size={18} /></a><a class="quiet-link" href="/manage/">写一篇笔记 <Icon name="northeast" size={15} /></a></div><div class="hero-footnote"><span class="short-line"></span><span>LEARN. CONNECT. CREATE.</span></div></div>
     <Orbit />
   </section>
-  <div class="shell content-strip"><span><Icon name="book" size={16} /><span id="home-document-count">正在读取笔记</span></span><span><span class="small-orbit"></span><span id="home-tag-count">连接你的知识</span></span><span class="strip-note">每一次记录，都是下一次理解的起点。</span><a class="quiet-link" id="home-example-link" href="/articles/?examples=1">查看示例 <Icon name="arrow" size={13} /></a></div>
+  <div class="shell content-strip"><span><Icon name="book" size={16} /><span id="home-document-count">正在读取笔记</span></span><span><span class="small-orbit"></span><span id="home-tag-count">连接你的知识</span></span><span class="strip-note">每一次记录，都是下一次理解的起点。</span>{includeExamples && <a class="quiet-link" id="home-example-link" href="/articles/?examples=1">查看示例 <Icon name="arrow" size={13} /></a>}</div>
   <TodaySection />
   <section class="shell featured-section"><div class="section-heading"><div><span class="eyebrow">YOUR LATEST NOTE</span><h2>从这里，展开思考<span class="mint-dot">.</span></h2></div><span class="section-aside" id="home-featured-hint">一篇值得慢下来的笔记</span></div><div class="featured-grid">
     <div id="home-featured" aria-live="polite"><div class="home-loading"><span class="live-dot"></span> 正在打开你的知识花园…</div></div>
-    <aside class="continue-card"><div class="continue-top"><span class="eyebrow">YOUR READING CORNER</span><Icon name="bookmark" size={19} /></div><span class="reading-illustration" aria-hidden="true">▤<span>✦</span></span><div id="continue-reading"><h3>给好奇心，留一个位置。</h3><p>从一篇笔记开始。阅读进度会留在这里，等你下次回来。</p><a class="quiet-link mint" href="/articles/">找一篇开始读 <Icon name="arrow" size={16} /></a></div><span class="local-note"><span class="live-dot"></span> 阅读记录仅保存在此浏览器</span></aside>
+    <aside class="continue-card"><div class="continue-top"><span class="eyebrow">YOUR READING CORNER</span><Icon name="bookmark" size={19} /></div><span class="reading-illustration" aria-hidden="true">▤<span>✦</span></span><div id="continue-reading"><h3>给好奇心，留一个位置。</h3><p>从一篇笔记开始。阅读进度会留在这里，等你下次回来。</p><a class="quiet-link mint" href="/articles/">找一篇开始读 <Icon name="arrow" size={16} /></a></div><span class="local-note"><span class="live-dot"></span> 本机即时保存 · 联网后同步</span></aside>
   </div></section>
   <section class="shell latest-section" id="home-latest-section" hidden><div class="section-heading"><div><span class="eyebrow">RECENT EXPLORATIONS</span><h2>最近的探索<span class="mint-dot">.</span></h2></div><a class="quiet-link" href="/articles/">全部文章 <Icon name="arrow" size={17} /></a></div><div class="cards-grid" id="home-latest"></div></section>
   <section class="shell lab-invitation"><div class="lab-invitation-art" aria-hidden="true"><span></span><span></span><span></span><i>✧</i></div><div><span class="eyebrow">BEYOND THE WRITTEN WORD</span><h2>让一个想法，拥有更多表达。</h2><p>把流程变成可探索的图，把数据变成能对话的内容。试一试，再带进下一篇文档。</p></div><a class="quiet-link mint" href="/lab/">进入内容实验室 <Icon name="arrow" size={17} /></a></section>
   <section class="shell garden-note"><Icon name="spark" size={27} /><p>知识不是收藏的终点，<span>理解才是。</span></p><span class="mono">A GARDEN, NOT A WAREHOUSE.</span></section>
-  <noscript><p class="shell search-hint">开启 JavaScript 后可读取已发布文档。你也可以<a href="/articles/?examples=1">浏览明确标注的示例文章</a>。</p></noscript>
+  <noscript><p class="shell search-hint">开启 JavaScript 后可读取已发布文档。{includeExamples && <span>你也可以<a href="/articles/?examples=1">浏览明确标注的示例文章</a>。</span>}</p></noscript>
   <script>import '../scripts/home';</script>
   <script>import '../scripts/home-daily';</script>
 </Layout>

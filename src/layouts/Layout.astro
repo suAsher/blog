@@ -3,13 +3,15 @@ import Icon from '../components/Icon.astro';
 import NavigationTransitions from '../components/NavigationTransitions.astro';
 import QuickCapture from '../components/daily/QuickCapture.astro';
 import SyncStatus from '../components/SyncStatus.astro';
+import { exampleContentEnabled } from '../lib/examples';
 import '../styles/global.css';
 import '../styles/graph.css';
 interface Props { title?: string; description?: string; active?: string; article?: boolean }
 const { title, description = '一个安静的角落，用来探索技术、连接知识，也留住思考。', active = '', article = false } = Astro.props;
+const includeExamples = exampleContentEnabled(process.env.BLOG_INCLUDE_EXAMPLES);
 ---
 <!doctype html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="dark" data-examples={includeExamples ? 'on' : 'off'}>
   <head>
     <NavigationTransitions />
     <meta charset="UTF-8" />

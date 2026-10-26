@@ -61,6 +61,9 @@
   bottom: calc(100% + 9px);
   right: 0;
   width: min(360px, calc(100vw - 28px));
+  max-height: min(65dvh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 16px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);

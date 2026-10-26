@@ -1,9 +1,12 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { SearchArticle } from './search';
+import { exampleContentEnabled } from './examples';
 
 export async function getArticles(): Promise<CollectionEntry<'articles'>[]> {
   const entries = await getCollection('articles');
-  return [...entries].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const examples = exampleContentEnabled(process.env.BLOG_INCLUDE_EXAMPLES);
+  return entries.filter(entry => examples || !entry.data.demo)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
 export function readingMinutes(body: string): number {

@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        BLOG_INCLUDE_EXAMPLES: ${BLOG_INCLUDE_EXAMPLES:-1}
     ports:
       - "127.0.0.1:8080:8080"
     restart: unless-stopped

@@ -3,6 +3,7 @@ import type { ReadingReviewAction } from '../lib/reading-sync';
 import type { SearchArticle } from '../lib/search';
 import { searchArticles, getTags, getCategories } from '../lib/search';
 import { ApiError, requestJSON, type DocumentList } from '../lib/documents';
+import { shouldUseExamples } from '../lib/examples';
 
 let current = readState();
 let indexPromise: Promise<SearchArticle[]> | undefined;
@@ -27,9 +28,11 @@ export function setReadingStateMutationHandler(handler?: ReadingStateMutationHan
   pendingReadingMutations = [];
   pending.forEach(mutation => handler(mutation));
 }
-export const examplesRequested = () => new URLSearchParams(location.search).get('examples') === '1';
+const includeExamples = document.documentElement.dataset.examples !== 'off';
+export const examplesRequested = () => shouldUseExamples(location.search, includeExamples);
 export const usingExamples = () => examplesRequested() || localExamples;
 export function loadDemoIndex(): Promise<SearchArticle[]> {
+  if (!includeExamples) return Promise.resolve([]);
   if (!demoPromise) demoPromise = fetch('/search-index.json').then(async response => {
     if (!response.ok) throw new Error('Example index unavailable');
     return await response.json() as SearchArticle[];
@@ -41,7 +44,7 @@ export async function queryPublished(query = '', tag = '', category = '', offset
     const params = new URLSearchParams({ status: 'published', q: query, tag, category, offset: String(offset), limit: String(limit) });
     try { return await requestJSON<DocumentList>(`/api/documents?${params}`, { signal }); }
     catch (error) {
-      if (!(error instanceof ApiError) || error.status !== 404 || !['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname)) throw error;
+      if (!includeExamples || !(error instanceof ApiError) || error.status !== 404 || !['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname)) throw error;
       localExamples = true;
     }
   }

@@ -32,7 +32,7 @@ test('home introduces the demo garden and navigation opens six articles', async 
   await expect(page).toHaveURL(/examples=1/);
   await expect(page.locator('#article-results .article-card:visible')).toHaveCount(6);
   await page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '关于', exact: true }).click();
-  await expect(page.getByText('文中没有作者真实工作经历，也没有导入任何本机文档。', { exact: false })).toBeVisible();
+  await expect(page.locator('.demo-explanation')).toContainText('不代表作者真实经历');
 });
 
 test('full-text search finds code in the body and handles zero results', async ({ page }) => {
@@ -89,7 +89,8 @@ test('bookmarks persist after reload and can be removed from the shelf', async (
   await expect(page.getByRole('button', { name: savedLabel, exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '我的书架' }).click();
   await expect(page.locator('#library-results').getByRole('link', { name: featuredTitle, exact: true })).toBeVisible();
-  await expect(page.getByText('不同设备不会同步', { exact: true })).toBeVisible();
+  await expect(page.locator('.privacy-note')).toContainText('阅读记录支持跨设备同步');
+  await expect(page.locator('.privacy-note')).toContainText('主题与加密离线副本仅留在此设备');
   await page.getByRole('button', { name: savedLabel, exact: true }).click();
   await expect(page.getByRole('heading', { name: '书架空着，好奇心没有' })).toBeVisible();
   await page.reload();

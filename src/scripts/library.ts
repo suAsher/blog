@@ -45,7 +45,7 @@ document.getElementById('import-reading')?.addEventListener('change', async even
     const entries = parseState(JSON.stringify(data.entries));
     if (Object.keys(entries).length !== Object.keys(data.entries).length) throw new Error('记录无效');
     const saved = replaceState({ ...getState(), ...entries });
-    if (saved) toast(`已导入 ${Object.keys(entries).length} 条记录，同一文章以导入记录为准。`);
+    if (saved) toast(`已导入 ${Object.keys(entries).length} 条记录，已合并到本机；联网后同步，冲突请在页脚选择。`);
   } catch { toast('无法导入：请选择有效的 asher 阅读记录 JSON 文件（小于 2 MB）。'); }
   input.value = '';
 });

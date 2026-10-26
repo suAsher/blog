@@ -13,7 +13,8 @@
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:examples": "node scripts/verify-example-build.mjs"
   },
   "dependencies": {
     "astro": "^7.4.2",
