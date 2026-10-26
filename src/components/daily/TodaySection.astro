@@ -1,0 +1,51 @@
+---
+import Icon from '../Icon.astro';
+---
+<section class="shell today-section" aria-labelledby="today-heading">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">TODAY IN YOUR GARDEN</span>
+      <h2 id="today-heading">今天，记下一点<span class="mint-dot">.</span></h2>
+    </div>
+    <span class="section-aside">随手记录，会先保存在草稿里</span>
+  </div>
+  <div class="today-grid">
+    <form id="today-capture" class="today-capture-card">
+      <label for="today-note">一个想法，从这里开始</label>
+      <textarea
+        id="today-note"
+        rows="4"
+        placeholder="写下一句话、一个问题，或今天想继续研究的事…"
+        aria-describedby="today-capture-help"
+      ></textarea>
+      <div class="today-capture-footer">
+        <span id="today-capture-help">首行作为标题 · ⌘/Ctrl + Enter 保存</span>
+        <button type="submit" class="button button-primary">
+          保存为随手记 <Icon name="arrow" size={15} />
+        </button>
+      </div>
+      <p id="today-capture-status" role="status" aria-live="polite"></p>
+    </form>
+    <div class="today-summary-card" id="today-dashboard" aria-live="polite">
+      <p class="today-loading">正在读取今天的记录…</p>
+    </div>
+  </div>
+  <div class="today-below" id="today-below" hidden>
+    <section class="today-heatmap-card" aria-labelledby="today-activity-heading">
+      <div class="today-card-heading">
+        <h3 id="today-activity-heading">过去一年的写作足迹</h3>
+        <span id="today-streak"></span>
+      </div>
+      <div
+        class="today-heatmap-scroll"
+        role="region"
+        tabindex="0"
+        aria-label="写作活动日历，可左右滚动"
+      >
+        <div id="today-heatmap" class="today-heatmap" role="list"></div>
+      </div>
+      <p id="today-history-note"></p>
+    </section>
+    <div class="today-lists" id="today-lists"></div>
+  </div>
+</section>

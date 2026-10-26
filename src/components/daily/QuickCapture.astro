@@ -1,0 +1,36 @@
+---
+import Icon from '../Icon.astro';
+---
+<button
+  class="quick-capture-fab"
+  type="button"
+  data-open-capture
+  aria-label="新建随手记"
+>
+  <span class="quick-capture-glyph" aria-hidden="true" data-glyph="＋"></span><span>随手记</span>
+</button>
+<dialog id="capture-dialog" aria-labelledby="capture-title">
+  <div class="dialog-top">
+    <div><span class="eyebrow">CAPTURE A THOUGHT</span><h2 id="capture-title">新建随手记<span class="mint-dot">.</span></h2></div>
+    <button class="icon-button" type="button" data-close-capture aria-label="关闭随手记">
+      <Icon name="close" />
+    </button>
+  </div>
+  <form id="capture-form">
+    <label for="capture-source" class="sr-only">随手记内容</label>
+    <textarea id="capture-source" rows="7" placeholder="第一行是标题。接着写下你想到的事…" aria-describedby="capture-help"></textarea>
+    <div class="capture-bottom">
+      <span id="capture-help">⌘/Ctrl + Enter 保存为草稿</span>
+      <button class="button button-primary" type="submit">保存随手记 <Icon name="arrow" size={15} /></button>
+    </div>
+  </form>
+  <p id="capture-status" role="status" aria-live="polite"></p>
+  <div class="capture-settings">
+    <label for="capture-shortcut">快速打开</label>
+    <select id="capture-shortcut">
+      <option value="alt-n">⌘/Ctrl + Alt + N</option>
+      <option value="shift-u">⌘/Ctrl + Shift + U</option>
+      <option value="off">关闭键盘快捷键</option>
+    </select>
+  </div>
+</dialog>

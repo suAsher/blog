@@ -1,5 +1,6 @@
 /* Import order preserves the original cascade. Page polish follows structural rules. */
 @import url("./home.css");
+@import url("./daily.css");
 @import url("./collection.css");
 
 @import url("./tokens.css");
