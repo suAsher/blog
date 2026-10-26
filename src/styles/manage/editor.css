@@ -197,11 +197,24 @@
   display: block;
   min-width: 0;
 }
+.metadata-field {
+  min-width: 0;
+}
+.metadata-field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.metadata-field-label > span {
+  color: var(--faint);
+  font-size: 9px;
+}
 .metadata-fields label > span {
   color: var(--faint);
   font-size: 9px;
 }
-.metadata-fields input {
+.metadata-fields input,
+.metadata-fields select {
   margin-top: 6px;
   border: 1px solid var(--line);
   background: var(--bg);
@@ -211,6 +224,9 @@
   font-size: 11px;
   width: 100%;
   min-width: 0;
+}
+.metadata-fields select {
+  appearance: auto;
 }
 .cover-field {
   grid-column: 1/-1;

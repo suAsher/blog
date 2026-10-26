@@ -22,7 +22,43 @@ import '../styles/manage.css';
         <div id="editor-panel" hidden>
           <div class="editor-topbar"><div class="editor-state"><span id="document-status" class="status-pill">草稿</span><span id="save-status" role="status" aria-live="polite">所有修改已保存</span></div><div class="editor-actions"><button class="small-action" id="focus-writing" aria-pressed="false">专注写作</button><button class="small-action" id="save-document">保存 <kbd>⌘ S</kbd></button><a class="small-action" id="view-document" href="/articles/" hidden>查看文章 ↗</a><button class="small-action" id="unpublish-document" hidden>撤回发布</button><button class="small-action" id="restore-document" hidden>恢复为草稿</button><button class="small-action danger" id="trash-document">移入垃圾箱</button><button class="small-action danger" id="delete-document" hidden>永久删除</button><button class="button button-primary publish-button" id="publish-document">发布文档 <Icon name="arrow" size={15} /></button></div></div>
           <div id="editor-problem" class="editor-problem" role="alert" hidden><p id="editor-problem-text"></p><div><button class="quiet-link" id="retry-save">重新保存</button><button class="quiet-link" id="reload-document" hidden>重新加载服务器版本</button><button class="quiet-link" id="download-local">下载当前未保存原文</button></div></div>
-          <div class="document-metadata"><label class="sr-only" for="document-title">文档标题</label><input id="document-title" class="document-title" type="text" maxlength="200" placeholder="给这段思考一个标题" /><label class="sr-only" for="document-description">文档摘要</label><textarea id="document-description" class="document-description" rows="2" maxlength="500" placeholder="用一两句话，写下这篇文档值得阅读的理由…"></textarea><details class="metadata-details"><summary>文档信息 <span id="metadata-summary">标签、日期、分类与封面</span><span class="details-plus">＋</span></summary><div class="metadata-fields"><label>标签<input id="document-tags" type="text" placeholder="用逗号分隔，例如：阅读笔记，实践" maxlength="1500" /></label><label>分类 <span>可选</span><input id="document-category" type="text" placeholder="由你的内容决定" maxlength="100" /></label><label>日期<input id="document-date" type="date" /></label><label class="cover-field">封面 <span>可选</span><div><input id="document-cover" type="text" placeholder="上传图片，或填写站内图片路径" maxlength="2048" /><button type="button" id="upload-cover" aria-label="上传封面图片">上传</button></div></label></div></details></div>
+          <div class="document-metadata">
+            <label class="sr-only" for="document-title">文档标题</label>
+            <input id="document-title" class="document-title" type="text" maxlength="200" placeholder="给这段思考一个标题" />
+            <label class="sr-only" for="document-description">文档摘要</label>
+            <textarea id="document-description" class="document-description" rows="2" maxlength="500" placeholder="用一两句话，写下这篇文档值得阅读的理由…"></textarea>
+            <details class="metadata-details">
+              <summary>文档信息 <span id="metadata-summary">类型、成长状态、标签与日期</span><span class="details-plus">＋</span></summary>
+              <div class="metadata-fields">
+                <div class="metadata-field">
+                  <label for="document-kind">文档类型</label>
+                  <select id="document-kind" aria-label="文档类型">
+                    <option value="article">文章</option>
+                    <option value="note">随手记</option>
+                  </select>
+                </div>
+                <div class="metadata-field">
+                  <label for="document-maturity">成长状态</label>
+                  <select id="document-maturity" aria-label="成长状态">
+                    <option value="">未设置</option>
+                    <option value="growing">成长中</option>
+                    <option value="evergreen">常青</option>
+                  </select>
+                </div>
+                <div class="metadata-field">
+                  <div class="metadata-field-label">
+                    <label for="document-series">系列</label>
+                    <span id="document-series-hint">可选</span>
+                  </div>
+                  <input id="document-series" type="text" placeholder="例如：构建知识系统" maxlength="100" aria-describedby="document-series-hint" />
+                </div>
+                <label>标签<input id="document-tags" type="text" placeholder="用逗号分隔，例如：阅读笔记，实践" maxlength="1500" /></label>
+                <label>分类 <span>可选</span><input id="document-category" type="text" placeholder="由你的内容决定" maxlength="100" /></label>
+                <label>日期<input id="document-date" type="date" /></label>
+                <label class="cover-field">封面 <span>可选</span><div><input id="document-cover" type="text" placeholder="上传图片，或填写站内图片路径" maxlength="2048" /><button type="button" id="upload-cover" aria-label="上传封面图片">上传</button></div></label>
+              </div>
+            </details>
+          </div>
           <div class="editor-modebar"><div class="editor-modes" role="group" aria-label="编辑视图"><button data-mode="write" aria-pressed="true" class="active">Markdown</button><button data-mode="split" aria-pressed="false">对照预览</button><button data-mode="preview" aria-pressed="false">预览</button></div><div class="editor-export"><button id="export-markdown" title="下载包含元数据的 Markdown">导出 .md</button><button id="export-bundle" title="下载 Markdown 与配套图片 ZIP">打包导出</button></div></div>
           <div class="source-toolbar" id="source-toolbar" role="group" aria-label="Markdown 格式"><div class="insert-menu-anchor"><button type="button" id="open-insert-menu" aria-label="插入内容块" aria-haspopup="menu" aria-expanded="false" aria-controls="insert-menu">＋ 内容块 <kbd>/</kbd></button><div id="insert-menu" class="insert-menu" role="menu" aria-label="可插入的内容块" hidden></div></div><button data-insert="heading" title="插入二级标题">H₂</button><button data-insert="bold" title="插入粗体"><strong>B</strong></button><button data-insert="code" title="插入代码块">&lt;/&gt;</button><button data-insert="link" title="插入链接">↗ 链接</button><button id="upload-inline-image"><Icon name="download" size={14} /> 图片</button><span>空行输入 / · 可粘贴、拖入图片</span></div>
           <div class="editor-body" id="editor-body" data-mode="write"><div class="source-pane"><label class="sr-only" for="document-source">Markdown 正文</label><textarea id="document-source" spellcheck="false" placeholder="从这里开始，让一个想法慢慢清晰。&#10;空行输入 / 插入内容块，也可以粘贴图片。&#10;&#10;## 一个值得深入的问题&#10;&#10;写下观察、判断，以及下一步想验证的事…"></textarea></div><div class="preview-pane" id="preview-pane" hidden><div class="preview-caption"><span class="eyebrow">READING PREVIEW</span><span id="preview-status">与正式文章使用相同渲染</span></div><article class="prose writing-preview" id="document-preview"></article></div></div>
