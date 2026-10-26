@@ -58,11 +58,29 @@ func parseImported(name string, data []byte) (Content, error) {
 			Tags        yaml.Node `yaml:"tags"`
 			Category    string    `yaml:"category"`
 			Cover       string    `yaml:"cover"`
+			Kind        yaml.Node `yaml:"kind"`
+			Maturity    yaml.Node `yaml:"maturity"`
+			Series      yaml.Node `yaml:"series"`
+			Related     yaml.Node `yaml:"related"`
 		}
 		if yaml.Unmarshal([]byte(metadata), &front) != nil {
 			return Content{}, bad(400, "Markdown 元数据格式无效。")
 		}
 		content.Title, content.Description, content.Category, content.Cover = front.Title, front.Description, front.Category, front.Cover
+		for _, field := range []struct {
+			node   yaml.Node
+			target any
+		}{
+			{front.Kind, &content.Kind}, {front.Maturity, &content.Maturity},
+			{front.Series, &content.Series}, {front.Related, &content.Related},
+		} {
+			if field.node.Kind == 0 {
+				continue
+			}
+			if field.node.Tag == "!!null" || field.node.Decode(field.target) != nil {
+				return Content{}, bad(400, "文档扩展属性格式无效。")
+			}
+		}
 		if content.Description == "" {
 			content.Description = front.Summary
 		}

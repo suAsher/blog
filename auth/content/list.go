@@ -180,6 +180,7 @@ func (s *Store) List(options ListOptions) (ListData, error) {
 	for _, item := range matches[start:end] {
 		summary := item.summary
 		summary.Tags = append([]string{}, summary.Tags...)
+		summary.Related = append([]string{}, summary.Related...)
 		if len(tokens) > 0 {
 			record, err := s.searchRecordLocked(summary.ID, options.Status == "published", true)
 			if err != nil {

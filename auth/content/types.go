@@ -15,6 +15,10 @@ type Content struct {
 	Category    string   `json:"category" yaml:"category,omitempty"`
 	Cover       string   `json:"cover" yaml:"cover,omitempty"`
 	Source      string   `json:"source" yaml:"-"`
+	Kind        string   `json:"kind,omitempty" yaml:"kind,omitempty"`
+	Maturity    string   `json:"maturity,omitempty" yaml:"maturity,omitempty"`
+	Series      string   `json:"series,omitempty" yaml:"series,omitempty"`
+	Related     []string `json:"related,omitempty" yaml:"related,omitempty"`
 }
 
 type Summary struct {
@@ -34,6 +38,10 @@ type Summary struct {
 	UpdatedAt             string   `json:"updatedAt"`
 	PublishedAt           string   `json:"publishedAt,omitempty"`
 	HasUnpublishedChanges bool     `json:"hasUnpublishedChanges"`
+	Kind                  string   `json:"kind"`
+	Maturity              string   `json:"maturity"`
+	Series                string   `json:"series"`
+	Related               []string `json:"related"`
 }
 type Heading struct {
 	Depth int    `json:"depth"`
@@ -87,6 +95,7 @@ type record struct {
 	PublishedAt string            `json:"publishedAt,omitempty"`
 	SourcePath  string            `json:"sourcePath,omitempty"`
 	Aliases     map[string]string `json:"aliases,omitempty"`
+	Activity    []activityBucket  `json:"activity,omitempty"`
 }
 type apiError struct {
 	Status        int

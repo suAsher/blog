@@ -9,7 +9,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"reflect"
 	"regexp"
 	"strings"
 	"sync"
@@ -29,13 +28,19 @@ type Store struct {
 	reservedBytes int64
 	search        *searchCache
 	freeBytes     func() (int64, error)
+	location      *time.Location
+	now           func() time.Time
 }
 
 func NewStore(root string) (*Store, error) {
 	if root == "" {
 		return nil, errors.New("content data directory is required")
 	}
-	root, err := filepath.Abs(root)
+	location, err := contentLocation()
+	if err != nil {
+		return nil, err
+	}
+	root, err = filepath.Abs(root)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +75,7 @@ func NewStore(root string) (*Store, error) {
 	default:
 		// A second Store in the same process must not erase a live import.
 	}
-	s := &Store{root: root, search: newSearchCache(searchCacheBudget)}
+	s := &Store{root: root, search: newSearchCache(searchCacheBudget), location: location, now: time.Now}
 	s.freeBytes = func() (int64, error) {
 		var stat syscall.Statfs_t
 		if err := syscall.Statfs(root, &stat); err != nil {
@@ -124,7 +129,7 @@ func normalizeContent(c Content) (Content, error) {
 		}
 		c.Description = string(text)
 	}
-	return c, nil
+	return normalizeMetadata(c)
 }
 
 func (s *Store) loadLocked(id string) (*record, error) {
@@ -136,7 +141,7 @@ func (s *Store) loadLocked(id string) (*record, error) {
 	if os.IsNotExist(err) {
 		return nil, bad(404, "文档不存在。")
 	}
-	if err != nil || !info.Mode().IsRegular() || info.Size() > MaxSourceBytes*5+65536 {
+	if err != nil || !info.Mode().IsRegular() || info.Size() > maxRecordBytes {
 		return nil, bad(500, "文档暂时无法读取，请稍后重试。")
 	}
 	data, err := os.ReadFile(name)
@@ -146,6 +151,9 @@ func (s *Store) loadLocked(id string) (*record, error) {
 	var d record
 	if json.Unmarshal(data, &d) != nil || d.ID != id || d.Version < 1 {
 		return nil, bad(500, "文档记录异常，请从备份恢复。")
+	}
+	if err := validateStoredRecord(&d); err != nil {
+		return nil, bad(500, "文档记录超出安全读取预算，请检查备份。")
 	}
 	return &d, nil
 }
@@ -182,6 +190,9 @@ func (s *Store) reserveSpace(additional int64) (func(), error) {
 }
 
 func (s *Store) saveLocked(d *record) error {
+	if err := validateStoredRecord(d); err != nil {
+		return err
+	}
 	var buffer bytes.Buffer
 	encoder := json.NewEncoder(&buffer)
 	// This is a private data file, never an inline script. Avoid sixfold HTML
@@ -191,6 +202,9 @@ func (s *Store) saveLocked(d *record) error {
 		return bad(500, "无法保存文档。")
 	}
 	data := buffer.Bytes()
+	if int64(len(data)) > maxRecordBytes {
+		return bad(413, "文档记录超出大小限制。")
+	}
 	releaseSpace, err := s.reserveSpace(int64(len(data)))
 	if err != nil {
 		return err
@@ -237,8 +251,14 @@ func (s *Store) Create(c Content, sourcePath string, aliases map[string]string) 
 	if _, err := rand.Read(random); err != nil {
 		return Detail{}, bad(503, "暂时无法创建文档。")
 	}
-	now := time.Now().UTC().Format(time.RFC3339Nano)
-	d := &record{ID: hex.EncodeToString(random), Version: 1, Status: "draft", Working: c, CreatedAt: now, UpdatedAt: now, SourcePath: sourcePath, Aliases: aliases}
+	now := s.now().UTC().Format(time.RFC3339Nano)
+	d := &record{
+		ID: hex.EncodeToString(random), Version: 1, Status: "draft", Working: c,
+		CreatedAt: now, UpdatedAt: now, SourcePath: sourcePath, Aliases: aliases,
+	}
+	if strings.TrimSpace(c.Source) != "" {
+		d.Activity = addActivity(nil, s.now())
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if err := s.saveLocked(d); err != nil {
@@ -258,7 +278,19 @@ func (s *Store) Get(id, view string) (Detail, error) {
 }
 
 func summary(d *record, c Content) Summary {
-	return Summary{ID: d.ID, Title: c.Title, Description: c.Description, Date: c.Date, Tags: append([]string{}, c.Tags...), Category: c.Category, Cover: c.Cover, ReadingMinutes: readingMinutes(c.Source), Status: d.Status, Version: d.Version, CreatedAt: d.CreatedAt, UpdatedAt: d.UpdatedAt, PublishedAt: d.PublishedAt, HasUnpublishedChanges: d.Published != nil && !reflect.DeepEqual(d.Working, *d.Published)}
+	kind := c.Kind
+	if kind == "" {
+		kind = "article"
+	}
+	return Summary{
+		ID: d.ID, Title: c.Title, Description: c.Description, Date: c.Date,
+		Tags: append([]string{}, c.Tags...), Category: c.Category, Cover: c.Cover,
+		ReadingMinutes: readingMinutes(c.Source), Status: d.Status, Version: d.Version,
+		CreatedAt: d.CreatedAt, UpdatedAt: d.UpdatedAt, PublishedAt: d.PublishedAt,
+		HasUnpublishedChanges: d.Published != nil && !sameContent(d.Working, *d.Published),
+		Kind:                  kind, Maturity: c.Maturity, Series: c.Series,
+		Related: append([]string{}, c.Related...),
+	}
 }
 
 func (s *Store) detail(d *record, view string) (Detail, error) {
@@ -277,10 +309,10 @@ func (s *Store) detail(d *record, view string) (Detail, error) {
 }
 
 func (s *Store) Update(id string, c Content, version int) (Detail, error) {
-	c, err := normalizeContent(c)
-	if err != nil {
-		return Detail{}, err
-	}
+	return s.update(id, c, version, metadataPresence{true, true, true, true})
+}
+
+func (s *Store) update(id string, c Content, version int, present metadataPresence) (Detail, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	d, err := s.loadLocked(id)
@@ -293,9 +325,21 @@ func (s *Store) Update(id string, c Content, version int) (Detail, error) {
 	if d.Status == "trash" {
 		return Detail{}, bad(409, "请先从垃圾箱恢复文档。")
 	}
+	c, err = normalizeContent(preserveMetadata(c, d.Working, present))
+	if err != nil {
+		return Detail{}, err
+	}
+	for _, target := range c.Related {
+		if target == id {
+			return Detail{}, bad(400, "文档不能关联自身。")
+		}
+	}
+	if d.Working.Source != c.Source && strings.TrimSpace(c.Source) != "" {
+		d.Activity = addActivity(d.Activity, s.now())
+	}
 	d.Working = c
 	d.Version++
-	d.UpdatedAt = time.Now().UTC().Format(time.RFC3339Nano)
+	d.UpdatedAt = s.now().UTC().Format(time.RFC3339Nano)
 	if err := s.saveLocked(d); err != nil {
 		return Detail{}, err
 	}
@@ -317,11 +361,10 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		if d.Status == "trash" || strings.TrimSpace(d.Working.Source) == "" {
 			return Detail{}, bad(400, "请恢复文档并填写正文后再发布。")
 		}
-		snapshot := d.Working
-		snapshot.Tags = append([]string{}, d.Working.Tags...)
+		snapshot := copyContent(d.Working)
 		d.Published = &snapshot
 		d.Status = "published"
-		d.PublishedAt = time.Now().UTC().Format(time.RFC3339Nano)
+		d.PublishedAt = s.now().UTC().Format(time.RFC3339Nano)
 	case "unpublish":
 		if d.Status != "published" {
 			return Detail{}, bad(409, "文档当前未发布。")
@@ -345,7 +388,7 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		return Detail{}, bad(404, "操作不存在。")
 	}
 	d.Version++
-	d.UpdatedAt = time.Now().UTC().Format(time.RFC3339Nano)
+	d.UpdatedAt = s.now().UTC().Format(time.RFC3339Nano)
 	if err := s.saveLocked(d); err != nil {
 		return Detail{}, err
 	}

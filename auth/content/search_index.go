@@ -13,7 +13,7 @@ import (
 )
 
 const searchCacheBudget int64 = 16 << 20
-const maxRecordBytes = MaxSourceBytes*5 + 65536
+const maxRecordBytes = MaxSourceBytes*5 + (192 << 10)
 
 type searchView struct {
 	summary                        Summary
@@ -24,6 +24,7 @@ type searchView struct {
 type searchRecord struct {
 	status             string
 	working, published *searchView
+	activity           []activityBucket
 }
 type searchEntry struct {
 	id    string
@@ -91,7 +92,7 @@ func searchable(view *searchView) *searchView {
 	result := *view
 	result.title = normalized(view.summary.Title)
 	result.description = normalized(view.summary.Description)
-	result.tags = normalized(strings.Join(view.summary.Tags, " "))
+	result.tags = normalized(strings.Join(append(append([]string{}, view.summary.Tags...), view.summary.Series, view.summary.Kind, view.summary.Maturity), " "))
 	result.body = normalized(view.source)
 	result.ready = true
 	return &result
@@ -120,16 +121,22 @@ func viewBytes(view *searchView) int64 {
 	// metadata overhead rather than charging only the normalized Markdown bytes.
 	total := int64(1024 + len(view.source) + len(view.title) + len(view.description) + len(view.tags) + len(view.body))
 	metadata := view.summary
-	for _, text := range []string{metadata.ID, metadata.Title, metadata.Description, metadata.Date, metadata.Category, metadata.Cover, metadata.CreatedAt, metadata.UpdatedAt, metadata.PublishedAt} {
+	for _, text := range []string{metadata.ID, metadata.Title, metadata.Description, metadata.Date, metadata.Category, metadata.Cover, metadata.CreatedAt, metadata.UpdatedAt, metadata.PublishedAt, metadata.Kind, metadata.Maturity, metadata.Series} {
 		total += int64(len(text))
 	}
 	for _, tag := range metadata.Tags {
 		total += int64(16 + len(tag))
 	}
+	for _, id := range metadata.Related {
+		total += int64(16 + len(id))
+	}
 	return total
 }
 func recordBytes(value searchRecord) int64 {
 	total := int64(512) + viewBytes(value.working)
+	for _, bucket := range value.activity {
+		total += int64(80 + len(bucket.Date) + len(bucket.FirstAt) + len(bucket.LastAt))
+	}
 	if value.published != value.working {
 		total += viewBytes(value.published)
 	}
@@ -175,9 +182,9 @@ func (c *searchCache) get(id string, info os.FileInfo, published, query bool, lo
 }
 func indexRecord(d *record) searchRecord {
 	working := &searchView{summary: summary(d, d.Working), source: d.Working.Source}
-	result := searchRecord{status: d.Status, working: working}
+	result := searchRecord{status: d.Status, working: working, activity: append([]activityBucket{}, d.Activity...)}
 	if d.Published != nil {
-		if reflect.DeepEqual(d.Working, *d.Published) {
+		if sameContent(d.Working, *d.Published) {
 			result.published = working
 		} else {
 			result.published = &searchView{summary: summary(d, *d.Published), source: d.Published.Source}
@@ -207,6 +214,9 @@ func readSearchRecord(name, id string, expected os.FileInfo) (searchRecord, erro
 	var d record
 	if json.Unmarshal(data, &d) != nil || d.ID != id || d.Version < 1 {
 		return searchRecord{}, bad(500, "文档记录异常，请从备份恢复。")
+	}
+	if err := validateStoredRecord(&d); err != nil {
+		return searchRecord{}, bad(500, "文档记录超出安全读取预算，请检查备份。")
 	}
 	return indexRecord(&d), nil
 }

@@ -64,6 +64,7 @@ docker compose --env-file runtime.env -f compose.yaml -f compose.http.yaml -f co
 | `AUTH_CONFIG` | `/run/auth/config.json`，受保护的密码验证器 |
 | `AUTH_LISTEN` | `:9090`，仅 Docker 私有网络，不发布宿主机端口 |
 | `AUTH_DATA_DIR` | `/data/content`，文档和图片持久卷 |
+| `CONTENT_TIMEZONE` | `Asia/Shanghai`，今日面板日界线；使用有效 IANA 名称，例如 `UTC`，无效配置启动失败 |
 | HTTP 超时 | 请求头 5 秒；正文读写 180 秒；空闲连接 30 秒 |
 | 内容 API 限速 | 每来源 IP 每分钟最多 600 次，保护搜索、预览及写入 |
 
@@ -74,6 +75,12 @@ docker compose --env-file runtime.env -f compose.yaml -f compose.http.yaml -f co
 `data/content/documents/` 中每篇独立 JSON 保存 Markdown 原文、元数据、版本号、工作稿和最近一次发布快照；采用原子替换与 fsync。`assets/` 按内容哈希去重保存图片，`tmp/` 仅用于受限上传暂存。
 
 保存草稿不会改变正式阅读内容。发布将当前工作稿保存为发布快照，首页、列表和搜索读取快照；继续修改只改变工作稿，重新发布后才更新阅读。版本号用于乐观锁，冲突返回 409，不能用陈旧标签页静默覆盖新内容。垃圾箱是软删除，恢复为草稿；永久删除仅允许对垃圾箱文档操作。
+
+可选元数据 `kind`（`article` / `note`）、`maturity`（空 / `growing` / `evergreen`）、`series` 和 `related` 与正文一起保存、导入、导出和发布；`related` 使用稳定文档 ID，最多 32 个。生命周期 `status` 仍为 `draft` / `published` / `trash`，与成长状态独立。旧客户端 PUT 省略这些新字段时保留原值；显式空字符串或空列表清空，`null` 会被拒绝。旧格式文件可以直接读取，发布快照与工作稿分别保存新字段。升级应先更新兼容后端，再更新前端；不要用旧后端重新保存含新字段的数据，否则旧程序可能丢弃扩展字段。
+
+写作活动与文档同一次原子落盘，每篇最多保留 400 个 UTC 日的真实创建/编辑首末时间。今日面板展示最近 366 个配置时区日期，每日数量是当天实际创建或修改过正文的文档数，同一天反复自动保存只算一篇。仅非空正文创建、正文改变且新正文非空时记录活动；仅修改标题、标签、系列等元数据，以及空白正文、相同内容重复保存、发布、撤回和回收操作不计入写作。旧文档不会通过 `createdAt` / `updatedAt` 补造历史；`historyComplete` 固定为 `false`，`activitySince` 是当前保留记录中最早真实活动日，没有活动时为 `null`。永久删除文档同时移除其活动记录，回收站中的记录仍保留。修改展示时区会重新按真实 UTC 时间计算，不重写文档时间。
+
+今日回顾仅返回已发布文章的快照，不选随手记；「往年今日」按文章 `date` 匹配同月同日且早于今年，最多六篇。「最近编辑」和「待完成草稿」供作者使用，各最多六篇。活动元数据最多 48 KiB、每份内容元数据最多 16 KiB，读取与写入均检查预算；磁盘记录还须满足生命周期、正文大小及复杂度、元数据和发布快照完整性约束，损坏数据不会进入详情或搜索缓存。搜索缓存继续共用既有 16 MiB 上限并计入新元数据与活动的内存开销。
 
 Markdown 使用 Goldmark/GFM 渲染，不启用不安全原始 HTML，也不由服务器抓取外部图片。配图导入按所选根目录中的相对路径匹配，缺图会报告；目录上传不会以别的目录同名图片静默替代。只有完全平铺选择且文件名唯一时，系统可报告按文件名匹配的警告。SVG 不接受；支持 PNG、JPEG、GIF、WebP 并校验格式与尺寸。
 
@@ -101,6 +108,7 @@ Markdown 使用 Goldmark/GFM 渲染，不启用不安全原始 HTML，也不由�
 | `GET /healthz` | 容器内部健康检查，不作为公网 API |
 | `/api/documents`、`/api/documents/{id}` | 列表、全文查询、工作稿与发布快照、乐观锁更新 |
 | `/api/documents/{id}/publish` 等 | 发布、撤回、垃圾箱、恢复与永久删除 |
+| `GET /api/dashboard` | 今日面板、366 日写作活动、连续天数、近期文档和发布文章回顾；同样鉴权、限速、不缓存 |
 | `POST /api/preview` | 与正式阅读一致的安全 Markdown 预览 |
 | `POST /api/import`、`POST /api/assets` | 文档/目录导入与单独图片上传 |
 | `GET /api/assets/{hash}.{ext}` | 登录后的私有图片读取 |

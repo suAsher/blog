@@ -55,6 +55,17 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	path := r.URL.Path
 	switch {
+	case path == "/api/dashboard":
+		if r.Method != "GET" && r.Method != "HEAD" {
+			method(w, "GET, HEAD")
+			return
+		}
+		result, err := h.store.Dashboard()
+		if err != nil {
+			respondError(w, err)
+			return
+		}
+		respond(w, 200, result)
 	case path == "/api/documents":
 		h.documents(w, r)
 	case path == "/api/preview":
@@ -112,12 +123,17 @@ func (h *handler) documents(w http.ResponseWriter, r *http.Request) {
 		}
 		respond(w, 200, result)
 	case "POST":
-		var value Content
+		var value contentRequest
 		if err := decodeJSON(w, r, &value); err != nil {
 			respondError(w, err)
 			return
 		}
-		document, err := h.store.Create(value, "", nil)
+		c, _, err := value.content()
+		if err != nil {
+			respondError(w, err)
+			return
+		}
+		document, err := h.store.Create(c, "", nil)
 		if err != nil {
 			respondError(w, err)
 			return
@@ -173,14 +189,19 @@ func (h *handler) document(w http.ResponseWriter, r *http.Request, path string) 
 		respond(w, 200, document)
 	case "PUT":
 		var value struct {
-			Content
+			contentRequest
 			Version int `json:"version"`
 		}
 		if err := decodeJSON(w, r, &value); err != nil {
 			respondError(w, err)
 			return
 		}
-		document, err := h.store.Update(id, value.Content, value.Version)
+		c, present, err := value.content()
+		if err != nil {
+			respondError(w, err)
+			return
+		}
+		document, err := h.store.update(id, c, value.Version, present)
 		if err != nil {
 			respondError(w, err)
 			return
