@@ -202,7 +202,7 @@
 }
 .today-lists {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
   gap: 18px;
   margin-top: 18px;
 }
@@ -222,6 +222,10 @@
   color: var(--muted);
   font-size: 11px;
   line-height: 1.7;
+}
+.today-review-missing {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
 }
 .today-document-link {
   display: block;
@@ -314,9 +318,6 @@
   }
   .today-lists {
     grid-template-columns: 1fr 1fr;
-  }
-  .today-list:last-child {
-    grid-column: 1 / -1;
   }
   .quick-capture-trigger span:last-child {
     display: none;

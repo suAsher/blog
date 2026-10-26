@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, documentHref, formatBytes, jsonRequest, requestJSON } from '../../src/lib/documents';
+import { clearPrivateSession, releaseLogoutIntent } from '../../src/lib/auth-lifecycle';
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => { vi.unstubAllGlobals(); releaseLogoutIntent(); });
 
 describe('private document requests', () => {
   it('uses the current secure session without exposing credentials and unwraps real data', async () => {
@@ -31,6 +32,32 @@ describe('private document requests', () => {
     await expect(requestJSON('/api/documents')).rejects.toMatchObject({ status: 503 });
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('private internal error')));
     await expect(requestJSON('/api/documents')).rejects.toThrow('当前编辑不会丢失');
+  });
+
+  it('keeps a failed offline purge visible on the login page', async () => {
+    const assign = vi.fn();
+    const events = new EventTarget();
+    vi.stubGlobal('document', events);
+    events.addEventListener('auth:clear', event => {
+      (event as CustomEvent).detail.waitUntil(Promise.reject(new Error('device storage blocked')));
+    });
+    vi.stubGlobal('location', { pathname: '/articles/', search: '', assign });
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 401 })));
+    await expect(requestJSON('/api/documents')).rejects.toMatchObject({ status: 401 });
+    expect(assign).toHaveBeenCalledWith('/login/?next=%2Farticles%2F&cleanup=incomplete');
+  });
+
+  it('does not let a late API expiry replace an explicit logout destination', async () => {
+    vi.stubGlobal('document', new EventTarget());
+    const assign = vi.fn();
+    vi.stubGlobal('location', { pathname: '/articles/', search: '', assign });
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 401 })));
+    await clearPrivateSession('logout');
+    await expect(requestJSON('/api/documents')).rejects.toMatchObject({ status: 401 });
+    expect(assign).not.toHaveBeenCalled();
+    releaseLogoutIntent();
+    await expect(requestJSON('/api/documents')).rejects.toMatchObject({ status: 401 });
+    expect(assign).toHaveBeenCalledWith('/login/?next=%2Farticles%2F');
   });
 
   it('allows an intentional request cancellation to remain a cancellation', async () => {

@@ -2,6 +2,7 @@
 import Icon from '../components/Icon.astro';
 import NavigationTransitions from '../components/NavigationTransitions.astro';
 import QuickCapture from '../components/daily/QuickCapture.astro';
+import SyncStatus from '../components/SyncStatus.astro';
 import '../styles/global.css';
 import '../styles/graph.css';
 interface Props { title?: string; description?: string; active?: string; article?: boolean }
@@ -17,6 +18,7 @@ const { title, description = '一个安静的角落，用来探索技术、连�
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#090d16" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
     <title>{title ? `${title} · asher 知识空间` : 'asher · 知识空间 — 让思考发光'}</title>
     <script is:inline>try { document.documentElement.dataset.theme = localStorage.getItem('asher-theme') === 'light' ? 'light' : 'dark'; } catch {}</script>
     <script is:inline>
@@ -64,7 +66,7 @@ const { title, description = '一个安静的角落，用来探索技术、连�
       </div>
     </header>
     <main id="main"><slot /></main>
-    <footer class="site-footer shell"><a class="footer-brand" href="/">asher <span>· 知识空间</span></a><p>保持好奇，持续生长。<span class="footer-dot">✳</span></p><span class="mono">BUILT FOR THINKING · {new Date().getFullYear()}</span></footer>
+    <footer class="site-footer shell"><a class="footer-brand" href="/">asher <span>· 知识空间</span></a><p>保持好奇，持续生长。<span class="footer-dot">✳</span></p><span class="mono">BUILT FOR THINKING · {new Date().getFullYear()}</span><div id="device-tools"><SyncStatus /></div></footer>
     <dialog id="search-dialog" aria-labelledby="search-title">
       <div class="dialog-top"><div><span class="eyebrow">FIND YOUR NEXT IDEA</span><h2 id="search-title">在知识里，找一点灵感</h2></div><button class="icon-button" data-close-search aria-label="关闭搜索"><Icon name="close" /></button></div>
       <form id="quick-search-form" action="/articles/"><label class="sr-only" for="quick-search">全文搜索</label><div class="search-input-wrap"><Icon name="search" /><input id="quick-search" type="search" name="q" placeholder="搜索全文，或输入 > 执行操作…" autocomplete="off" aria-controls="quick-results" /><kbd>ESC</kbd></div></form>

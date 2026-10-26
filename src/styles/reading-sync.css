@@ -1,0 +1,129 @@
+.reading-sync-status {
+  position: relative;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.reader-toolbar > div {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.reading-sync-status summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+  cursor: pointer;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.reading-sync-status summary::-webkit-details-marker {
+  display: none;
+}
+
+.reading-sync-indicator {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+.reading-sync-indicator[data-sync-phase='syncing'] {
+  background: var(--accent);
+  animation: sync-pulse 1.1s ease-in-out infinite;
+}
+
+.reading-sync-indicator[data-sync-phase='synced'] {
+  background: var(--accent-strong);
+}
+
+.reading-sync-indicator[data-sync-phase='offline'],
+.reading-sync-indicator[data-sync-phase='unavailable'],
+.reading-sync-indicator[data-sync-phase='error'] {
+  background: var(--warning, #d49b45);
+}
+
+.reading-sync-indicator[data-sync-phase='conflict'] {
+  background: var(--danger, #d96f75);
+}
+
+.reading-sync-panel {
+  position: absolute;
+  z-index: 80;
+  top: auto;
+  bottom: calc(100% + 9px);
+  right: 0;
+  width: min(360px, calc(100vw - 28px));
+  padding: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+#reading-sync-detail {
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.reading-sync-conflicts:empty {
+  display: none;
+}
+
+.reading-sync-conflict {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.reading-sync-conflict p {
+  color: var(--text);
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.reading-sync-conflict > div {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.reading-sync-conflict button,
+#reading-sync-retry {
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: #fff !important;
+  background: #263341;
+  font-size: 13px;
+}
+
+#reading-sync-retry {
+  margin-top: 12px;
+}
+
+.reading-sync-export {
+  display: inline-block;
+  margin: 12px 0 0 10px;
+  color: var(--text) !important;
+  font-size: 12px;
+}
+
+@keyframes sync-pulse {
+  50% { opacity: .35; transform: scale(.78); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reading-sync-indicator { animation: none !important; }
+}
+
+@media (max-width: 640px) {
+  .reading-sync-panel { position: fixed; top: 68px; right: 14px; bottom: auto; }
+}

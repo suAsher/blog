@@ -19,6 +19,18 @@ const status = document.querySelector<HTMLElement>("#today-capture-status");
 const panel = document.querySelector<HTMLElement>("#today-dashboard");
 const below = document.querySelector<HTMLElement>("#today-below");
 let dashboardVersion = 0;
+let reviewVersion = 0;
+
+interface DueReview {
+  key: string;
+  dueAt: string;
+  step: number;
+}
+
+interface DueReviews {
+  due: DueReview[];
+  total: number;
+}
 
 try {
   if (note) note.value = sessionStorage.getItem(TODAY_NOTE_DRAFT_KEY) || "";
@@ -63,6 +75,46 @@ function section(
       ...docs.slice(0, 6).map((doc) => documentLink(doc, "", edit)),
     );
   return container;
+}
+
+async function renderDueReviews(container: HTMLElement) {
+  const version = ++reviewVersion;
+  container.replaceChildren(element("h3", "", "今日阅读回顾"), element("p", "", "正在读取回顾计划…"));
+  try {
+    const [reviews, index] = await Promise.all([
+      requestJSON<DueReviews>("/api/reviews?limit=20"),
+      loadLibraryIndex(),
+    ]);
+    if (version !== reviewVersion) return;
+    container.replaceChildren(element("h3", "", `今日阅读回顾${reviews.total ? ` · ${reviews.total}` : ""}`));
+    if (!reviews.due.length) {
+      container.append(element("p", "", "今天没有到期文章。加入回顾后，会按节奏在这里出现。"));
+      return;
+    }
+    const byKey = new Map(index.map(document => [document.id, document]));
+    for (const due of reviews.due) {
+      const document = byKey.get(due.key);
+      if (!document) {
+        const missing = element("p", "today-review-missing", "一篇到期文章当前不可打开，发布后可继续回顾。");
+        missing.setAttribute("role", "status");
+        container.append(missing);
+        continue;
+      }
+      const link = element("a", "today-document-link");
+      link.href = articleUrl(document.id);
+      link.append(
+        element("strong", "", document.title),
+        element("small", "", `第 ${Math.min(3, due.step) + 1} 阶段 · 点击开始回顾`),
+      );
+      container.append(link);
+    }
+  } catch {
+    if (version !== reviewVersion) return;
+    container.replaceChildren(
+      element("h3", "", "今日阅读回顾"),
+      element("p", "", "回顾计划暂时无法读取；离线记录仍会保留。"),
+    );
+  }
 }
 function renderDashboard(data: Dashboard) {
   if (!panel || !below) return;
@@ -181,6 +233,9 @@ function renderDashboard(data: Dashboard) {
       })
       .catch(() => reading.append(element("p", "", "阅读记录暂时无法读取。")));
   lists?.append(reading);
+  const dueReviews = element("section", "today-list today-due-reviews");
+  lists?.append(dueReviews);
+  void renderDueReviews(dueReviews);
   below.hidden = false;
 }
 async function loadDashboard() {

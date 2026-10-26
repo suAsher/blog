@@ -1,4 +1,5 @@
 import { getState, patchEntry, toast } from './shared';
+import { performReadingReview } from './reading-sync';
 import { initReadingTools } from './reading-tools';
 import { enhanceContent } from './content-blocks';
 
@@ -33,6 +34,46 @@ mark?.addEventListener('click', () => {
 });
 document.addEventListener('reading:change', syncRead); syncRead();
 
+const toolbar = document.querySelector<HTMLElement>('.reader-toolbar > div');
+const reviewToggle = document.createElement('button');
+reviewToggle.type = 'button';
+reviewToggle.id = 'review-toggle';
+reviewToggle.className = 'reader-tool';
+reviewToggle.setAttribute('aria-pressed', 'false');
+const reviewToggleLabel = document.createElement('span');
+reviewToggleLabel.textContent = '加入回顾';
+reviewToggle.append(reviewToggleLabel);
+const reviewComplete = document.createElement('button');
+reviewComplete.type = 'button';
+reviewComplete.id = 'review-complete';
+reviewComplete.className = 'reader-tool';
+reviewComplete.textContent = '完成本次回顾';
+reviewComplete.hidden = true;
+toolbar?.append(reviewToggle, reviewComplete);
+
+function syncReview() {
+  const review = getState()[id]?.review;
+  const enabled = Boolean(review?.enabled);
+  reviewToggle.setAttribute('aria-pressed', String(enabled));
+  reviewToggleLabel.textContent = enabled ? '停止回顾' : '加入回顾';
+  reviewComplete.hidden = !enabled;
+  if (enabled && review?.dueAt) {
+    reviewComplete.title = `下次回顾：${new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium' }).format(new Date(review.dueAt))}`;
+  } else reviewComplete.removeAttribute('title');
+}
+
+reviewToggle.addEventListener('click', () => {
+  const enabled = Boolean(getState()[id]?.review?.enabled);
+  if (performReadingReview(id, enabled ? 'disable' : 'enable')) {
+    toast(enabled ? '已停止这篇文章的定期回顾。' : '已加入回顾，第一次将在一天后到期。');
+  }
+});
+reviewComplete.addEventListener('click', () => {
+  if (performReadingReview(id, 'complete')) toast('已完成本次回顾，下一次日期已更新。');
+});
+document.addEventListener('reading:change', syncReview);
+syncReview();
+
 function toggleFocus(enabled: boolean) {
   const top = body?.getBoundingClientRect().top || 0;
   document.body.classList.toggle('focus-mode', enabled);
@@ -59,7 +100,11 @@ document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(pre => {
   const language = document.createElement('span'); language.className = 'code-language'; language.textContent = pre.dataset.language?.toUpperCase() || 'CODE';
   wrapper.append(language, copy);
   copy.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(pre.querySelector('code')?.textContent || ''); copy.textContent = '已复制 ✓'; toast('代码已复制'); setTimeout(() => { copy.textContent = '复制代码'; }, 2000); }
+    try {
+      await navigator.clipboard.writeText(pre.querySelector('code')?.textContent || '');
+      copy.textContent = '已复制 ✓'; copy.setAttribute('aria-label', '已复制 ✓'); toast('代码已复制');
+      setTimeout(() => { copy.textContent = '复制代码'; copy.setAttribute('aria-label', '复制代码'); }, 2000);
+    }
     catch { const selection = window.getSelection(); const range = document.createRange(); range.selectNodeContents(pre); selection?.removeAllRanges(); selection?.addRange(range); toast('已选中代码，请按 Ctrl/Cmd+C 复制。'); }
   });
 });

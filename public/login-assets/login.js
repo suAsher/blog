@@ -39,6 +39,7 @@
   password?.addEventListener('keyup', event => { caps.hidden = !event.getModifierState('CapsLock'); });
   password?.addEventListener('blur', () => { caps.hidden = true; });
   if (params.get('reason') === 'logout') document.getElementById('session-message').hidden = false;
+  if (params.get('cleanup') === 'incomplete') document.getElementById('cleanup-warning').hidden = false;
 
   function showError(message, invalid = false) {
     error.textContent = message;

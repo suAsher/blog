@@ -1,0 +1,16 @@
+---
+import '../styles/reading-sync.css';
+---
+<details id="reading-sync-status" class="reading-sync-status" data-sync-phase="local">
+  <summary>
+    <span class="sr-only">阅读记录：</span>
+    <span id="reading-sync-indicator" class="reading-sync-indicator" data-sync-phase="local" aria-hidden="true"></span>
+    <span id="reading-sync-label">阅读记录保存在本机</span>
+  </summary>
+  <div class="reading-sync-panel">
+    <p id="reading-sync-detail" role="status" aria-live="polite">尚未与服务器同步</p>
+    <div id="reading-sync-conflicts" class="reading-sync-conflicts"></div>
+    <button id="reading-sync-retry" type="button" class="quiet-link mint">立即重试同步</button>
+    <a class="reading-sync-export" href="/library/">前往书架导出备份</a>
+  </div>
+</details>

@@ -11,6 +11,17 @@ async function openFeatured(page: Page) {
   await expect(page.getByRole('heading', { level: 1, name: featuredTitle })).toBeVisible();
 }
 
+async function isolateLocalReading(page: Page) {
+  // Keep explicit local-reading cases independent from the one shared QA
+  // account used by fully parallel projects. Cross-device synchronization has
+  // separate real-API coverage.
+  await page.context().route('**/api/reading-state', route => route.fulfill({
+    status: 404,
+    contentType: 'application/json',
+    body: JSON.stringify({ ok: false, message: 'Reading sync is unavailable in this local-only test.' }),
+  }));
+}
+
 test('home introduces the demo garden and navigation opens six articles', async ({ page }) => {
   await page.goto('/?examples=1');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('让知识生长');
@@ -70,6 +81,7 @@ test('keyboard search opens, searches, closes and opens a result', async ({ page
 });
 
 test('bookmarks persist after reload and can be removed from the shelf', async ({ page }) => {
+  await isolateLocalReading(page);
   await openFeatured(page);
   await page.getByRole('button', { name: bookmarkLabel, exact: true }).click();
   await expect(page.getByRole('button', { name: savedLabel, exact: true })).toHaveAttribute('aria-pressed', 'true');
@@ -85,6 +97,7 @@ test('bookmarks persist after reload and can be removed from the shelf', async (
 });
 
 test('read status is reversible and reflected in the read shelf', async ({ page }) => {
+  await isolateLocalReading(page);
   await openFeatured(page);
   await page.getByRole('button', { name: '标为已读', exact: true }).click();
   await expect(page.getByRole('button', { name: '已读 · 撤销', exact: true })).toHaveAttribute('aria-pressed', 'true');
@@ -99,6 +112,7 @@ test('read status is reversible and reflected in the read shelf', async ({ page 
 });
 
 test('scroll progress survives navigation and resumes at the saved position', async ({ page }) => {
+  await isolateLocalReading(page);
   await openFeatured(page);
   await page.getByRole('heading', { name: '03 · 让笔记包含判断的依据', exact: true }).scrollIntoViewIfNeeded();
   await expect.poll(async () => Number((await page.locator('#reading-percent').textContent())?.replace('%', ''))).toBeGreaterThan(10);
@@ -133,6 +147,7 @@ test('focus mode supports keyboard exit and ignores typing in search', async ({ 
 });
 
 test('homepage continuation refreshes when another tab marks the article read', async ({ page, context }) => {
+  await isolateLocalReading(page);
   await openFeatured(page);
   await page.getByRole('heading', { name: '03 · 让笔记包含判断的依据', exact: true }).scrollIntoViewIfNeeded();
   await expect.poll(async () => page.evaluate(() => JSON.parse(localStorage.getItem('asher-reading-v1') || '{}')['build-a-learning-system']?.progress || 0)).toBeGreaterThan(10);
@@ -260,6 +275,7 @@ test('responsive pages fit viewport and reduced motion stops decorative animatio
 });
 
 test('JSON backup restores records and rejects malformed input without erasing them', async ({ page }) => {
+  await isolateLocalReading(page);
   await openFeatured(page);
   await page.getByRole('button', { name: bookmarkLabel, exact: true }).click();
   await page.goto('/library/');
@@ -278,6 +294,7 @@ test('JSON backup restores records and rejects malformed input without erasing t
 });
 
 test('blocked local storage keeps current-page bookmarking usable with an honest warning', async ({ page }) => {
+  await isolateLocalReading(page);
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Blocked', 'SecurityError'); } }));
   await openFeatured(page);
   await page.getByRole('button', { name: bookmarkLabel, exact: true }).click();

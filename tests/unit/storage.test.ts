@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseState, readState, saveState, STORAGE_KEY, updateEntry, type ReadingState } from '../../src/lib/storage';
+import { isSafeReadingKey, parseState, readState, saveState, STORAGE_KEY, updateEntry, type ReadingState } from '../../src/lib/storage';
 
 const saved: ReadingState = {
   'reading-notes': { bookmarked: true, read: false, progress: 42, updatedAt: 1000 },
@@ -33,6 +33,36 @@ describe('reading state parsing', () => {
     }));
     expect(parsed.high).toEqual({ bookmarked: false, read: true, progress: 100, updatedAt: 2 });
     expect(parsed.low?.progress).toBe(0);
+  });
+
+  it('round-trips an optional spaced-review schedule without breaking version-one entries', () => {
+    const legacy = parseState(JSON.stringify(saved));
+    const reviewed = parseState(JSON.stringify({
+      article: {
+        bookmarked: false,
+        read: true,
+        progress: 100,
+        updatedAt: 3,
+        review: { enabled: true, step: 2, dueAt: '2026-10-27T00:00:00Z', lastReviewedAt: null },
+      },
+    }));
+    expect(legacy).toEqual(saved);
+    expect(reviewed.article?.review).toEqual({
+      enabled: true,
+      step: 2,
+      dueAt: '2026-10-27T00:00:00Z',
+      lastReviewedAt: null,
+    });
+  });
+
+  it('rejects traversal, controls, oversized UTF-8 keys and reserved prototype names', () => {
+    expect(isSafeReadingKey('notes/first')).toBe(true);
+    for (const key of [
+      '../secret', 'notes/../secret', 'notes//first', 'notes/__proto__', 'line\nfeed',
+      '__proto__', 'question?', 'hash#', 'slash\\', 'quote"', "quote'", '<tag>', '你'.repeat(81),
+    ]) {
+      expect(isSafeReadingKey(key)).toBe(false);
+    }
   });
 
   it('rejects invalid timestamps, primitive entries and invalid progress types', () => {

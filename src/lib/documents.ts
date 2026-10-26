@@ -1,4 +1,5 @@
 import type { ContentFacet, SearchArticle } from "./search";
+import { clearPrivateSession, explicitLogoutInProgress } from './auth-lifecycle';
 
 export interface DocumentContent {
   title: string;
@@ -76,8 +77,11 @@ export async function requestJSON<T>(
     );
   }
   if (response.status === 401) {
+    const cleared = explicitLogoutInProgress() ? true : await clearPrivateSession('expired');
     const next = location.pathname + location.search;
-    location.assign(`/login/?next=${encodeURIComponent(next)}`);
+    if (!explicitLogoutInProgress()) {
+      location.assign(`/login/?next=${encodeURIComponent(next)}${cleared ? '' : '&cleanup=incomplete'}`);
+    }
     throw new ApiError("登录已过期，请重新登录。", 401);
   }
   let payload: { ok?: boolean; data?: T; message?: string; code?: string };

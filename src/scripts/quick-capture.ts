@@ -106,6 +106,8 @@ document.addEventListener("keydown", (event) => {
 dialog?.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 });
+// The PWA shortcut contains only an action flag, never private note text.
+if (new URLSearchParams(location.search).get('capture') === '1') open();
 window.addEventListener("beforeunload", (event) => {
   if (source?.value) event.preventDefault();
 });

@@ -1,4 +1,5 @@
 import { readState, saveState, updateEntry, type ReadingState, type ReadingEntry } from '../lib/storage';
+import type { ReadingReviewAction } from '../lib/reading-sync';
 import type { SearchArticle } from '../lib/search';
 import { searchArticles, getTags, getCategories } from '../lib/search';
 import { ApiError, requestJSON, type DocumentList } from '../lib/documents';
@@ -7,6 +8,25 @@ let current = readState();
 let indexPromise: Promise<SearchArticle[]> | undefined;
 let demoPromise: Promise<SearchArticle[]> | undefined;
 let localExamples = false;
+export interface ReadingStateMutation {
+  previous: ReadingState;
+  next: ReadingState;
+  key?: string;
+  patch?: Partial<ReadingEntry>;
+  reviewAction?: ReadingReviewAction;
+}
+type ReadingStateMutationHandler = (mutation: ReadingStateMutation) => void;
+let readingMutationHandler: ReadingStateMutationHandler | undefined;
+let pendingReadingMutations: ReadingStateMutation[] = [];
+
+/** The sync runtime injects this observer; local storage never imports network code. */
+export function setReadingStateMutationHandler(handler?: ReadingStateMutationHandler) {
+  readingMutationHandler = handler;
+  if (!handler || !pendingReadingMutations.length) return;
+  const pending = pendingReadingMutations;
+  pendingReadingMutations = [];
+  pending.forEach(mutation => handler(mutation));
+}
 export const examplesRequested = () => new URLSearchParams(location.search).get('examples') === '1';
 export const usingExamples = () => examplesRequested() || localExamples;
 export function loadDemoIndex(): Promise<SearchArticle[]> {
@@ -44,7 +64,11 @@ export function toast(message: string) {
   toastTimer = setTimeout(() => el.classList.remove('visible'), 3500);
 }
 let storageWarned = false;
-export function replaceState(state: ReadingState) {
+export function replaceState(
+  state: ReadingState,
+  options: { notifySync?: boolean; key?: string; patch?: Partial<ReadingEntry>; reviewAction?: ReadingReviewAction } = {},
+) {
+  const previous = current;
   current = state;
   const saved = saveState(current);
   if (!saved && !storageWarned) {
@@ -52,10 +76,19 @@ export function replaceState(state: ReadingState) {
     toast('浏览器不允许保存记录；本页可用，刷新后可能丢失。');
   }
   document.dispatchEvent(new CustomEvent('reading:change'));
+  if (options.notifySync !== false) {
+    const mutation = { previous, next: state, key: options.key, patch: options.patch, reviewAction: options.reviewAction };
+    try {
+      if (readingMutationHandler) readingMutationHandler(mutation);
+      else pendingReadingMutations = [...pendingReadingMutations.slice(-255), mutation];
+    } catch {
+      toast('阅读记录已保存在本机，但同步队列暂时不可用。');
+    }
+  }
   return saved;
 }
-export function patchEntry(id: string, patch: Partial<ReadingEntry>) {
-  return replaceState(updateEntry(current, id, patch));
+export function patchEntry(id: string, patch: Partial<ReadingEntry>, reviewAction?: ReadingReviewAction) {
+  return replaceState(updateEntry(current, id, patch), { key: id, patch, reviewAction });
 }
 export function loadIndex() {
   if (!indexPromise) indexPromise = (async () => {
@@ -93,7 +126,7 @@ export function syncBookmarkButtons() {
     const label = button.getAttribute('aria-label') || '';
     button.setAttribute('aria-label', `${saved ? '取消收藏' : '收藏'}：${label.split('：').slice(1).join('：')}`);
     const text = button.querySelector('[data-bookmark-label]');
-    if (text) text.textContent = saved ? '已收藏' : '收藏';
+    if (text) text.textContent = saved ? '取消收藏' : '收藏';
   });
 }
 export function makeCard(article: SearchArticle, resume = false, library = true) {

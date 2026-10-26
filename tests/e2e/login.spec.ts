@@ -68,18 +68,25 @@ test.describe('deployed cookie login', () => {
 
   test('logout clears the browser cookie and revokes the old server token', async ({ page, context, baseURL }) => {
     await establishSession(context, baseURL);
+    const localEntryKey = `qa-local-logout-${randomUUID()}`;
     const token = (await context.cookies()).find(cookie => cookie.name === cookieName)?.value;
     if (!token) throw new Error('Deployment test session was not created.');
     await page.goto('/');
+    const initialReadingSync = page.waitForResponse(response =>
+      new URL(response.url()).pathname === '/api/reading-state' && response.request().method() === 'GET');
     const articleResponse = await page.goto(article);
+    await initialReadingSync;
+    await expect(page.locator('#reading-sync-status')).toHaveAttribute('data-sync-phase', 'synced');
     const articleHeaders = await articleResponse?.allHeaders();
     expect(articleHeaders?.['cache-control']).toContain('no-store');
-    await page.evaluate(() => {
+    await page.evaluate(key => {
       localStorage.setItem('asher-theme', 'light');
       localStorage.setItem('asher-reading-v1', JSON.stringify({
-        'build-a-learning-system': { bookmarked: true, read: false, progress: 23, updatedAt: Date.now() },
+        [key]: { bookmarked: true, read: false, progress: 23, updatedAt: Date.now() },
       }));
-    });
+      window.dispatchEvent(new StorageEvent('storage', { key: 'asher-reading-v1' }));
+    }, localEntryKey);
+    expect(await page.evaluate(key => JSON.parse(localStorage.getItem('asher-reading-v1') || '{}')[key]?.bookmarked, localEntryKey)).toBe(true);
     const logoutResponse = page.waitForResponse(response => response.url().endsWith('/auth/logout') && response.request().method() === 'POST');
     await page.getByRole('button', { name: '退出登录', exact: true }).click();
     const logoutHeaders = await (await logoutResponse).allHeaders();
@@ -101,7 +108,7 @@ test.describe('deployed cookie login', () => {
     await expect(page).toHaveURL(/\/login\//);
     await expect(page.getByRole('heading', { name: '欢迎回来。', exact: true })).toBeVisible();
     expect(await page.evaluate(() => localStorage.getItem('asher-theme'))).toBe('light');
-    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('asher-reading-v1') || '{}')['build-a-learning-system']?.bookmarked)).toBe(true);
+    expect(await page.evaluate(key => JSON.parse(localStorage.getItem('asher-reading-v1') || '{}')[key]?.bookmarked, localEntryKey)).toBe(true);
   });
 
   test('untrusted next values cannot redirect outside the space', async ({ page, context, baseURL }) => {

@@ -139,6 +139,11 @@ test.describe('interactive reading and discovery', () => {
   });
 
   test('the command palette drops a stale continue-reading action after the article becomes read', async ({ page }) => {
+    await page.context().route('**/api/reading-state', route => route.fulfill({
+      status: 404,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: false, message: 'Reading sync is unavailable in this local-only test.' }),
+    }));
     await page.goto(example + '?examples=1');
     await page.locator('#article-body h2').last().scrollIntoViewIfNeeded();
     await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('asher-reading-v1') || '{}')['build-a-learning-system']?.progress || 0)).toBeGreaterThan(20);

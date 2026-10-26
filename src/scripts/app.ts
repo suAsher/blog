@@ -4,6 +4,9 @@ import {
   nextCommandIndex,
 } from "../lib/commands";
 import { reviewDocuments } from "../lib/daily";
+import { clearPrivateSession, releaseLogoutIntent } from '../lib/auth-lifecycle';
+import { initReadingSync } from './reading-sync';
+import './pwa/client';
 import "./motion";
 import {
   articleUrl,
@@ -95,6 +98,9 @@ const logoutButton = document.querySelector<HTMLButtonElement>("[data-logout]");
 logoutButton?.addEventListener("click", async () => {
   if (logoutButton.disabled) return;
   logoutButton.disabled = true;
+  // Device protection follows the user's intent even if the network loses the
+  // logout response. Server-session termination is confirmed separately.
+  const cleanup = clearPrivateSession('logout');
   try {
     const response = await fetch("/auth/logout", {
       method: "POST",
@@ -102,9 +108,14 @@ logoutButton?.addEventListener("click", async () => {
       signal: AbortSignal.timeout(10000),
     });
     if (!response.ok) throw new Error("Logout unavailable");
-    location.replace("/login/?reason=logout");
+    const cleared = await cleanup;
+    location.replace(`/login/?reason=logout${cleared ? '' : '&cleanup=incomplete'}`);
   } catch {
-    toast("暂时无法退出，请检查连接后重试。");
+    const cleared = await cleanup;
+    releaseLogoutIntent();
+    toast(cleared
+      ? '本机离线资料已锁定并清除；服务器尚未确认退出，请联网后重试。'
+      : '本机离线资料已锁定，但清理和服务器退出尚未确认，请联网后重试。');
     logoutButton.disabled = false;
   }
 });
@@ -539,3 +550,4 @@ async function updateContinueReading() {
 }
 void updateContinueReading();
 document.addEventListener("reading:change", updateContinueReading);
+initReadingSync();

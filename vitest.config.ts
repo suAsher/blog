@@ -1,13 +1,33 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
-    include: ['tests/unit/**/*.test.ts'],
+    include: ["tests/unit/**/*.test.ts"],
     coverage: {
-      provider: 'v8',
-      include: ['src/lib/animation-clock.ts', 'src/lib/daily.ts', 'src/lib/quick-note.ts', 'src/lib/motion-capabilities.ts', 'src/lib/search.ts', 'src/lib/storage.ts', 'src/lib/documents.ts', 'src/lib/commands.ts', 'src/lib/reading-preferences.ts', 'src/lib/writing-tools.ts', 'src/lib/content-blocks.ts'],
+      provider: "v8",
+      include: [
+        "src/lib/auth-lifecycle.ts",
+        "src/lib/graph.ts",
+        "src/lib/wikilinks.ts",
+        "src/lib/animation-clock.ts",
+        "src/lib/daily.ts",
+        "src/lib/quick-note.ts",
+        "src/lib/motion-capabilities.ts",
+        "src/lib/search.ts",
+        "src/lib/storage.ts",
+        "src/lib/documents.ts",
+        "src/lib/commands.ts",
+        "src/lib/reading-preferences.ts",
+        "src/lib/reading-sync.ts",
+        "src/lib/writing-tools.ts",
+        "src/lib/content-blocks.ts",
+        "src/lib/offline-vault-model.ts",
+        "src/lib/vault-crypto.ts",
+        "src/lib/offline-snapshot.ts",
+        "src/lib/pwa-update.ts",
+      ],
       thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
       // Vitest's agent formatter otherwise hides fully covered modules in text output.
-      reporter: [['text', { skipFull: false }], 'html', 'json-summary'],
+      reporter: [["text", { skipFull: false }], "html", "json-summary"],
     },
   },
 });
