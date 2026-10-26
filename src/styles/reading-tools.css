@@ -110,6 +110,9 @@
   filter: brightness(1.06);
 }
 .image-viewer {
+  inset: 0;
+  margin: 0;
+  border-radius: 0;
   width: 100vw;
   max-width: 100vw;
   height: 100dvh;
@@ -179,4 +182,7 @@
   .prose .image-open img {
     transition: none;
   }
+}
+.reading-aa::before {
+  content: attr(data-label);
 }

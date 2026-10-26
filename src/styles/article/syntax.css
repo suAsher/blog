@@ -1,0 +1,106 @@
+.prose pre code.hljs {
+  color: var(--text);
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: #c3a6e9;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: #9dd9b0;
+}
+.hljs-title,
+.hljs-title.function_,
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #8dcde7;
+}
+.hljs-number,
+.hljs-built_in,
+.hljs-attr {
+  color: #e6bf92;
+}
+.hljs-comment,
+.hljs-quote,
+.hljs-meta {
+  color: #82958e;
+}
+.hljs-variable,
+.hljs-template-variable,
+.hljs-deletion {
+  color: #e7a4a0;
+}
+[data-theme="light"] .hljs-keyword,
+[data-theme="light"] .hljs-literal {
+  color: #8250a1;
+}
+[data-theme="light"] .hljs-string {
+  color: #196a40;
+}
+[data-theme="light"] .hljs-title,
+[data-theme="light"] .hljs-type {
+  color: #136d92;
+}
+[data-theme="light"] .hljs-number,
+[data-theme="light"] .hljs-attr {
+  color: #9c5c14;
+}
+[data-theme="light"] .hljs-comment {
+  color: #6b7b73;
+}
+
+/* Keep a known canvas behind both highlighters rather than inheriting ambient page gradients. */
+html[data-theme] .prose pre.astro-code {
+  background: var(--surface) !important;
+}
+html[data-theme] .astro-code span[style*="--shiki-dark:#6A737D" i] {
+  --shiki-dark: var(--code-comment) !important;
+}
+html[data-theme] .astro-code span[style*="--shiki-light:#6A737D" i] {
+  --shiki-light: var(--code-comment) !important;
+}
+.hljs-comment,
+.hljs-quote,
+.hljs-meta {
+  color: var(--code-comment);
+}
+[data-theme="light"] .hljs-keyword,
+[data-theme="light"] .hljs-selector-tag,
+[data-theme="light"] .hljs-literal,
+[data-theme="light"] .hljs-section,
+[data-theme="light"] .hljs-link {
+  color: #79509b;
+}
+[data-theme="light"] .hljs-string,
+[data-theme="light"] .hljs-regexp,
+[data-theme="light"] .hljs-symbol,
+[data-theme="light"] .hljs-bullet,
+[data-theme="light"] .hljs-addition {
+  color: #216b43;
+}
+[data-theme="light"] .hljs-title,
+[data-theme="light"] .hljs-title.function_,
+[data-theme="light"] .hljs-type,
+[data-theme="light"] .hljs-class .hljs-title {
+  color: #17698e;
+}
+[data-theme="light"] .hljs-number,
+[data-theme="light"] .hljs-built_in,
+[data-theme="light"] .hljs-attr {
+  color: #955512;
+}
+[data-theme="light"] .hljs-variable,
+[data-theme="light"] .hljs-template-variable,
+[data-theme="light"] .hljs-deletion {
+  color: #a44540;
+}
+
+html[data-theme="light"] .astro-code span[style*="--shiki-light:#E36209" i] {
+  --shiki-light: var(--code-warm) !important;
+}

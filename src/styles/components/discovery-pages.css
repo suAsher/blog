@@ -1,0 +1,222 @@
+.collection-page {
+  padding-top: 58px;
+}
+.page-heading {
+  max-width: 780px;
+  margin-bottom: 34px;
+}
+.page-heading h1 {
+  font-size: clamp(30px, 3.2vw, 43px);
+  font-weight: 580;
+  letter-spacing: -1.4px;
+  margin: 17px 0 15px;
+}
+.page-heading > p {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.collection-actions {
+  margin-top: 17px;
+}
+.collection-search {
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  border-color: var(--line-strong);
+  box-shadow: inset 0 1px 0 #ffffff04;
+}
+.collection-search input {
+  font-size: 15px;
+}
+.search-scope,
+.category-filter,
+.category-filter select {
+  font-size: 11px;
+}
+.filter-panel {
+  margin-top: 20px;
+}
+.tag-filter {
+  min-height: 35px;
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+}
+.tag-filter.active {
+  background: var(--accent-bg);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.list-summary {
+  margin-top: 28px;
+  font-size: 12px;
+}
+.list-summary > span + span {
+  font-size: 11px;
+}
+.article-card {
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal),
+    box-shadow var(--duration-normal);
+}
+.article-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  box-shadow: var(--shadow);
+}
+.card-cover {
+  height: 178px;
+  border-bottom: 1px solid var(--line);
+}
+.card-cover img {
+  opacity: 0.91;
+}
+.card-content {
+  padding: 22px 24px 16px;
+}
+.card-content h3 {
+  font-size: 19px;
+  line-height: 1.55;
+  margin-block: 12px;
+  font-weight: 560;
+}
+.card-content > p {
+  font-size: 12px;
+  line-height: 1.9;
+}
+.card-meta,
+.demo-mark,
+.card-bottom time {
+  font-size: 10px;
+}
+.tag-row > a {
+  font-size: 11px;
+  border-radius: 5px;
+  padding: 3px 8px;
+}
+.card-bottom .icon-button {
+  width: 38px;
+  height: 38px;
+}
+.empty-state {
+  background:
+    radial-gradient(ellipse at 50% 0, var(--violet-bg), transparent 70%),
+    var(--surface-glass);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding-block: 68px;
+}
+.empty-orbit {
+  color: var(--violet);
+}
+.empty-state h2 {
+  font-size: 25px;
+  font-weight: 550;
+}
+.empty-state p {
+  max-width: 500px;
+  margin-inline: auto;
+  font-size: 13px;
+}
+.privacy-note {
+  border-radius: var(--radius-md);
+  background: var(--blue-bg);
+  border-color: var(--line-strong);
+}
+.library-toolbar {
+  margin-block: 28px;
+}
+.library-tabs {
+  gap: 5px;
+  padding: 4px;
+  background: var(--surface-glass);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.library-tabs > button {
+  min-height: 39px;
+  padding: 8px 18px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.library-tabs > button.active {
+  background: var(--surface-raised);
+  color: var(--accent);
+}
+.backup-tools .quiet-link {
+  font-size: 11px;
+}
+.about-page {
+  padding-block: 70px 90px;
+  max-width: 1000px;
+}
+.about-page > h1 {
+  font-size: clamp(44px, 5vw, 68px);
+  line-height: 1.25;
+  margin-block: 25px;
+  letter-spacing: -2px;
+}
+.about-lead {
+  font-size: 17px;
+  line-height: 2;
+  max-width: 720px;
+}
+.about-grid {
+  gap: 18px;
+  margin-block: 48px 32px;
+}
+.about-grid section {
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+.about-grid section:nth-child(2) svg {
+  color: var(--violet);
+}
+.about-grid section:nth-child(3) svg {
+  color: var(--blue);
+}
+.about-grid svg {
+  margin-bottom: 23px;
+}
+.about-grid h2 {
+  font-size: 18px;
+}
+.about-grid p {
+  font-size: 13px;
+}
+.demo-explanation {
+  padding: 23px 26px;
+  border-radius: var(--radius-md);
+  background: var(--blue-bg);
+}
+.demo-pill {
+  font-size: 11px;
+}
+.not-found {
+  min-height: 72svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: 50px;
+}
+.error-number {
+  background: var(--gradient-accent);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: clamp(110px, 13vw, 165px);
+  line-height: 1.5;
+}
+.error-number span {
+  color: var(--violet);
+  -webkit-text-fill-color: var(--violet);
+}
+.not-found h1 {
+  font-size: 27px;
+}
+.not-found p {
+  max-width: 460px;
+  font-size: 14px;
+  line-height: 1.9;
+}

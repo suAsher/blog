@@ -1,0 +1,103 @@
+/* Canonical visual language. The login stylesheet receives these same tokens at build time. */
+:root {
+  color-scheme: dark;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --bg: #090d16;
+  --surface: #111824;
+  --surface-raised: #192333;
+  --surface-glass: #111a29c9;
+  --text: #edf2f9;
+  --muted: #a1aec1;
+  --faint: #8b9bb1;
+  --line: #a9c2e51a;
+  --line-strong: #abc7ea30;
+  --accent: #a1f0d1;
+  --accent-strong: #6ae4b9;
+  --accent-bg: #8ae8c30b;
+  --violet: #b8a3f2;
+  --violet-bg: #a68be714;
+  --blue: #8dbfee;
+  --blue-bg: #80b9ed12;
+  --danger: #f4b1a5;
+  --code-comment: #9bacc0;
+  --code-warm: #e6bf92;
+  --header: #090d16d9;
+  --input: #0c131f;
+  --card: linear-gradient(145deg, #182337e6, #101725eb);
+  --glow: #77dcbc10;
+  --shadow: 0 20px 60px #00000024;
+  --shadow-raised: 0 24px 80px #00000038, inset 0 1px 0 #ffffff06;
+  --gradient-accent: linear-gradient(
+    110deg,
+    var(--accent) 12%,
+    #96d9e4 56%,
+    var(--violet)
+  );
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-display: clamp(42px, 4.65vw, 66px);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --content-width: 1184px;
+  --reading-column: 760px;
+  --reading-font-size: 19px;
+  --reading-line-height: 2;
+  --z-header: 10;
+  --z-progress: 40;
+  --z-toast: 100;
+  --duration-fast: 160ms;
+  --duration-normal: 260ms;
+  --duration-reveal: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --surface-raised: #e9eef6;
+  --surface-glass: #ffffffd9;
+  --text: #1d2b40;
+  --muted: #52647c;
+  --faint: #60728a;
+  --line: #24466d18;
+  --line-strong: #24466d30;
+  --accent: #18775e;
+  --accent-strong: #10664f;
+  --accent-bg: #23886d09;
+  --violet: #7654b3;
+  --violet-bg: #8964c80c;
+  --blue: #3678b8;
+  --blue-bg: #4888c90b;
+  --danger: #a34232;
+  --code-comment: #586a80;
+  --code-warm: #9b4d16;
+  --header: #f3f6fbdf;
+  --input: #f2f5fa;
+  --card: linear-gradient(145deg, #fffffff5, #f8faffed);
+  --glow: #358a710b;
+  --shadow: 0 20px 60px #20395f0a;
+  --shadow-raised: 0 24px 80px #20395f10, inset 0 1px 0 #ffffff;
+  --gradient-accent: linear-gradient(110deg, #146f55 12%, #357b9e 56%, #7954ad);
+}

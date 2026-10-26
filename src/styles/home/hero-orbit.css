@@ -1,0 +1,269 @@
+.hero {
+  min-height: 505px;
+  display: grid;
+  grid-template-columns: 1.06fr 1fr;
+  align-items: center;
+  position: relative;
+  padding-block: 55px 48px;
+}
+.hero-copy {
+  position: relative;
+  z-index: 2;
+}
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 10px var(--mono);
+  letter-spacing: 1.8px;
+  color: var(--accent);
+  margin-bottom: 29px;
+}
+.hero h1 {
+  font-size: 64px;
+  line-height: 1.26;
+  font-weight: 580;
+  letter-spacing: -2.7px;
+}
+.hero-copy > p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 2.05;
+  margin-top: 24px;
+  letter-spacing: 0.3px;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 29px;
+  margin-top: 29px;
+}
+.hero-actions > .quiet-link {
+  color: var(--muted);
+}
+.hero-footnote {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 39px;
+  color: var(--faint);
+  font: 8px var(--mono);
+  letter-spacing: 2px;
+}
+.short-line {
+  width: 25px;
+  height: 1px;
+  background: var(--faint);
+}
+.orbit-art {
+  height: 410px;
+  position: relative;
+  isolation: isolate;
+}
+.orbit-glow {
+  position: absolute;
+  inset: 25px -35px;
+  background: radial-gradient(ellipse at 45% 50%, #2a8a6c20, transparent 66%);
+  filter: blur(20px);
+}
+.star-field {
+  position: absolute;
+  inset: 0;
+  opacity: 0.6;
+  background-image:
+    radial-gradient(circle at 16% 23%, #9ee4c7 1px, transparent 1.4px),
+    radial-gradient(circle at 82% 20%, #9ee4c7 1px, transparent 1.4px),
+    radial-gradient(circle at 65% 80%, #9ee4c7 1px, transparent 1.4px),
+    radial-gradient(circle at 23% 73%, #9ee4c7 1px, transparent 1.4px),
+    radial-gradient(circle at 91% 65%, #9ee4c7 1px, transparent 1.4px),
+    radial-gradient(circle at 44% 13%, #9ee4c7 1px, transparent 1.4px),
+    radial-gradient(circle at 76% 42%, #9ee4c7 0.6px, transparent 1px);
+  background-size: 100% 100%;
+}
+.orbit-scene {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 390px;
+  height: 290px;
+  transform: translate(-50%, -50%) rotate(-24deg);
+}
+.orbital {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid #8be2bb29;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.orbital-one {
+  width: 380px;
+  height: 150px;
+  box-shadow: 0 -1px 0 #b4ffda44;
+}
+.orbital-two {
+  width: 330px;
+  height: 220px;
+  transform: translate(-50%, -50%) rotate(58deg);
+  border-color: #8be2bb23;
+}
+.orbital-three {
+  width: 330px;
+  height: 220px;
+  transform: translate(-50%, -50%) rotate(-58deg);
+  border-color: #8be2bb23;
+}
+.orbital-four {
+  width: 275px;
+  height: 275px;
+  border-style: dashed;
+  border-color: #8be2bb12;
+}
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 143px;
+  height: 143px;
+  transform: translate(-50%, -50%) rotate(24deg);
+  border: 1px solid #a3eac95c;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 28% 25%, #8bcfb12e, transparent 60%),
+    radial-gradient(circle at 45% 50%, #132825, #0b1717);
+  box-shadow:
+    inset -18px -15px 35px #0008,
+    0 0 45px #79e7b414;
+  overflow: hidden;
+}
+.planet:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 4px,
+    #70dcb303 5px
+  );
+}
+.planet-latitude {
+  position: absolute;
+  inset: 35px -5px;
+  border-block: 1px solid #9ae8ce13;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+.planet-longitude {
+  position: absolute;
+  inset: -10px 40px;
+  border-inline: 1px solid #9ae8ce13;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+.planet-core {
+  position: absolute;
+  inset: 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font:
+    italic 72px Georgia,
+    serif;
+  color: #c5f3dd;
+  text-shadow: 0 0 25px #abffca70;
+}
+.planet-core > span {
+  font:
+    24px Georgia,
+    serif;
+  position: relative;
+  top: -14px;
+  left: 0;
+}
+.orbit-point {
+  position: absolute;
+  background: #b8efcd;
+  border-radius: 50%;
+  box-shadow: 0 0 14px #a3f8ca80;
+  width: 7px;
+  height: 7px;
+}
+.point-one {
+  top: 113px;
+  left: 10px;
+  animation: point-glimmer 5s ease-in-out infinite;
+}
+.point-two {
+  top: 197px;
+  left: 330px;
+  width: 5px;
+  height: 5px;
+  animation: point-glimmer 5s 2s ease-in-out infinite;
+}
+.point-three {
+  top: 22px;
+  left: 189px;
+  width: 4px;
+  height: 4px;
+}
+.orbit-note {
+  position: absolute;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #bdd6ca;
+  white-space: nowrap;
+}
+.orbit-note small {
+  font: 8px var(--mono);
+  color: var(--faint);
+  letter-spacing: 1px;
+}
+.tiny-cross {
+  color: var(--accent);
+  margin-right: 2px;
+}
+.note-one {
+  left: 8%;
+  top: 19%;
+}
+.note-two {
+  right: 1%;
+  top: 48%;
+}
+.note-three {
+  left: 14%;
+  bottom: 15%;
+}
+.orbit-coordinate {
+  position: absolute;
+  font-size: 7px;
+  color: var(--faint);
+  letter-spacing: 1.4px;
+}
+.coord-top {
+  top: 5px;
+  left: 36%;
+  display: flex;
+  align-items: center;
+  gap: 65px;
+}
+.coord-top > span {
+  font-size: 18px;
+  color: var(--accent);
+}
+.coord-bottom {
+  bottom: 4px;
+  left: 31%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.coord-bottom .live-dot {
+  width: 4px;
+  height: 4px;
+}

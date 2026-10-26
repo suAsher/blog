@@ -1,0 +1,306 @@
+@media (max-width: 1100px) {
+  .header-inner {
+    gap: 18px;
+  }
+  .site-header nav {
+    gap: 2px;
+  }
+  .site-header nav a {
+    padding-inline: 10px;
+  }
+  .search-trigger {
+    padding: 8px;
+  }
+  .featured-copy {
+    padding: 25px;
+  }
+  .card-content {
+    padding-inline: 21px;
+  }
+  .hero h1 {
+    letter-spacing: -2px;
+  }
+}
+@media (max-width: 800px) {
+  .hero {
+    min-height: 430px;
+    padding-block: 40px;
+  }
+  .hero h1 {
+    font-size: 46px;
+  }
+  .hero-copy > p {
+    font-size: 13px;
+  }
+  .hero-kicker {
+    font-size: 8px;
+  }
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-grid section {
+    padding: 23px;
+  }
+}
+@media (max-width: 700px) {
+  .site-header {
+    height: 113px;
+  }
+  .header-inner {
+    height: 113px;
+    grid-template-rows: 65px 48px;
+  }
+  .brand {
+    gap: 11px;
+    font-size: 19px;
+  }
+  .brand-symbol {
+    font-size: 30px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .brand-zh {
+    font-size: 14px;
+  }
+  .header-tools {
+    gap: 0;
+  }
+  .header-tools .icon-button {
+    width: 36px;
+    height: 40px;
+  }
+  .site-header nav {
+    height: 48px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+    align-self: stretch;
+    border-top: 1px solid var(--line);
+  }
+  .site-header nav a {
+    font-size: 11px;
+    padding: 8px 0;
+    border-radius: 7px;
+  }
+  .site-header nav a[aria-current] {
+    background: none;
+  }
+  .site-header nav a[aria-current]:after {
+    bottom: 1px;
+    width: 14px;
+    height: 2px;
+    box-shadow: none;
+    border-radius: 2px;
+  }
+  .search-trigger {
+    padding: 8px;
+  }
+  .page-heading h1 {
+    font-size: 31px;
+    line-height: 1.45;
+    letter-spacing: -0.9px;
+  }
+  .page-heading > p {
+    font-size: 13px;
+  }
+  .collection-page {
+    padding-top: 37px;
+  }
+  .collection-search {
+    padding: 16px;
+  }
+  .collection-search input {
+    font-size: 16px;
+  }
+  .search-scope {
+    font-size: 10px;
+  }
+  .tag-filter {
+    font-size: 11px;
+    padding: 7px 12px;
+  }
+  .category-filter {
+    min-height: 36px;
+  }
+  .section-heading h2 {
+    font-size: 23px;
+  }
+  .section-heading .eyebrow {
+    font-size: 9px;
+  }
+  .card-content h3 {
+    font-size: 18px;
+  }
+  .card-cover {
+    height: 155px;
+  }
+  .about-page {
+    padding-block: 45px 60px;
+  }
+  .about-page > h1 {
+    font-size: 47px;
+    letter-spacing: -1.4px;
+  }
+  .about-lead {
+    font-size: 15px;
+  }
+  .about-grid {
+    margin-block: 34px 24px;
+    gap: 14px;
+  }
+  .about-grid section {
+    padding: 25px;
+  }
+  .demo-explanation {
+    gap: 13px;
+    padding: 21px;
+  }
+  .site-footer {
+    padding-block: 27px;
+  }
+  .dialog-footer {
+    font-size: 10px;
+  }
+  .privacy-note p {
+    font-size: 12px;
+  }
+  .library-toolbar {
+    gap: 20px;
+  }
+  .library-tabs {
+    width: 100%;
+  }
+  .library-tabs > button {
+    flex: 1;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+  .empty-state {
+    padding: 48px 22px;
+  }
+  .empty-state h2 {
+    font-size: 23px;
+  }
+}
+@media (max-width: 600px) {
+  .hero {
+    padding-block: 36px 10px;
+    gap: 0;
+  }
+  .hero h1 {
+    font-size: clamp(41px, 10.7vw, 55px);
+    letter-spacing: -2px;
+  }
+  .hero-copy > p {
+    font-size: 13px;
+    margin-top: 19px;
+  }
+  .hero-kicker {
+    margin-bottom: 22px;
+    font-size: 8px;
+    letter-spacing: 1.1px;
+  }
+  .hero-actions {
+    margin-top: 24px;
+    gap: 24px;
+  }
+  .hero-actions .button {
+    min-height: 48px;
+    padding-inline: 22px;
+  }
+  .hero-actions > .quiet-link {
+    font-size: 12px;
+  }
+  .hero-footnote {
+    margin-top: 24px;
+    font-size: 8px;
+  }
+  .content-strip {
+    padding-block: 13px;
+    gap: 12px;
+    font-size: 11px;
+  }
+  .content-strip > .quiet-link {
+    font-size: 10px;
+  }
+  .featured-section {
+    padding-top: 33px;
+  }
+  .featured-card {
+    grid-template-columns: 1fr;
+  }
+  .featured-image {
+    height: 200px;
+  }
+  .featured-copy {
+    padding: 25px;
+  }
+  .featured-copy h3 {
+    font-size: 25px;
+  }
+  .home-invitation {
+    padding: 27px;
+  }
+  .home-invitation h3 {
+    font-size: 24px;
+  }
+  .home-invitation p {
+    font-size: 13px;
+  }
+  .lab-invitation {
+    padding: 24px;
+  }
+  .lab-invitation h2 {
+    font-size: 20px;
+  }
+  .lab-invitation p {
+    font-size: 12px;
+  }
+  .lab-invitation .eyebrow {
+    font-size: 8px;
+  }
+  .lab-invitation > .quiet-link {
+    margin-left: 0;
+  }
+  .garden-note {
+    padding-block: 34px;
+  }
+  .garden-note > p {
+    font-size: 12px;
+  }
+}
+@media (max-width: 500px) {
+  .card-cover {
+    height: 195px;
+  }
+  .card-content {
+    padding: 23px 24px 16px;
+  }
+  .card-content h3 {
+    font-size: 21px;
+  }
+  .card-content > p {
+    font-size: 13px;
+  }
+  .card-meta,
+  .demo-mark,
+  .card-bottom time {
+    font-size: 11px;
+  }
+  .not-found h1 {
+    font-size: 23px;
+  }
+  .error-number span {
+    font-size: 36px;
+    right: -25px;
+  }
+}
+/* A view-transition snapshot is outside the document tree; it needs its own motion rule. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
+  }
+}

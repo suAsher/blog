@@ -1,0 +1,20 @@
+<style is:inline>
+  @view-transition { navigation: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
+</style>
+<script is:inline>
+  // Install before first paint: deferred modules may miss pagereveal.
+  for (const name of ['pageswap', 'pagereveal']) {
+    window.addEventListener(name, event => {
+      const transition = event.viewTransition;
+      if (!transition) return;
+      transition.ready.catch(error => {
+        if (error instanceof DOMException &&
+            (error.name === 'AbortError' || error.name === 'InvalidStateError')) return;
+        console.error('页面转场未完成。', error);
+      });
+    });
+  }
+</script>

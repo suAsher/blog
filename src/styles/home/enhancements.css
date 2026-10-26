@@ -1,0 +1,356 @@
+.orbital-one {
+  animation: orbit-drift 24s ease-in-out infinite;
+}
+@keyframes orbit-drift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(-7deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(7deg);
+  }
+}
+
+.featured-title-line {
+  display: block;
+}
+
+.home-loading,
+.home-invitation {
+  min-height: 282px;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--surface), var(--accent-bg));
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.home-loading {
+  gap: 13px;
+  color: var(--muted);
+  font-size: 13px;
+  flex-direction: row;
+  align-items: center;
+}
+.home-invitation .invitation-star {
+  font-size: 43px;
+  line-height: 1.4;
+  color: var(--accent);
+  margin-top: 15px;
+}
+.home-invitation h3 {
+  font-size: 26px;
+  font-weight: 500;
+  margin-top: 5px;
+  line-height: 1.6;
+}
+.home-invitation p {
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin-top: 10px;
+  max-width: 450px;
+}
+.invitation-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 22px;
+}
+.content-strip > .quiet-link {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 10px;
+}
+.home-invitation .eyebrow {
+  font-size: 8px;
+}
+@media (max-width: 600px) {
+  .home-invitation {
+    padding: 27px;
+  }
+  .home-invitation h3 {
+    font-size: 23px;
+  }
+  .home-invitation p {
+    font-size: 12px;
+  }
+  .content-strip {
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-block: 10px;
+  }
+  .content-strip > .quiet-link {
+    font-size: 9px;
+  }
+}
+
+/* A small, tactile universe: SVG structure plus compositor-only drift. */
+.hero {
+  isolation: isolate;
+}
+.hero:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -30px 0 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 80% 40%, #548dc80b, transparent 50%),
+    radial-gradient(ellipse at 57% 50%, #87e2ba0a, transparent 48%);
+}
+.orbit-art {
+  contain: layout style paint;
+  overflow: hidden;
+}
+.orbit-glow {
+  inset: 25px 0;
+  background:
+    radial-gradient(ellipse at 40% 50%, #2a8a6c25, transparent 59%),
+    radial-gradient(ellipse at 78% 32%, #9b73c718, transparent 50%);
+  filter: none;
+}
+.orbit-grid {
+  position: absolute;
+  inset: 10% 0;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(#8be2bb12 1px, transparent 1px),
+    linear-gradient(90deg, #8be2bb12 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse, #000 10%, transparent 65%);
+  transform: perspective(450px) rotateX(23deg) rotate(-12deg);
+  pointer-events: none;
+}
+.orbit-parallax {
+  position: absolute;
+  inset: 0;
+  transform: translate(var(--orbit-x, 0px), var(--orbit-y, 0px));
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.constellation-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.constellation-lines path {
+  fill: none;
+  stroke: url(#constellation-gradient);
+  stroke-width: 0.7;
+  stroke-dasharray: 2 6;
+}
+.constellation-lines circle {
+  fill: #a2d4c6;
+  opacity: 0.65;
+}
+.orbit-halo {
+  position: absolute;
+  inset: -11% 8%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 45deg,
+    transparent 45%,
+    #a2e9d333 56%,
+    transparent 61%,
+    #a68bd322 83%,
+    transparent 92%
+  );
+  mask-image: radial-gradient(
+    ellipse,
+    transparent 68%,
+    #000 69%,
+    #000 70%,
+    transparent 71%
+  );
+  animation: halo-turn 35s linear infinite;
+}
+.orbital-two {
+  border-color: #b59ede33;
+  box-shadow: 0 1px 0 #b59ede12;
+}
+.planet {
+  box-shadow:
+    inset -18px -15px 35px #0008,
+    0 0 60px #79e7b41c,
+    0 0 100px #9b73c70b;
+}
+.lab-invitation {
+  margin-top: 50px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  min-height: 156px;
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  padding: 27px 34px;
+  background: linear-gradient(
+    115deg,
+    var(--surface),
+    var(--accent-bg) 62%,
+    var(--surface)
+  );
+  overflow: hidden;
+}
+.lab-invitation > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.lab-invitation .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  color: var(--accent);
+}
+.lab-invitation h2 {
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  margin-top: 8px;
+}
+.lab-invitation p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin-top: 9px;
+  max-width: 590px;
+}
+.lab-invitation > .quiet-link {
+  white-space: nowrap;
+  font-size: 11px;
+}
+.lab-invitation-art {
+  position: relative;
+  flex: 0 0 68px;
+  height: 68px;
+  animation: lab-float 8s ease-in-out infinite;
+}
+.lab-invitation-art > span {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid #9ae8ce44;
+  border-radius: 11px;
+  transform: rotate(25deg);
+}
+.lab-invitation-art > span:nth-child(2) {
+  inset: 12px 1px;
+  transform: rotate(-30deg);
+  border-color: #b59ede55;
+}
+.lab-invitation-art > span:nth-child(3) {
+  inset: 19px -4px;
+  transform: rotate(55deg);
+  border-color: #8ab4d144;
+}
+.lab-invitation-art > i {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font:
+    35px Georgia,
+    serif;
+  color: var(--accent);
+  font-style: normal;
+}
+@keyframes halo-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes lab-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(3deg);
+  }
+}
+[data-theme="light"] .orbit-glow {
+  background:
+    radial-gradient(ellipse at 35% 50%, #57b48919, transparent 59%),
+    radial-gradient(ellipse at 78% 32%, #9b73c710, transparent 50%);
+}
+[data-theme="light"] .constellation-lines circle {
+  fill: #3c8a70;
+}
+[data-theme="light"] .orbit-grid {
+  opacity: 0.6;
+}
+@media (max-width: 800px) {
+  .lab-invitation {
+    gap: 20px;
+    padding: 25px;
+    flex-wrap: wrap;
+  }
+  .lab-invitation > div:nth-child(2) {
+    flex: 1 1 300px;
+  }
+  .lab-invitation > .quiet-link {
+    margin-left: 88px;
+  }
+}
+@media (max-width: 600px) {
+  .hero:before {
+    inset: 0;
+  }
+  .orbit-grid {
+    inset: 0 10%;
+  }
+  .constellation-lines {
+    opacity: 0.6;
+  }
+  .lab-invitation {
+    margin-top: 32px;
+    padding: 23px;
+    gap: 17px;
+  }
+  .lab-invitation-art {
+    flex-basis: 45px;
+    height: 45px;
+  }
+  .lab-invitation-art > span {
+    inset: 4px;
+    border-radius: 7px;
+  }
+  .lab-invitation-art > span:nth-child(2) {
+    inset: 9px 0;
+  }
+  .lab-invitation-art > span:nth-child(3) {
+    inset: 13px -3px;
+  }
+  .lab-invitation-art > i {
+    font-size: 26px;
+  }
+  .lab-invitation > div:nth-child(2) {
+    flex-basis: 200px;
+  }
+  .lab-invitation h2 {
+    font-size: 19px;
+    line-height: 1.6;
+  }
+  .lab-invitation p {
+    font-size: 11px;
+  }
+  .lab-invitation > .quiet-link {
+    margin-left: 62px;
+  }
+  .lab-invitation .eyebrow {
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-parallax {
+    transform: none;
+  }
+  .reveal-pending {
+    opacity: 1;
+    translate: none;
+  }
+}

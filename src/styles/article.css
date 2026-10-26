@@ -1,3 +1,5 @@
+@import url("./article/syntax.css");
+
 .reading-progress {
   position: fixed;
   inset: 0 0 auto;
@@ -478,7 +480,7 @@ html[data-theme="light"] .astro-code span {
     font-size: 16px;
   }
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .article-heading {
     margin: 16px auto 30px;
     max-width: 680px;
@@ -659,62 +661,6 @@ html[data-theme="light"] .astro-code span {
   font-size: 11px;
   margin-left: auto;
 }
-.prose pre code.hljs {
-  color: var(--text);
-}
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-section,
-.hljs-link {
-  color: #c3a6e9;
-}
-.hljs-string,
-.hljs-regexp,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition {
-  color: #9dd9b0;
-}
-.hljs-title,
-.hljs-title.function_,
-.hljs-type,
-.hljs-class .hljs-title {
-  color: #8dcde7;
-}
-.hljs-number,
-.hljs-built_in,
-.hljs-attr {
-  color: #e6bf92;
-}
-.hljs-comment,
-.hljs-quote,
-.hljs-meta {
-  color: #82958e;
-}
-.hljs-variable,
-.hljs-template-variable,
-.hljs-deletion {
-  color: #e7a4a0;
-}
-[data-theme="light"] .hljs-keyword,
-[data-theme="light"] .hljs-literal {
-  color: #8250a1;
-}
-[data-theme="light"] .hljs-string {
-  color: #196a40;
-}
-[data-theme="light"] .hljs-title,
-[data-theme="light"] .hljs-type {
-  color: #136d92;
-}
-[data-theme="light"] .hljs-number,
-[data-theme="light"] .hljs-attr {
-  color: #9c5c14;
-}
-[data-theme="light"] .hljs-comment {
-  color: #6b7b73;
-}
 @media (max-width: 700px) {
   .reader-loading {
     padding-block: 65px;
@@ -727,5 +673,36 @@ html[data-theme="light"] .astro-code span {
   }
   .reader-error h1 {
     font-size: 23px;
+  }
+}
+
+/* Covers are a calm bridge into reading; never taller than the text introduction. */
+.article-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 3;
+  max-height: 360px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  margin: 0 0 34px;
+}
+::view-transition-group(article-cover) {
+  animation-duration: var(--duration-reveal);
+  animation-timing-function: var(--ease-out);
+}
+@media (max-width: 700px) {
+  .article-cover {
+    max-height: 260px;
+    margin-bottom: 25px;
+    border-radius: var(--radius-md);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(article-cover),
+  ::view-transition-old(article-cover),
+  ::view-transition-new(article-cover) {
+    animation: none !important;
   }
 }

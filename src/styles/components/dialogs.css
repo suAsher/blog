@@ -1,0 +1,115 @@
+dialog {
+  position: fixed;
+  width: min(640px, calc(100% - 32px));
+  padding: 27px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 25px 120px #0007;
+  max-height: 85dvh;
+  margin: 12dvh auto auto;
+}
+dialog::backdrop {
+  background: #030a10b8;
+  backdrop-filter: blur(7px);
+}
+.dialog-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 23px;
+}
+.dialog-top h2 {
+  font-size: 21px;
+  margin-top: 7px;
+  font-weight: 550;
+}
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--accent);
+  background: var(--bg);
+}
+.search-input-wrap input {
+  width: 100%;
+  background: none;
+  border: 0;
+  color: var(--text);
+  outline: none;
+  font-size: 15px;
+  min-width: 0;
+}
+.search-input-wrap kbd {
+  font-size: 9px;
+  color: var(--faint);
+}
+#quick-results {
+  max-height: 47dvh;
+  overflow: auto;
+  padding-block: 13px;
+}
+.search-hint {
+  color: var(--muted);
+  padding: 22px 8px;
+  font-size: 13px;
+}
+.search-result {
+  display: block;
+  padding: 14px 12px;
+  border-radius: 7px;
+}
+.search-result:hover,
+.search-result:focus-visible {
+  background: var(--surface-raised);
+}
+.search-result strong {
+  font-size: 15px;
+  font-weight: 550;
+}
+.search-result p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.search-result small {
+  font-size: 10px;
+  color: var(--accent);
+}
+.dialog-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--faint);
+}
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 15px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: var(--text);
+  color: var(--bg);
+  padding: 11px 20px;
+  border-radius: 9px;
+  font-size: 12px;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  max-width: calc(100% - 30px);
+  width: max-content;
+  box-shadow: var(--shadow);
+}
+#toast.visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}

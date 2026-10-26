@@ -1,0 +1,395 @@
+@media (min-width: 1700px) {
+  .writing-shell {
+    width: 1480px;
+  }
+}
+@media (max-width: 1200px) {
+  .writing-shell {
+    width: calc(100% - 48px);
+  }
+  .writing-layout {
+    grid-template-columns: 245px minmax(0, 1fr);
+  }
+  .editor-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 25px;
+  }
+  .editor-actions {
+    justify-content: flex-start;
+    gap: 15px;
+  }
+  .document-metadata {
+    padding: 26px 25px 0;
+  }
+  .editor-modebar {
+    padding-inline: 25px;
+  }
+  .source-pane textarea {
+    padding-inline: 25px;
+  }
+  .preview-pane {
+    padding-inline: 25px;
+  }
+  .source-toolbar {
+    padding-inline: 21px;
+  }
+  .source-toolbar > span {
+    display: none;
+  }
+  .editor-bottom {
+    padding-inline: 25px;
+  }
+  .document-title {
+    font-size: 27px;
+  }
+}
+@media (max-width: 850px) {
+  .writing-shell {
+    padding-top: 35px;
+  }
+  .writing-heading {
+    align-items: flex-start;
+    gap: 22px;
+  }
+  .writing-heading h1 {
+    font-size: 30px;
+  }
+  .writing-heading-actions {
+    flex-direction: column;
+  }
+  .writing-heading-actions .button {
+    padding: 9px 13px;
+    min-height: 38px;
+    font-size: 11px;
+  }
+  .writing-layout {
+    grid-template-columns: 205px minmax(0, 1fr);
+  }
+  .document-sidebar {
+    padding-inline: 12px;
+  }
+  .document-tabs button {
+    font-size: 10px;
+    padding-inline: 8px;
+  }
+  .document-search {
+    padding-inline: 8px;
+  }
+  .document-search input {
+    font-size: 11px;
+  }
+  .editor-modes {
+    gap: 15px;
+  }
+  .editor-export {
+    gap: 10px;
+  }
+  .metadata-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .metadata-fields label:first-child {
+    grid-column: 1/-1;
+  }
+  .editor-body[data-mode="split"] {
+    grid-template-columns: 1fr;
+  }
+  .editor-body[data-mode="split"] .source-pane {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .editor-body[data-mode="split"] .source-pane textarea {
+    min-height: 270px;
+  }
+  .editor-state {
+    flex-wrap: wrap;
+  }
+  .editor-bottom {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .empty-footnote {
+    line-height: 1.8;
+  }
+  .editor-empty > div {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .document-title {
+    font-size: 25px;
+  }
+  .editor-export button {
+    font-size: 9px;
+  }
+}
+@media (max-width: 620px) {
+  .writing-shell {
+    width: calc(100% - 32px);
+    padding: 30px 0 40px;
+  }
+  .writing-heading {
+    flex-direction: column;
+    margin-bottom: 24px;
+    gap: 21px;
+  }
+  .writing-heading h1 {
+    font-size: 29px;
+    margin-top: 10px;
+  }
+  .writing-heading p {
+    font-size: 12px;
+  }
+  .writing-heading-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+  .writing-heading-actions .button {
+    min-height: 42px;
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+  .writing-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-radius: 11px;
+  }
+  .document-sidebar {
+    padding: 20px 15px 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar-heading {
+    margin-bottom: 14px;
+    padding: 0 2px;
+  }
+  .sidebar-heading h2 {
+    font-size: 15px;
+  }
+  .document-search input {
+    font-size: 16px;
+  }
+  .document-search {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+  .document-tabs {
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 13px;
+    gap: 3px;
+  }
+  .document-tabs button {
+    font-size: 11px;
+    padding: 7px;
+  }
+  .document-tabs span {
+    font-size: 9px;
+  }
+  .document-list {
+    max-height: 225px;
+    gap: 3px;
+  }
+  .document-list-item {
+    padding: 11px 10px;
+  }
+  .document-list-item strong {
+    -webkit-line-clamp: 1;
+    font-size: 12px;
+  }
+  .document-list-meta {
+    font-size: 9px;
+    margin-top: 4px;
+  }
+  .storage-note {
+    padding: 12px 2px 0;
+    margin-top: 12px;
+    font-size: 9px;
+  }
+  .storage-note .live-dot {
+    margin-top: 6px;
+  }
+  .editor-empty {
+    min-height: 480px;
+    padding: 40px 23px;
+  }
+  .editor-empty h2 {
+    font-size: 23px;
+  }
+  .editor-empty > p {
+    font-size: 12px;
+  }
+  .editor-empty > div {
+    margin: 23px 0;
+  }
+  .empty-footnote {
+    font-size: 9px;
+  }
+  .editor-topbar {
+    padding: 17px 18px;
+    gap: 15px;
+  }
+  .editor-actions {
+    gap: 13px;
+    row-gap: 10px;
+    width: 100%;
+  }
+  .small-action {
+    font-size: 10px;
+    min-height: 28px;
+  }
+  .small-action kbd {
+    display: none;
+  }
+  .publish-button {
+    margin-left: auto;
+    font-size: 11px;
+    min-height: 36px;
+  }
+  .editor-state {
+    gap: 9px;
+  }
+  #save-status {
+    font-size: 10px;
+  }
+  .document-metadata {
+    padding: 25px 18px 0;
+  }
+  .document-title {
+    font-size: 25px;
+    letter-spacing: -0.8px;
+  }
+  .document-description {
+    font-size: 16px;
+    min-height: 65px;
+    line-height: 1.7;
+  }
+  .metadata-fields input {
+    font-size: 16px;
+  }
+  .metadata-fields label {
+    font-size: 11px;
+  }
+  .metadata-fields {
+    gap: 12px;
+  }
+  .metadata-details summary {
+    font-size: 11px;
+  }
+  .metadata-details summary #metadata-summary {
+    font-size: 9px;
+    max-width: 185px;
+  }
+  .editor-modebar {
+    padding: 0 18px;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .editor-modes {
+    gap: 20px;
+  }
+  .editor-modes button {
+    font-size: 11px;
+    padding: 14px 0;
+  }
+  .editor-export {
+    width: 100%;
+    border-top: 1px solid var(--line);
+    justify-content: flex-end;
+    gap: 18px;
+    padding: 10px 0;
+  }
+  .editor-export button {
+    font-size: 10px;
+  }
+  .source-toolbar {
+    padding: 10px 15px;
+    gap: 8px;
+  }
+  .source-toolbar button {
+    height: 31px;
+    min-width: 30px;
+  }
+  .source-pane textarea,
+  .editor-body[data-mode="split"] .source-pane textarea {
+    padding: 22px 18px;
+    font-size: 16px;
+    min-height: 420px;
+    line-height: 1.8;
+  }
+  .preview-pane,
+  .editor-body[data-mode="split"] .preview-pane {
+    padding: 22px 18px;
+  }
+  .writing-preview.prose {
+    font-size: 15px;
+  }
+  .editor-bottom {
+    padding: 13px 18px;
+    font-size: 9px;
+  }
+  .editor-problem {
+    padding: 13px 18px;
+    font-size: 11px;
+  }
+  .editor-problem > div {
+    gap: 16px;
+  }
+  #import-dialog {
+    padding: 22px 18px;
+    margin-top: 3dvh;
+    max-height: 94dvh;
+  }
+  .import-heading h2 {
+    font-size: 22px;
+  }
+  .import-intro {
+    font-size: 11px;
+  }
+  .import-dropzone {
+    padding: 21px 13px;
+  }
+  .import-dropzone p {
+    font-size: 9px;
+  }
+  .import-dropzone > div {
+    gap: 8px;
+  }
+  .import-dropzone .button {
+    font-size: 11px;
+    padding-inline: 13px;
+  }
+  .import-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .import-footer > span {
+    text-align: center;
+    font-size: 10px;
+  }
+  .import-footer .button {
+    width: 100%;
+    min-height: 42px;
+  }
+  .import-selection {
+    padding: 13px;
+  }
+  .preview-caption {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .preview-caption > span:last-child {
+    font-size: 9px;
+  }
+  .list-hint {
+    padding: 22px 12px;
+  }
+  .workspace-notice {
+    font-size: 12px;
+  }
+  .editor-body[data-mode="split"] .source-pane textarea {
+    min-height: 300px;
+  }
+}

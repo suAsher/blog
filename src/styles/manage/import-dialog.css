@@ -1,0 +1,161 @@
+#import-dialog {
+  width: min(720px, calc(100% - 32px));
+  margin-top: 6dvh;
+  padding: 28px;
+  max-height: 88dvh;
+}
+.import-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.import-heading h2 {
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  margin: 10px 0 13px;
+}
+.import-heading h2 > span {
+  color: var(--accent);
+}
+.import-intro {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+  max-width: 560px;
+}
+.import-dropzone {
+  border: 1px dashed color-mix(in srgb, var(--accent) 25%, var(--line));
+  background: var(--accent-bg);
+  border-radius: 11px;
+  padding: 25px;
+  text-align: center;
+  margin: 22px 0;
+}
+.import-dropzone.is-dragging {
+  background: color-mix(in srgb, var(--accent) 13%, var(--surface));
+  border-color: var(--accent);
+}
+.import-dropzone > span {
+  font-size: 31px;
+  color: var(--accent);
+  line-height: 1;
+}
+.import-dropzone h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 8px 0;
+}
+.import-dropzone p {
+  color: var(--faint);
+  font-size: 10px;
+}
+.import-dropzone > div {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 19px;
+}
+.import-dropzone .button {
+  font-size: 11px;
+  min-height: 38px;
+  padding: 9px 16px;
+}
+.import-selection {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 15px 17px;
+  margin: 18px 0;
+}
+.import-selection > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.import-selection strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.import-selection .quiet-link {
+  font-size: 10px;
+  color: var(--faint);
+}
+.import-selection p {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+.import-selection ul {
+  list-style: none;
+  margin: 13px 0 0;
+  padding: 0;
+  max-height: 130px;
+  overflow: auto;
+  color: var(--faint);
+  font: 10px/1.9 var(--mono);
+}
+.import-selection li {
+  overflow-wrap: anywhere;
+}
+.import-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 19px;
+  margin-top: 22px;
+}
+.import-footer > span {
+  font-size: 10px;
+  color: var(--faint);
+}
+.import-footer > .button {
+  font-size: 11px;
+  min-height: 40px;
+  padding: 9px 16px;
+  white-space: nowrap;
+}
+.import-report {
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  padding: 18px;
+  border-radius: 9px;
+  margin-top: 18px;
+}
+.import-report h3 {
+  font-size: 15px;
+  color: var(--accent);
+  font-weight: 500;
+}
+.import-report p,
+.import-report li {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.9;
+}
+.import-report p {
+  margin-top: 8px;
+}
+.import-report ul {
+  margin: 7px 0 0;
+  padding-left: 18px;
+  max-height: 140px;
+  overflow: auto;
+}
+.import-report button {
+  color: var(--accent);
+  font-size: 11px;
+  margin-top: 12px;
+}
+.form-error {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #d8a68c;
+  background: #cc8a5010;
+  padding: 11px 13px;
+  border-radius: 6px;
+  margin-top: 15px;
+}

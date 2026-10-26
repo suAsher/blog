@@ -476,6 +476,8 @@
   display: none;
 }
 .collection-disclaimer a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
   color: var(--accent);
   margin-left: 8px;
 }
