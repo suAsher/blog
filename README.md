@@ -1,8 +1,10 @@
 # asher · 知识空间
 
-一个可以部署到腾讯云或华为云个人服务器的私有技术知识博客。Astro 7 + TypeScript 提供阅读与写作界面，Go 服务持久保存 Markdown 文档、配图和发布快照，负责会话与全文查询。支持站内写作、草稿保存和批量导入，无需数据库、API 密钥、付费服务或在线字体。
+一个可以部署到腾讯云或华为云个人服务器的单所有者私有技术知识博客。Astro 7 + TypeScript 提供阅读与写作界面，Go 服务持久保存 Markdown 文档、配图和发布快照，负责会话与全文查询。支持站内写作、草稿保存和批量导入，无需数据库、API 密钥、付费服务或在线字体。
 
 首页、列表与搜索默认展示你正式发布的内容；没有已发布文档时显示写作和导入入口。原有示例仅在明确选择「查看示例」后出现，均标注为**演示内容**，不代表作者真实经历。项目只接收你在页面里主动选择的文件，不扫描电脑中的其他文档。
+
+生产构建可用 `BLOG_INCLUDE_EXAMPLES=0 npm run build` 关闭演示：示例正文路由、索引、入口和浏览器回退一起排除。Docker 构建使用 `BLOG_INCLUDE_EXAMPLES=0 docker compose build`；正式 Go 文档不受影响。默认值为 `1`，修改后需要重新构建。
 
 ## 本地启动
 
@@ -22,7 +24,9 @@ npm run build
 npm run preview
 ```
 
-快捷键：`Ctrl/Cmd + K` 打开搜索，`Esc` 关闭搜索，文章页 `F` 切换专注、`Esc` 退出专注，`Tab/Shift+Tab` 遍历控件。
+关闭示例的真实构建与浏览器回归可运行 `npm run test:examples`。它使用独立私有测试环境，验证示例路由/索引确实移除、查询参数不能重新启用，以及正式文档仍可发布阅读；结束后恢复调用前的构建开关（未指定时为 `1`）。不要与其他构建同时运行。
+
+快捷键：`Ctrl/Cmd + K` 打开搜索，`Ctrl/Cmd + Alt + N` 打开随手记，`Esc` 关闭弹层，文章页 `F` 切换专注，`Tab/Shift+Tab` 遍历控件。随手记快捷键可改为 `Ctrl/Cmd + Shift + U` 或关闭；浏览器保留的 `Ctrl/Cmd + Shift + N` 不作为网页快捷键。
 
 `dist/` 包含静态页面外壳、登录资源和示例文章。正式文档阅读、搜索、写作和导入由私有 Go API 提供数据，生产环境同时运行下方 Nginx、Caddy 与文档服务。Astro preview 仅用于本地界面检查。
 
@@ -34,7 +38,11 @@ npm run preview
 
 [知识连接](docs/knowledge-links.md)支持 `[[标题]]`、`[[标题|别名]]`、稳定 ID 补全、关联文档和反向链接。`/graph/` 用本地 Canvas 与独立 Worker 展示已发布关系；仅该页面加载布局引擎，支持搜索、键盘、缩放拖动与静态布局。代码中的双括号保持原文，未发布的标题和关系不会提前进入正式阅读。
 
+[离线阅读与跨设备同步](docs/offline-and-sync.md)把两类数据严格分开：收藏、已读、进度和回顾计划采用本地缓存、待同步队列及服务器字段版本；私有正文只有在用户明确选择后，才以独立口令加密保存已发布快照。Service Worker 只缓存无正文的离线外壳，不缓存登录、API、私有文章 HTML 或搜索索引。
+
 本轮体验升级增加了[内容实验室与交互 Markdown](docs/interactive-content.md)：本地按需绘制的流程图、可切换系列的数据图表、提示块、图片放大和阅读排版设置。编辑器可快捷插入内容块、粘贴/拖入图片、专注写作；命令搜索支持快捷操作、键盘选择和安全命中高亮。首页与卡片使用克制的星轨、光晕和入场，遵循减少动画偏好。服务端增加16MiB预算的派生搜索缓存，保留既有存储格式和发布快照隔离。
+
+视觉增强采用 OGL 绘制首页主视觉；设备能力、节省流量和减少动画偏好决定是否按需加载 GSAP/ScrollTrigger 与 Lenis，隐藏、离屏或失败时会暂停/降级，阅读和写作仍使用原生滚动。跨文档效果使用浏览器原生 View Transitions 渐进增强，而不接管导航为 ClientRouter，保持无脚本、失败降级、认证重定向与浏览器历史行为可预测。
 
 - 站内 Markdown 编辑、自动保存草稿、对照预览、发布/撤回与发布快照隔离。
 - 批量导入 Markdown、TXT 与配套图片，保留目录关系；Markdown 和含配图 ZIP 导出。
@@ -45,9 +53,9 @@ npm run preview
 - 标签和可选分类从 Markdown 元数据汇总；没有预置技术领域分类。
 - 自定义登录页、密码显示切换、登录错误反馈、保持登录与退出；公网入口使用服务端会话保护内容。
 
-浏览器记录按**协议 + 域名 + 端口**隔离。因此开发地址、SSH 隧道地址与正式域名的阅读记录各自独立；不同设备和浏览器不会自动同步。清理站点数据或使用隐私窗口可能丢失记录。主题和阅读记录不上传服务器。
+浏览器记录按**协议 + 域名 + 端口**隔离；登录并联网后，收藏、已读、进度与回顾计划会同步到同一空间的服务器，离线变更在恢复连接后补传。冲突不会按设备时间静默覆盖，而是要求选择服务器值或重新应用本机值；不支持 Web Locks API 的浏览器安全降级为仅本机模式并显示警告。主题仍只保存在浏览器。
 
-在「我的书架」使用「导出记录」下载 JSON，在另一台设备的同一页面使用「导入记录」手动迁移。导入会合并记录，同一文章以导入数据为准。导出结构为 `{ version: 1, exportedAt, entries }`，不包含文章正文。正式文档使用稳定随机 ID 关联阅读记录；修改标题不会改变文档地址。原有示例仍按其源文件名关联记录。
+「我的书架」仍可导出或导入 v1 JSON 作为迁移与应急备份。结构为 `{ version: 1, exportedAt, entries }`，可选包含回顾计划，但不含文章/离线正文、图片、密码、会话或同步队列。正式文档使用稳定随机 ID 关联记录；修改标题不会改变文档地址。完整边界见[离线与同步说明](docs/offline-and-sync.md)。
 
 ## 写作、导入与发布
 
@@ -57,19 +65,19 @@ npm run preview
 
 支持 UTF-8 的 `.md`、`.markdown`、`.txt`，以及 PNG、JPEG、GIF、WebP；不接受 SVG、Word、PDF、压缩包或可执行文件。每批最多 32 MiB、500 个文件，单篇正文 2 MiB、单张图片 8 MiB；接近批量上限时应分批并留出上传封装余量。服务器还会保留至少 64 MiB 空闲容量，空间不足时返回明确提示，不应把小磁盘视为无限文档库。
 
-正式内容保存在服务器 `/srv/asher-knowledge/data/content/`，独立于程序版本和 `dist/`。每篇记录包含 Markdown 原文、元数据、工作稿和最近发布快照，图片按内容哈希保存；无需数据库。浏览器只保留收藏、阅读位置、主题和当前标签页的未保存备份，不能代替服务端内容备份。
+正式内容保存在服务器 `/srv/asher-knowledge/data/content/`，独立于程序版本和 `dist/`。每篇记录包含 Markdown 原文、元数据、工作稿和最近发布快照，图片按内容哈希保存；服务端阅读状态位于同目录的 `state/reading.json`，无需数据库。浏览器本地缓存、待同步队列、主题、未保存备份和加密离线副本都不能代替服务端内容备份。
 
 详细工作流、Markdown 元数据、相对配图、冲突处理、垃圾箱及私有备份见 [文档使用与备份指南](docs/content-guide.md)。`src/content/articles/` 现用于维护明确标注的静态示例；只有修改界面、程序或示例时才运行 `npm run build` 更新部署。
 
 ## 完整本地验收
 
-完整端到端测试需要 Go 1.26、OpenSSL 和 Playwright/Chrome。先构建，再运行 `npm run test:e2e`：默认启动仅绑定回环地址的临时 HTTPS 环境，使用真实 Go 认证和内容服务、随机测试账号及独立临时数据。结束后清理这些进程和数据，不访问生产服务器。
+完整端到端测试需要 Go 1.26、OpenSSL 和 Playwright/Chrome。先构建，再运行 `npm run test:e2e`：默认启动仅绑定回环地址的临时 HTTPS 环境，使用真实 Go 认证和内容服务、随机测试账号及独立临时数据。自签名证书的 SPKI 仅用于固定本次临时测试证书，不放宽普通网络请求的 TLS 校验；结束后清理进程、凭据和数据，不使用 SSH 或访问生产服务器。
 
 仅检查静态页面时可显式设置 `BLOG_TEST_STATIC_ONLY=1`；此模式会跳过真实认证/内容用例，不能代替完整验收。明确设置 `BLOG_TEST_BASE_URL` 才会使用指定预览或部署地址。测试服务不会复用已有端口，避免误把 SSH 转发或旧预览当作当前代码。
 
 ## 腾讯云 / 华为云部署
 
-支持腾讯云轻量应用服务器 Lighthouse、CVM，以及华为云 ECS 等可运行 Docker 的 Linux 主机。以下以 Ubuntu 24.04 LTS 为例；服务器上无需安装 Node.js，构建在 Docker 内完成。
+支持腾讯云轻量应用服务器 Lighthouse、CVM，以及华为云 ECS 等可运行 Docker 的 Linux 主机。以下以 Ubuntu 24.04 LTS 为例；基础 `compose.yaml` 只启动回环绑定的静态 Nginx，不是一键完整私有服务。正式写作、同步和离线版本校验还需按[部署指南](docs/deployment.md)运行 Caddy 与 Go 服务。
 
 1. 根据 [Docker 官方 Ubuntu 安装文档](https://docs.docker.com/engine/install/ubuntu/)安装 Docker Engine 与 Compose 插件，并确认 `docker version`、`docker compose version` 可用。使用维护中的 Docker 版本；本机端口绑定在 Docker 28 以前存在同二层网络访问的历史限制，详见 [Docker 端口发布文档](https://docs.docker.com/engine/network/port-publishing/)。
 2. 把本项目源文件上传到服务器，例如 `/srv/asher-knowledge`。保留 `package-lock.json`，不上传 `node_modules/`、本机密钥或环境文件。
@@ -138,7 +146,7 @@ ssh YOUR_SERVER 'cat /srv/asher-knowledge/secrets/access.json'
 
 准备网关时，将基础 Compose 复制为 `/srv/asher-knowledge/gateway/compose.yaml`，会话配置复制为 `compose.session.yaml`，会话版 Caddy 配置复制为 `config/Caddyfile`。`runtime.env` 设置 `BLOG_IP`、固定摘要的 `BLOG_GATEWAY_IMAGE` 与 `BLOG_RUNTIME_IMAGE`。Go 程序在开发电脑编译，服务器复用现有精简运行镜像；在服务器就地运行 `auth/provision.py`，将既有密码转换为 `gateway/private/session.json` 中的 PBKDF2-SHA256 验证器，文件为 root:101、`0440`。程序只挂载验证器，不读取明文凭据文件；还需创建 UID/GID `101:101`、`0700` 的 `/srv/asher-knowledge/data/content/`，以可写持久卷挂载到 `/data/content`。具体步骤见 [文档与会话服务部署](auth/README.md)。Caddy 配置目录使用 root:1000、`0750`；`data/` 归 UID/GID `1000:1000`、权限 `0700`，普通 Caddyfile 可用 `0644`。
 
-会话 Cookie 使用 `Secure`、`HttpOnly`、`SameSite=Lax` 和 `__Host-` 前缀。普通会话在浏览器关闭后结束，服务端最长 12 小时；选择保持登录时最长 7 天。退出会撤销服务端令牌并清理 HTTP 缓存，保留书架和主题记录。认证服务重启或更新后所有人需重新登录；会话令牌不写入 localStorage，也不持久化到数据库。
+会话 Cookie 使用 `Secure`、`HttpOnly`、`SameSite=Lax` 和 `__Host-` 前缀。普通会话在浏览器关闭后结束，服务端最长 12 小时；选择保持登录时最长 7 天。退出会先锁定并清理本机加密离线库和同步协议元数据，再确认服务端令牌撤销；书架 v1 记录和主题保留。认证服务重启或更新后需重新登录；会话令牌不写入 localStorage，也不持久化到数据库。
 
 会话版 Caddy 配置使用 HTTP-01。已有 80 端口反向代理时，搭配 [HTTP 端口叠加配置](deploy/compose.ip-http.yaml)和 [Nginx 验证路径片段](deploy/nginx-acme-location.example)。先备份现有 Nginx 配置，只在 80 端口站点中增加 `/.well-known/acme-challenge/` 路由，并在 `nginx -t` 成功后平滑重载。`BLOG_CHALLENGE_BIND` 必须填写该 Nginx 容器所在 Docker 网络的私有网桥地址，**不得使用 `0.0.0.0` 或公网地址**。网关 HTTP 端口只处理证书验证，其他路径返回 404。
 
@@ -241,14 +249,14 @@ docker compose up -d --no-build --force-recreate
 备份分四部分：
 
 1. **程序源代码**：备份项目源码、`public/`、部署配置、`package-lock.json`、`auth/go.mod` 与 `auth/go.sum`。`src/content/articles/` 是静态示例，正式内容不在这里；依赖、`dist/`、缓存和报告可重建。普通源码归档排除 `data/`、网关私有配置和凭据。
-2. **服务端正式内容**：单独加密备份 `/srv/asher-knowledge/data/content/`，包含文档 JSON、Markdown 原文/发布快照及配图。程序回滚时保持此目录，不要用旧数据覆盖新文章。应在短暂停止写入的维护窗口创建一致备份，方法见 [内容备份指南](docs/content-guide.md#备份与恢复)。
-3. **浏览器记录**：定期在「我的书架」导出 JSON。服务器备份不包含浏览器收藏与阅读位置；恢复时通过「导入记录」合并。
+2. **服务端正式内容与状态**：单独加密备份整个 `/srv/asher-knowledge/data/content/`，包含文档 JSON、Markdown 原文/发布快照、配图、活动和 `state/reading.json`。程序回滚时保持此目录，不要用旧数据覆盖新文章。应在短暂停止唯一写入进程的维护窗口创建一致备份，方法见 [内容备份指南](docs/content-guide.md#备份与恢复)。
+3. **浏览器记录**：定期在「我的书架」导出 JSON，保留尚未同步或仅本机的记录。服务器备份不包含主题、未保存编辑和加密离线副本；恢复时可通过「导入记录」合并。
 4. **部署私有配置**：单独加密备份，不放入代码仓库或普通源码归档。此次 IP 网关需备份 `/srv/asher-knowledge/gateway/`（含配置、`private/session.json` 验证器、认证程序版本、`data/` 内的证书与 ACME 账户）以及 `/srv/asher-knowledge/secrets/`；恢复后保持原有所有者和权限，并复查现有 Nginx 的 ACME 路由。内存会话无需备份，恢复后重新登录。域名宿主机兼容方案备份 `/etc/caddy/` 与证书数据目录；官方 systemd 服务通常使用 `/var/lib/caddy/.local/share/caddy`，详见 [Caddy 服务运行说明](https://caddyserver.com/docs/running)。
 
 例如在项目目录外创建源码归档：
 
 ```bash
-tar --exclude=node_modules --exclude=dist --exclude=.astro --exclude=coverage --exclude=playwright-report --exclude=test-results --exclude=.git --exclude=.aws --exclude=.agents --exclude=.codex --exclude=.codegraph --exclude=docs/deployments --exclude=docs/plans --exclude=auth/auth-service --exclude='.env*' --exclude=runtime.env --exclude=gateway --exclude=secrets --exclude=data -czf asher-knowledge-source.tar.gz -C /srv asher-knowledge
+tar --exclude=node_modules --exclude=dist --exclude=.astro --exclude=coverage --exclude=playwright-report --exclude=test-results --exclude=.playwright-cli --exclude=.git --exclude=.aws --exclude=.agents --exclude=.codex --exclude=.codegraph --exclude=docs/deployments --exclude=docs/plans --exclude=auth/auth-service --exclude='.env*' --exclude=runtime.env --exclude=gateway --exclude=secrets --exclude=data -czf asher-knowledge-source.tar.gz -C /srv asher-knowledge
 ```
 
 归档目标不要放进正在归档的项目目录。恢复程序时按部署记录恢复 Nginx、文档服务和网关，再挂载单独恢复的正式内容；`docker compose up -d --build` 只恢复静态容器，不等于恢复完整博客。服务端没有会话数据库，但 `data/content/` 必须保留。
@@ -271,11 +279,11 @@ npm run test:e2e
 BLOG_TEST_BASE_URL=https://YOUR_PUBLIC_IP BLOG_TEST_SSH_TARGET=YOUR_SERVER npm run test:e2e
 ```
 
-该模式不启动本地服务器，仅通过 SSH 将 `/srv/asher-knowledge/secrets/access.json` 读入测试进程内存，校验目标 HTTPS origin 后由测试 fixture 调用 `/auth/login` 建立 Cookie 会话。不会导出密码文件，配置中不再使用 HTTP Basic 凭据，并关闭 trace、视频与 HTML 报告。已有部署需保持相同的凭据文件格式与路径。登录与内容端到端用例仅在显式指定 SSH 目标时运行，本地静态预览不会被当作认证或文档服务器。内容测试只创建和清理自身随机 QA 文档，不操作用户已有文档。
+该部署模式必须显式同时提供 HTTPS origin 与 SSH 目标；它不启动本地服务器，只通过 SSH 将 `/srv/asher-knowledge/secrets/access.json` 读入测试进程内存，校验 origin 后建立 Cookie 会话。不会导出密码文件，并关闭 trace、视频与 HTML 报告。默认 `npm run test:e2e` 不使用此模式。内容测试只创建和清理自身随机 QA 文档，不操作用户已有文档。
 
-macOS 已安装 Google Chrome 时测试会自动复用；其他环境默认使用 Playwright Chromium，也可通过 `PLAYWRIGHT_CHANNEL` 指定浏览器通道。首次安装 Playwright 浏览器需要网络；Linux 上可能还需 `npx playwright install --with-deps chromium`。端到端测试针对 Chromium 的桌面、手机和平板视口；这不等同于真实 Safari/iOS 设备认证。覆盖率门槛覆盖搜索、浏览器存储、文档请求、命令匹配、阅读偏好、写作辅助及内容块解析的核心逻辑的语句、分支、函数、行均不低于 80%，不声称该数字代表全部 UI 代码。
+macOS 已安装 Google Chrome 时测试会自动复用；其他环境默认使用 Playwright Chromium，也可通过 `PLAYWRIGHT_CHANNEL` 指定浏览器通道。首次安装 Playwright 浏览器需要网络；Linux 上可能还需 `npx playwright install --with-deps chromium`。端到端测试是 Chromium 的桌面、手机和平板三种视口，不等同于三种浏览器，更不等同于真实 Safari/iOS 设备认证。覆盖率门槛覆盖核心逻辑，不声称代表全部 UI 代码。
 
-本轮通过68项前端单元测试、51项Go竞态测试，以及162项完整公网浏览器验收（桌面、手机、平板，无跳过或重试）。已实测资源503恢复、未保存草稿等待保存后刷新，以及128MiB容器内缓存淘汰、2MiB文档与图片重建持久化。覆盖率、真实截图、基准数据和未验证范围见[验证记录](docs/qa/verification.md)。公开仓库只保留通用配置；实例地址、真实凭据、内容数据和私有运维记录应由部署者私下保管。
+此前记录的 162 项公网浏览器验收属于旧版本历史基线，不能代表本轮 PWA、同步与回流改动已经通过。最新本地门禁、覆盖率、截图、Lighthouse/LCP 数据、跳过项和环境限制以[验证记录](docs/qa/verification.md)及[性能记录](docs/qa/performance.md)为准；目标值在重新测量并写入记录前不算成绩。公开仓库只保留通用配置，不记录实例地址、真实凭据、内容数据或私有运维信息。
 
 ```text
 src/content/articles/    明确标注的静态示例
@@ -288,6 +296,7 @@ public/login-assets/    公开登录页的独立样式和交互
 auth/                   Go 文档/会话服务、Markdown 渲染与验证器工具
 auth/content/           持久化、快照、搜索、上传与导出
 docs/content-guide.md   日常写作、导入和私有内容备份
+docs/offline-and-sync.md 加密离线、阅读同步与设备清理边界
 tests/                  单元与浏览器测试
 deploy/                 Nginx、Caddy 与服务配置
 Dockerfile              静态构建及非 root 运行镜像

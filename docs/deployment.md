@@ -23,7 +23,9 @@
     auth-service -> releases/RELEASE/auth-service
 ```
 
-Nginx 只绑定服务器 `127.0.0.1:8080`，提供静态外壳。Caddy 在公网提供 HTTPS。Go 服务只在 Docker 私有网络监听 `9090`，处理会话、文档、图片、导入和导出。正式数据不在 `dist/` 或静态示例目录中；日常写作和发布无需重建程序。
+Nginx 只绑定服务器 `127.0.0.1:8080`，提供静态外壳。Caddy 在公网提供 HTTPS。Go 服务只在 Docker 私有网络监听 `9090`，处理会话、文档、图片、导入导出、阅读同步和离线版本检查。正式数据不在 `dist/` 或静态示例目录中；日常写作和发布无需重建程序。基础 `compose.yaml` / `compose.prebuilt.yaml` 只负责静态 Nginx，不是一条命令就能启动完整私有博客。
+
+这是单所有者、单写入者部署：只运行一个写入 `/srv/asher-knowledge/data/content/` 的 auth 实例。服务没有数据库；文档、配图、活动和 `state/reading.json` 都在同一个内容目录中，由进程内锁串行写入。不要把该目录同时挂载给多个 auth 容器。
 
 ## 1. 准备构建
 
@@ -38,6 +40,16 @@ cd auth
 GOTOOLCHAIN=go1.27.3 go test -race -cover ./...
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOTOOLCHAIN=go1.27.3 go build -trimpath -ldflags='-s -w' -o auth-service .
 ```
+
+生产环境可关闭演示文章，构建时设置 `BLOG_INCLUDE_EXAMPLES=0`：
+
+```bash
+BLOG_INCLUDE_EXAMPLES=0 npm run build
+# 使用 Docker 构建时，Compose 会传递同名构建参数：
+BLOG_INCLUDE_EXAMPLES=0 docker compose build
+```
+
+默认值为 `1`；只接受 `0`/`1`，错误配置会使构建失败。关闭后不生成带 `demo: true` 的静态文章路由，示例索引为空，入口和客户端回退同时关闭，`?examples=1` 也不能重新启用。源码中的演示 Markdown 与通用插图保留；真实 Go 文档、发布和导入不受影响。此设置需要重新构建，不能只改运行时容器环境变量。
 
 将源码和 `dist/` 上传到新的 `releases/RELEASE/`，把二进制上传到 `gateway/releases/RELEASE/auth-service`。不上传依赖、测试报告、本机配置和密钥。服务器无需安装 Node.js 或 Go；小磁盘使用 [预构建静态配置](../compose.prebuilt.yaml)，避免现场构建依赖。
 
@@ -88,9 +100,11 @@ python3 /srv/asher-knowledge/releases/RELEASE/auth/provision.py \
 
 验证器为 root:101、`0440`，使用随机盐和 600000 次 PBKDF2-SHA256。服务只挂载验证器，不挂载明文访问记录。配置缺失或 HTTPS origin 非法时，服务拒绝启动。
 
-复制 [基础网关 Compose](../deploy/compose.ip-https.yaml) 为 `gateway/compose.yaml`、[会话配置](../deploy/compose.session.yaml) 为 `gateway/compose.session.yaml`、[会话 Caddyfile](../deploy/Caddyfile.session.example) 为 `gateway/config/Caddyfile`。程序权限为 `0755`，`gateway/auth-service` 指向相应版本二进制。Caddyfile 可为 `0644`，配置目录保持 root:1000、`0750`。
+复制 [基础网关 Compose](../deploy/compose.ip-https.yaml) 为 `gateway/compose.yaml`、[会话配置](../deploy/compose.session.yaml) 为 `gateway/compose.session.yaml`、[会话 Caddyfile](../deploy/Caddyfile.session.example) 为 `gateway/config/Caddyfile`。程序权限为 `0755`，`gateway/auth-service` 指向相应版本二进制。Caddyfile 可为 `0644`，配置目录保持 root:1000、`0750`；内容目录及其 `state/` 保持 `0700`，`state/reading.json` 为 `0600`。
 
 `gateway/runtime.env` 仅在服务器保存，设置实际 `BLOG_IP`、`BLOG_GATEWAY_IMAGE` 和 `BLOG_RUNTIME_IMAGE`，镜像建议固定为审核后的 digest。不要把此文件提交仓库。
+
+PWA 安装、Service Worker 与 Web Crypto 依赖 HTTPS。保持会话 Caddyfile 的匿名登录资源为精确路径白名单，不要为了 manifest、图标或离线页扩大 `/login-assets/` 前缀或公开目录；页面通过 `crossorigin="use-credentials"` 读取 manifest，登录后再取得其余私有外壳。Service Worker 不得缓存 `/login/`、`/auth/*`、`/api/*`、私有文章 HTML 或搜索索引。运行时不需要 CDN 或在线字体。
 
 ## 3. 选择 HTTP-01 证书入口
 
@@ -129,6 +143,8 @@ docker compose --env-file runtime.env -f compose.yaml -f compose.http.yaml -f co
 - 首页匿名请求 302 到 `/login/`，登录页 200，不含原生 `WWW-Authenticate` 挑战。
 - 匿名 `/api/documents` 返回 401；正确账号密码登录后可新建、保存、发布并搜索。
 - 上传自行选择的测试 Markdown 和配图，发布后显示正确；草稿不进入阅读索引。
+- 两个已登录浏览器的收藏/已读能同步；字段冲突显示明确选择，离线队列联网后补传。
+- 主动保存的已发布文章可在 `/offline/` 用独立口令解锁；Cache Storage 中没有登录、API、私有文章 HTML 或搜索索引。
 - 退出后旧会话失效，后退不恢复私有正文；书架和主题记录保留。
 - 验证程序重建后文档和图片仍在。重启会清除内存会话，重新登录属于预期。
 
@@ -138,10 +154,14 @@ docker compose --env-file runtime.env -f compose.yaml -f compose.http.yaml -f co
 BLOG_TEST_BASE_URL=https://YOUR_PUBLIC_IP BLOG_TEST_SSH_TARGET=YOUR_SERVER npm run test:e2e
 ```
 
+默认 `npm run test:e2e` 不走 SSH：它在回环地址启动临时 HTTPS、真实 Go 服务、随机凭据和独立数据目录，并在结束时清理。SPKI 参数只固定这张临时自签名证书。测试项目是 Chromium 的桌面、手机和平板三种视口，不是 Safari/iOS 真机。只有上面的部署模式才显式读取 SSH 凭据到进程内存；本轮本地验收不应误写成部署验收。
+
 ## 更新、回滚与备份
 
-日常文档编辑、导入和发布无需部署。程序更新上传到新版本目录；切换二进制符号链接后，用 `up -d --force-recreate --wait auth` 重建绑定挂载，仅 `restart` 不会更换旧 inode。静态容器也应从新版本目录重建并验收，再切换 `current`。
+日常文档编辑、导入和发布无需部署。涉及数据格式的新版本先部署兼容后端并验收，再部署静态前端；切换二进制符号链接后，用 `up -d --force-recreate --wait auth` 重建绑定挂载，仅 `restart` 不会更换旧 inode。静态容器随后从新版本目录重建并验收，再切换 `current`。
 
-回滚保留的程序及配置时，保持同一个 `data/content/`，不要用旧数据覆盖已经更新的文章。确认旧程序兼容当前数据格式。不要自动清理旧版本、共享图片或其他网站的数据。
+回滚保留的程序及配置时，保持同一个 `data/content/`，不要用旧数据覆盖已经更新的文章。旧后端再次保存可能剥离它不认识的新字段；回滚前需提供兼容桥接或进入只读维护窗口验证格式，不能一边用新前端写入、一边切回不兼容后端。不要自动清理旧版本、共享图片或其他网站的数据。
 
-源码、服务端内容、私有配置和浏览器状态分开备份：正式内容及配图位于 `data/content/`，验证器和证书位于 `gateway/`，登录记录位于 `secrets/`，应单独加密保存。备份需短暂停写并保持一致性；恢复属主和权限后再启动。具体命令见 [内容备份与恢复](content-guide.md#备份与恢复)。实例实际运维记录应保存在部署者私有位置，不进入公开仓库。
+源码、服务端内容、私有配置和浏览器状态分开备份：整个 `data/content/` 包含正式内容、配图、活动和服务端阅读状态；验证器和证书位于 `gateway/`，登录记录位于 `secrets/`，应单独加密保存。浏览器 IndexedDB 离线库不是服务器备份，忘记口令时只能清除并联网重建。备份需短暂停止唯一写入者并保持一致性；恢复属主和权限后再启动。具体命令见[内容备份与恢复](content-guide.md#备份与恢复)，离线边界见[离线与同步说明](offline-and-sync.md)。
+
+固定条件下的 Lighthouse、LCP 实测及限制统一记录在[性能记录](qa/performance.md)和[验证记录](qa/verification.md)。本轮已完成本地受控测量；正式部署后仍应按实际服务器与网络重新验收。
