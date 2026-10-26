@@ -5,7 +5,7 @@ import { resolve, join } from 'node:path';
 import { readLocalCredentials } from './local-private-server.mjs';
 
 const mode = process.env.BLOG_CAPTURE_MODE || 'examples';
-if (!['examples', 'today', 'knowledge'].includes(mode)) throw new Error('Capture mode must be examples, today or knowledge.');
+if (!['examples', 'today', 'knowledge', 'private'].includes(mode)) throw new Error('Capture mode must be examples, today, knowledge or private.');
 if (mode !== 'examples' && process.env.BLOG_TEST_LOCAL_AUTH !== '1') throw new Error('Generated private captures require temporary local QA authentication.');
 
 async function seedToday(request, origin, record) {
@@ -19,8 +19,8 @@ async function seedToday(request, origin, record) {
     ['QA · 等待整理的一页笔记', 'article', '', false, day],
   ]) {
     const response = await request.post('/api/documents', { headers: { Origin: origin }, data: {
-      title, description: '只为本次本地界面验收生成的示例内容。', date, tags: ['QA示例'], category: '临时验收',
-      cover: '', source: `## 从一个问题开始\n\n${'记录一个观察，保留继续探索的线索。'.repeat(24)}`, kind, maturity, series: 'QA日常观察', related: [],
+      title, description: '演示/验收示例，不代表真实经历。只为本次本地界面验收生成。', date, tags: ['QA示例'], category: '临时验收',
+      cover: '', source: `> **演示/验收示例，不代表真实经历。**\n\n## 从一个问题开始\n\n${'记录一个观察，保留继续探索的线索。'.repeat(24)}`, kind, maturity, series: 'QA日常观察', related: [],
     } });
     if (!response.ok()) throw new Error('QA Today dataset creation failed.');
     let { data } = await response.json();
@@ -46,10 +46,10 @@ async function seedKnowledge(request, origin, record) {
     const links = targets.map(title => `[[${title}]]`).join('，以及 ');
     const missing = index === 0 ? '\n\n[[QA · 下一次想继续研究的问题]]' : '';
     const response = await request.post('/api/documents', { headers: { Origin: origin }, data: {
-      title: titles[index], description: '仅用于本次本地知识连接验收的生成内容。', date: new Date().toISOString().slice(0, 10),
+      title: titles[index], description: '演示/验收示例，不代表真实经历。仅用于本次本地知识连接验收。', date: new Date().toISOString().slice(0, 10),
       tags: [['QA知识连接', 'QA阅读笔记', 'QA实践记录'][index % 3]], category: '临时验收', cover: '',
       kind: index % 3 === 1 ? 'note' : 'article', maturity: index % 2 ? 'growing' : 'evergreen', related: [], series: 'QA知识花园',
-      source: `## 从一个问题开始\n\n一条知识不必孤立存在。保留判断的来路，也为下一次回顾留下一条线索。\n\n## 让想法连接起来\n\n继续阅读 ${links}。${missing}\n\n> 本文与所有连接均为本地验收生成的 QA 内容。`,
+      source: `> **演示/验收示例，不代表真实经历。**\n\n## 从一个问题开始\n\n一条知识不必孤立存在。保留判断的来路，也为下一次回顾留下一条线索。\n\n## 让想法连接起来\n\n继续阅读 ${links}。${missing}\n\n> 本文与所有连接均为本地验收生成的 QA 内容。`,
     } });
     if (!response.ok()) throw new Error('QA knowledge dataset creation failed.');
     let { data } = await response.json();
@@ -67,16 +67,39 @@ async function seedKnowledge(request, origin, record) {
   return documents;
 }
 
+async function seedPrivate(request, origin, record) {
+  const response = await request.post('/api/documents', { headers: { Origin: origin }, data: {
+    title: '验收示例 · 加密离线阅读',
+    description: '演示/验收示例，不代表真实经历。仅用于本地加密离线功能验收。',
+    date: new Date().toISOString().slice(0, 10), tags: ['QA离线验收'], category: '临时验收', cover: '',
+    source: '> **演示/验收示例，不代表真实经历。**\n\n## 离线阅读验收\n\n这份临时内容只用于确认正文经加密后保存在当前设备，并能使用独立离线口令解锁。',
+  } });
+  if (!response.ok()) throw new Error('QA private dataset creation failed.');
+  let { data } = await response.json();
+  record(data);
+  const published = await request.post(`/api/documents/${data.id}/publish`, { headers: { Origin: origin }, data: { version: data.version } });
+  if (!published.ok()) throw new Error('QA private dataset publication failed.');
+  ({ data } = await published.json());
+  record(data);
+  return [data];
+}
+
 async function cleanupToday(request, origin, documents) {
+  let failed = false;
   for (let document of documents) {
-    if (document.status !== 'trash') {
-      const response = await request.post(`/api/documents/${document.id}/trash`, { headers: { Origin: origin }, data: { version: document.version } });
-      if (!response.ok()) throw new Error('QA Today cleanup failed.');
-      ({ data: document } = await response.json());
+    try {
+      if (document.status !== 'trash') {
+        const response = await request.post(`/api/documents/${document.id}/trash`, { headers: { Origin: origin }, data: { version: document.version } });
+        if (!response.ok()) throw new Error('trash failed');
+        ({ data: document } = await response.json());
+      }
+      const response = await request.delete(`/api/documents/${document.id}`, { headers: { Origin: origin }, data: { version: document.version } });
+      if (!response.ok()) throw new Error('delete failed');
+    } catch {
+      failed = true;
     }
-    const response = await request.delete(`/api/documents/${document.id}`, { headers: { Origin: origin }, data: { version: document.version } });
-    if (!response.ok()) throw new Error('QA Today cleanup failed.');
   }
+  if (failed) throw new Error('QA generated-document cleanup failed.');
 }
 
 const base = new URL(process.env.BLOG_CAPTURE_BASE_URL || 'http://127.0.0.1:4321');
@@ -85,31 +108,76 @@ const themes = (process.env.BLOG_CAPTURE_THEMES || 'dark,light').split(',');
 const allowed = { desktop: { width: 1440, height: 1000 }, tablet: { width: 768, height: 1024 }, mobile: { width: 390, height: 844 } };
 const viewports = (process.env.BLOG_CAPTURE_VIEWPORTS || 'desktop,tablet,mobile').split(',');
 if (themes.some(theme => !['dark', 'light'].includes(theme)) || viewports.some(name => !allowed[name])) throw new Error('Invalid capture theme or viewport.');
+const motion = process.env.BLOG_CAPTURE_MOTION === 'normal' ? 'no-preference' : 'reduce';
+const fullPage = process.env.BLOG_CAPTURE_FULL_PAGE !== '0';
 const output = resolve(process.env.BLOG_CAPTURE_OUTPUT || 'docs/qa/previews');
 await mkdir(output, { recursive: true });
-const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome' });
+const credentials = process.env.BLOG_TEST_LOCAL_AUTH === '1' ? await readLocalCredentials(base.origin) : undefined;
+const browser = await chromium.launch({
+  channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
+  args: credentials ? [`--ignore-certificate-errors-spki-list=${credentials.certificateSPKI}`] : [],
+  handleSIGINT: false,
+  handleSIGTERM: false,
+  handleSIGHUP: false,
+});
 let captures = 0;
 let seedContext;
 let owned = [];
+let cleanupPromise;
+const cleanup = () => cleanupPromise ??= (async () => {
+  let failed = false;
+  try { if (seedContext) await cleanupToday(seedContext.request, base.origin, owned); }
+  catch { failed = true; }
+  await browser.close();
+  if (failed) throw new Error('Temporary QA capture cleanup failed; no request details retained.');
+})();
+const onSignal = signal => { void cleanup().finally(() => process.exit(signal === 'SIGINT' ? 130 : 143)); };
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, onSignal);
 try {
   if (mode !== 'examples') {
     seedContext = await browser.newContext({ baseURL: base.origin, ignoreHTTPSErrors: true });
-    const credentials = await readLocalCredentials(base.origin);
     const response = await seedContext.request.post('/auth/login', { headers: { Origin: base.origin }, data: { username: credentials.username, password: credentials.password } });
     if (!response.ok()) throw new Error('Local QA capture login failed.');
-    const seed = mode === 'knowledge' ? seedKnowledge : seedToday;
+    const seed = mode === 'knowledge' ? seedKnowledge : mode === 'private' ? seedPrivate : seedToday;
     owned = await seed(seedContext.request, base.origin, document => { owned = [...owned.filter(item => item.id !== document.id), document]; });
   }
   for (const name of viewports) {
-    const context = await browser.newContext({ viewport: allowed[name], deviceScaleFactor: 1, baseURL: base.origin, ignoreHTTPSErrors: process.env.BLOG_TEST_LOCAL_AUTH === '1', reducedMotion: 'reduce' });
-    if (process.env.BLOG_TEST_LOCAL_AUTH === '1') {
-      const credentials = await readLocalCredentials(base.origin);
-      const response = await context.request.post('/auth/login', { headers: { Origin: base.origin }, data: { username: credentials.username, password: credentials.password } });
-      if (response.status() !== 200) throw new Error('Local capture login failed.');
-    }
     for (const theme of themes) {
+      const context = await browser.newContext({ viewport: allowed[name], deviceScaleFactor: 1, baseURL: base.origin, ignoreHTTPSErrors: process.env.BLOG_TEST_LOCAL_AUTH === '1', reducedMotion: motion });
       await context.addInitScript(value => localStorage.setItem('asher-theme', value), theme);
+      if (credentials) {
+        const response = await context.request.post('/auth/login', { headers: { Origin: base.origin }, data: { username: credentials.username, password: credentials.password } });
+        if (response.status() !== 200) throw new Error('Local capture login failed.');
+      }
       const page = await context.newPage();
+      if (mode === 'private') {
+        const document = owned[0];
+        const passphrase = 'EXAMPLE VAULT 2026';
+        await page.goto(`/articles/${document.id}/`, { waitUntil: 'networkidle' });
+        await page.getByRole('button', { name: '保存离线', exact: true }).click();
+        const dialog = page.locator('#offline-save-dialog');
+        await dialog.getByLabel('离线口令', { exact: true }).fill(passphrase);
+        await dialog.getByLabel('再次输入离线口令', { exact: true }).fill(passphrase);
+        await dialog.getByRole('checkbox').check();
+        await dialog.getByRole('button', { name: '加密保存', exact: true }).click();
+        await page.getByRole('button', { name: '已保存离线', exact: true }).waitFor();
+        await page.goto('/offline/', { waitUntil: 'networkidle' });
+        await page.getByLabel('此设备的离线口令', { exact: true }).fill(passphrase);
+        await page.getByRole('button', { name: '解锁离线资料', exact: true }).click();
+        await page.getByRole('link', { name: new RegExp(document.title) }).waitFor();
+        await page.screenshot({ path: join(output, `offline-${name}-${theme}.png`), fullPage: true });
+        captures++;
+        if (name === 'desktop') {
+          await page.goto('about:blank');
+          await context.clearCookies();
+          await page.goto('/login/', { waitUntil: 'networkidle' });
+          await page.screenshot({ path: join(output, `login-${name}-${theme}.png`), fullPage: true });
+          captures++;
+        }
+        await page.close();
+        await context.close();
+        continue;
+      }
       // Today mode uses only documents generated above in the temporary local QA store.
       const paths = mode === 'knowledge' ? [['graph', '/graph/'], ['backlinks', `/articles/${owned[0].id}/`]] : mode === 'today' ? [['today', '/'], ['today-articles', '/articles/'], ['today-article', `/articles/${owned.find(document => document.status === 'published').id}/`]] : [['home', '/?examples=1'], ['articles', '/articles/?examples=1'], ['article', '/articles/build-a-learning-system/']];
       for (const [label, path] of paths) {
@@ -118,18 +186,27 @@ try {
         if (label === 'graph') await page.locator('#graph-stage[data-layout-ready="true"]').waitFor();
         if (label === 'backlinks') await page.getByRole('region', { name: '反向链接' }).getByRole('link').first().waitFor();
         if (label === 'today') await page.locator('#today-lists .today-document-link').first().waitFor();
-        await page.screenshot({ path: join(output, `${label}-${name}-${theme}.png`), fullPage: !label.endsWith('article') });
+        if (label === 'today' && motion === 'no-preference') {
+          await page.locator('[data-hero-scene][data-scene-state="active"]').waitFor();
+          await page.waitForTimeout(2_000);
+          const gradient = await page.locator('.hero-copy h1 .gradient-text').evaluate(element => {
+            const style = getComputedStyle(element);
+            const rect = element.getBoundingClientRect();
+            return { opacity: Number(style.opacity), width: rect.width, height: rect.height, backgroundImage: style.backgroundImage };
+          });
+          if (gradient.opacity < 0.99 || gradient.width <= 0 || gradient.height <= 0 || gradient.backgroundImage === 'none') throw new Error('Animated heading did not settle before capture.');
+        }
+        await page.screenshot({ path: join(output, `${label}-${name}-${theme}.png`), fullPage: fullPage && !label.endsWith('article') });
         captures++;
       }
       await page.close();
+      await context.close();
     }
-    await context.close();
   }
   console.log(JSON.stringify({ screenshots: captures, output }));
 } catch {
   throw new Error('Example-only capture failed; request details were not retained.');
 } finally {
-  try { if (seedContext) await cleanupToday(seedContext.request, base.origin, owned); }
-  catch { throw new Error('Temporary QA capture cleanup failed; no request details retained.'); }
-  finally { await browser.close(); }
+  for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, onSignal);
+  await cleanup();
 }

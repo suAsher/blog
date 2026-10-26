@@ -40,12 +40,25 @@ if (!devices.length || devices.some(value => !['mobile', 'desktop'].includes(val
 const graphPreset = process.env.BLOG_PERF_GRAPH === '1';
 const count = Number(process.env.BLOG_PERF_DOCUMENTS || (graphPreset ? 300 : 30));
 if (!Number.isInteger(count) || count < (graphPreset ? 9 : 1) || count > 300) throw new Error('Invalid QA dataset size.');
-const service = await startPrivateServer();
+const service = await startPrivateServer({ handleSignals: false });
 let browser;
 let chrome;
+let cleanupPromise;
+const cleanup = () => cleanupPromise ??= (async () => {
+  await browser?.close();
+  chrome?.kill();
+  await service.stop();
+})();
+const onSignal = signal => { void cleanup().finally(() => process.exit(signal === 'SIGINT' ? 130 : 143)); };
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, onSignal);
 try {
   const credentials = await readLocalCredentials(service.origin, service.fixture);
-  browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome' });
+  browser = await chromium.launch({
+    channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
+    handleSIGINT: false,
+    handleSIGTERM: false,
+    handleSIGHUP: false,
+  });
   const login = async () => {
     const context = await browser.newContext({ baseURL: service.origin, ignoreHTTPSErrors: true });
     const response = await context.request.post('/auth/login', { headers: { Origin: service.origin }, data: { username: credentials.username, password: credentials.password } });
@@ -80,7 +93,6 @@ try {
   const cookie = (await context.cookies(service.origin)).find(value => value.name === '__Host-asher_session');
   if (!cookie) throw new Error('Local audit session unavailable.');
   const chromePath = process.env.CHROME_PATH || (existsSync('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome') ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : undefined);
-  chrome = await launch({ chromePath, chromeFlags: ['--headless=new', '--ignore-certificate-errors', '--disable-background-networking', '--disable-extensions'] });
   const chromeVersion = browser.version();
   await browser.close(); browser = undefined;
   const paths = (process.env.BLOG_PERF_PATHS || '/,/articles/,/articles/build-a-learning-system/,/manage/').split(',');
@@ -91,13 +103,24 @@ try {
       const runs = [];
       const diagnostics = [];
       for (let sample = 0; sample < samples; sample++) {
-        const report = await lighthouse(service.origin + path, {
-          port: chrome.port, logLevel: 'error', output: 'json', onlyCategories: ['performance', 'accessibility', 'best-practices'],
-          formFactor, screenEmulation: formFactor === 'desktop' ? { mobile: false, width: 1440, height: 1000, deviceScaleFactor: 1, disabled: false } : { mobile: true, width: 390, height: 844, deviceScaleFactor: 1, disabled: false },
-          throttlingMethod: 'simulate',
-          extraHeaders: { Cookie: `${cookie.name}=${cookie.value}` },
-          disableStorageReset: false,
-        }, formFactor === 'desktop' ? { extends: 'lighthouse:default', settings: { formFactor: 'desktop', throttling: { rttMs: 40, throughputKbps: 10240, cpuSlowdownMultiplier: 1, requestLatencyMs: 0, downloadThroughputKbps: 0, uploadThroughputKbps: 0 } } } : undefined);
+        chrome = await launch({ chromePath, handleSIGINT: false, chromeFlags: ['--headless=new', `--ignore-certificate-errors-spki-list=${credentials.certificateSPKI}`, '--disable-background-networking', '--disable-extensions'] });
+        let auditBrowser;
+        let report;
+        try {
+          auditBrowser = await chromium.connectOverCDP(`http://127.0.0.1:${chrome.port}`);
+          const [auditContext] = auditBrowser.contexts();
+          if (!auditContext) throw new Error('Fresh Lighthouse browser context unavailable.');
+          await auditContext.addCookies([{ name: cookie.name, value: cookie.value, url: service.origin, httpOnly: true, secure: true, sameSite: 'Lax' }]);
+          report = await lighthouse(service.origin + path, {
+            port: chrome.port, logLevel: 'error', output: 'json', onlyCategories: ['performance', 'accessibility', 'best-practices'],
+            formFactor, screenEmulation: formFactor === 'desktop' ? { mobile: false, width: 1440, height: 1000, deviceScaleFactor: 1, disabled: false } : { mobile: true, width: 390, height: 844, deviceScaleFactor: 1, disabled: false },
+            throttlingMethod: 'simulate', disableStorageReset: true,
+          }, formFactor === 'desktop' ? { extends: 'lighthouse:default', settings: { formFactor: 'desktop', throttling: { rttMs: 40, throughputKbps: 10240, cpuSlowdownMultiplier: 1, requestLatencyMs: 0, downloadThroughputKbps: 0, uploadThroughputKbps: 0 } } } : undefined);
+        } finally {
+          await auditBrowser?.close();
+          chrome?.kill();
+          chrome = undefined;
+        }
         const lhr = report.lhr;
         if (lhr.runtimeError || !lhr.finalDisplayedUrl.startsWith(service.origin + path.split('?')[0]) || lhr.finalDisplayedUrl.includes('/login')) throw new Error('Audit did not measure the authenticated target page.');
         runs.push({ performance: lhr.categories.performance.score * 100, accessibility: lhr.categories.accessibility.score * 100, bestPractices: lhr.categories['best-practices'].score * 100, lcpMs: lhr.audits['largest-contentful-paint'].numericValue,
@@ -115,14 +138,13 @@ try {
       results.push({ formFactor, path, metrics, runs, diagnostics });
     }
   }
-  const summary = { measuredAt: new Date().toISOString(), chromeVersion, lighthouseVersion: (await import('lighthouse/package.json', { with: { type: 'json' } })).default.version, samples, devices, dataset: { documents: count, graph: graphBudget, source: 'Generated QA fixtures only; temporary real Go store' }, transport: 'loopback HTTPS; self-signed certificate; real cookie authentication', cache: 'Lighthouse resets HTTP cache and browser storage before each sample', results };
+  const summary = { measuredAt: new Date().toISOString(), chromeVersion, lighthouseVersion: (await import('lighthouse/package.json', { with: { type: 'json' } })).default.version, samples, devices, dataset: { documents: count, graph: graphBudget, source: 'Generated QA fixtures only; temporary real Go store' }, transport: 'loopback HTTPS; self-signed certificate; real browser cookie authentication', cache: 'A fresh Chrome profile provides cold browser storage and HTTP cache for every sample', results };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(summary, null, 2) + '\n');
   console.log(`Aggregate performance report: ${output}`);
 } catch {
   throw new Error('Local performance audit failed; raw requests and reports were not retained.');
 } finally {
-  await browser?.close();
-  chrome?.kill();
-  await service.stop();
+  for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, onSignal);
+  await cleanup();
 }

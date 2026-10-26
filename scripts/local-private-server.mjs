@@ -49,7 +49,7 @@ export async function startPrivateServer(options = {}) {
   let stopping;
   let ownsFixture = false;
   const stop = () => stopping ??= (async () => {
-    for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, onSignal);
+    if (options.handleSignals !== false) for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, onSignal);
     if (server) { server.closeAllConnections(); await new Promise(done => server.close(done)); }
     await Promise.all(children.map(child => new Promise(done => {
       if (!child.pid || child.exitCode !== null || child.signalCode !== null) return done();
@@ -60,7 +60,7 @@ export async function startPrivateServer(options = {}) {
     await rm(temporary, { recursive: true, force: true });
   })();
   const onSignal = async () => { await stop(); process.exit(0); };
-  for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, onSignal);
+  if (options.handleSignals !== false) for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, onSignal);
   const launch = (command, args, env = {}) => {
     const child = spawn(command, args, { cwd: root, env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
     // Do not pipe child logs or request details into test artifacts.

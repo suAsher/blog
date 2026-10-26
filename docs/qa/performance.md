@@ -23,7 +23,9 @@ BLOG_PERF_PATHS=/,/articles/build-a-learning-system/ \
   node scripts/audit-performance.mjs
 ```
 
-The audit script starts and cleans up its own server and creates random credentials with the production PBKDF2-SHA256 verifier (600,000 iterations). `BLOG_PERF_SAMPLES` defaults to 3 (minimum 3), `BLOG_PERF_DOCUMENTS` to 30, and `BLOG_PERF_PATHS` to home, article listing, example article, and writing workspace. `BLOG_TEST_LOCAL_DIST` optionally points to a preserved production build. `BLOG_TEST_LOCAL_PORT` changes the default HTTPS port 4443. Run comparable audits with the same Chrome version, dataset size, paths and machine workload; run audits sequentially.
+The audit script starts and cleans up its own server and creates random credentials with the production PBKDF2-SHA256 verifier (600,000 iterations). `BLOG_PERF_SAMPLES` defaults to 3 (minimum 3), `BLOG_PERF_DOCUMENTS` to 30, and `BLOG_PERF_PATHS` to home, article listing, example article, and writing workspace. `BLOG_TEST_LOCAL_DIST` optionally points to a preserved production build. `BLOG_TEST_LOCAL_PORT` changes the default HTTPS port 4443. Each current sample starts with a fresh Chrome profile and installs the temporary authenticated session as a real browser cookie. The fresh profile supplies empty browser storage and a cold HTTP cache without stripping authentication from service-worker requests. Run comparable audits with the same Chrome version, dataset size, paths and machine workload; run audits sequentially.
+
+Service-worker tests use a browser-worker fixture that reads the fresh QA certificate's public SPKI hash after server startup and pins only that certificate through Chrome's `--ignore-certificate-errors-spki-list`. Chrome's general localhost allowance was insufficient for service-worker script validation. The pin is generated per run and deleted with the temporary fixture; explicit deployment/static modes receive no browser certificate trust override. No system trust store or production TLS setting is changed.
 
 The default E2E run uses the real local private service (Go 1.26+ and OpenSSL are required). Set `BLOG_TEST_STATIC_ONLY=1` to run only the static preview on port 4390, with authentication/content cases skipped. Explicit `BLOG_TEST_BASE_URL` and optional SSH target retain the deployment workflow. Tests refuse to reuse an unrelated local preview.
 
@@ -144,3 +146,30 @@ The final screenshot dataset contains 12 generated published QA documents, 24 re
 - [Published reader with Wiki links and backlinks](evolution-stage3-reader-backlinks-desktop-dark.png)
 
 All screenshot documents were removed after capture, and all temporary authentication credentials, content stores and QA processes were shut down. The stage-three build snapshots and aggregate reports remain under `/tmp` only for subsequent comparison.
+
+## Stage-five final validation
+
+The final default build (2026-10-26 21:48:59 local time) passed all 318 browser tests with zero skips across desktop, mobile and tablet in 1.8 minutes. Its focused encrypted-PWA run passed 24/24, including stored dark and light preferences on a light OS. The separate examples-disabled production build generated 11 routes and passed its real Go browser smoke on all three viewports; the orchestrator then restored the normal 17-route build. The immutable final snapshot includes the private offline PWA, cross-device reading sync and the bounded conflict panel.
+
+The final performance run used three independent cold Chrome profiles for every workload/device row. Every profile received the temporary QA session as an actual browser cookie, so the authenticated service-worker script request followed the same credential path as an ordinary browser. The home workload contains 30 generated published documents. The separate graph workload was validated through the real Go API at exactly 300 nodes and 2,400 edges before measurement.
+
+| Workload | Device | Performance (median / worst) | Accessibility | Best practices | LCP (ms, median / worst) | TBT (ms, median / worst) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Home, 30 published documents | Mobile | 97 / 97 | 100 / 100 | 100 / 100 | 2262 / 2266 | 75 / 91 |
+| Home, 30 published documents | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 557 / 559 | 8 / 20 |
+| Graph, 300 nodes / 2,400 real edges | Mobile | 91 / 91 | 100 / 100 | 100 / 100 | 3308 / 3308 | 0 / 0 |
+| Graph, 300 nodes / 2,400 real edges | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 730 / 731 | 0 / 0 |
+
+Home mobile CLS was approximately 0.000105; desktop home CLS was approximately 0.000051. Mobile graph CLS was 0.040062 and desktop graph CLS was zero. The 3.308-second mobile graph LCP belongs only to the maximum-size graph stress workload; the final homepage remains below the 2.5-second LCP budget in all three samples.
+
+An initial final-build batch authenticated Lighthouse navigation with an injected `Cookie` request header. It scored Best Practices 96 because worker fetches do not inherit that header: Lighthouse recorded `errors-in-console` with “The script resource is behind a redirect, which is disallowed” when `/sw.js` reached the login redirect. The application PWA tests use a real cookie and were already green. The corrected audit uses a fresh Chrome profile and real cookie for each sample, and trusts only the fixture's per-run certificate SPKI; Best Practices then scored 100 in all twelve final samples. No application route or authentication exception was changed to accommodate the measurement.
+
+The aggregate reports are `/tmp/asher-blog-stage5-home-spki-cold.json` and `/tmp/asher-blog-stage5-graph-spki-cold.json`. They retain metrics and sanitized diagnostics only: no credentials, cookies, raw traces, HTML or page text. Both temporary QA datasets and their local server processes were removed by the harness.
+
+The final visual set contains 23 curated PNGs: six Today/home views, six graph views, two generated reader views, six corrected encrypted-offline views, two login views, and one 1440×1000 default-motion desktop home view with the real WebGL scene active. Generated documents explicitly state “演示/验收示例，不代表真实经历”; the offline vault uses only the test phrase `EXAMPLE VAULT 2026`. No real account or user document appears in a capture.
+
+- Home: [desktop dark](evolution-stage5-home-desktop-dark.png), [desktop light](evolution-stage5-home-desktop-light.png), [tablet dark](evolution-stage5-home-tablet-dark.png), [tablet light](evolution-stage5-home-tablet-light.png), [mobile dark](evolution-stage5-home-mobile-dark.png), [mobile light](evolution-stage5-home-mobile-light.png), [desktop dark with active motion](evolution-stage5-home-desktop-dark-motion.png)
+- Graph: [desktop dark](evolution-stage5-graph-desktop-dark.png), [desktop light](evolution-stage5-graph-desktop-light.png), [tablet dark](evolution-stage5-graph-tablet-dark.png), [tablet light](evolution-stage5-graph-tablet-light.png), [mobile dark](evolution-stage5-graph-mobile-dark.png), [mobile light](evolution-stage5-graph-mobile-light.png)
+- Reader: [desktop dark](evolution-stage5-reader-desktop-dark.png), [desktop light](evolution-stage5-reader-desktop-light.png)
+- Offline: [desktop dark](evolution-stage5-offline-desktop-dark.png), [desktop light](evolution-stage5-offline-desktop-light.png), [tablet dark](evolution-stage5-offline-tablet-dark.png), [tablet light](evolution-stage5-offline-tablet-light.png), [mobile dark](evolution-stage5-offline-mobile-dark.png), [mobile light](evolution-stage5-offline-mobile-light.png)
+- Login: [desktop dark](evolution-stage5-login-desktop-dark.png), [desktop light](evolution-stage5-login-desktop-light.png)
