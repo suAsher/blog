@@ -30,6 +30,7 @@ type Store struct {
 	freeBytes     func() (int64, error)
 	location      *time.Location
 	now           func() time.Time
+	links         *linkCache
 }
 
 func NewStore(root string) (*Store, error) {
@@ -75,7 +76,7 @@ func NewStore(root string) (*Store, error) {
 	default:
 		// A second Store in the same process must not erase a live import.
 	}
-	s := &Store{root: root, search: newSearchCache(searchCacheBudget), location: location, now: time.Now}
+	s := &Store{root: root, search: newSearchCache(searchCacheBudget), location: location, now: time.Now, links: newLinkCache(linkIndexBudget)}
 	s.freeBytes = func() (int64, error) {
 		var stat syscall.Statfs_t
 		if err := syscall.Statfs(root, &stat); err != nil {
@@ -231,6 +232,7 @@ func (s *Store) saveLocked(d *record) error {
 		return bad(500, "文档尚未保存，请重试。")
 	}
 	s.search.invalidate(d.ID)
+	s.links.invalidate()
 	dir, err := os.Open(directory)
 	if err != nil {
 		return bad(500, "无法确认文档保存状态，请重新加载核对。")
@@ -301,7 +303,11 @@ func (s *Store) detail(d *record, view string) (Detail, error) {
 		}
 		c = *d.Published
 	}
-	rendered, err := renderMarkdown(c.Source, d.Aliases)
+	var resolver wikiResolver
+	if strings.Contains(c.Source, "[[") {
+		resolver = s.wikiResolverLocked(view)
+	}
+	rendered, err := renderMarkdownResolved(c.Source, d.Aliases, resolver)
 	if err != nil {
 		return Detail{}, err
 	}
@@ -337,6 +343,9 @@ func (s *Store) update(id string, c Content, version int, present metadataPresen
 	if d.Working.Source != c.Source && strings.TrimSpace(c.Source) != "" {
 		d.Activity = addActivity(d.Activity, s.now())
 	}
+	if d.Working.Title != c.Title {
+		d.WorkingTitleAliases = rememberTitle(d.WorkingTitleAliases, d.Working.Title)
+	}
 	d.Working = c
 	d.Version++
 	d.UpdatedAt = s.now().UTC().Format(time.RFC3339Nano)
@@ -361,6 +370,9 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		if d.Status == "trash" || strings.TrimSpace(d.Working.Source) == "" {
 			return Detail{}, bad(400, "请恢复文档并填写正文后再发布。")
 		}
+		if d.Published != nil && d.Published.Title != d.Working.Title {
+			d.PublishedTitleAliases = rememberTitle(d.PublishedTitleAliases, d.Published.Title)
+		}
 		snapshot := copyContent(d.Working)
 		d.Published = &snapshot
 		d.Status = "published"
@@ -369,6 +381,7 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		if d.Status != "published" {
 			return Detail{}, bad(409, "文档当前未发布。")
 		}
+		d.PublishedTitleAliases = rememberTitle(d.PublishedTitleAliases, d.Published.Title)
 		d.Status = "draft"
 		d.Published = nil
 		d.PublishedAt = ""
@@ -380,6 +393,9 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 	case "restore":
 		if d.Status != "trash" {
 			return Detail{}, bad(409, "文档不在垃圾箱。")
+		}
+		if d.Published != nil {
+			d.PublishedTitleAliases = rememberTitle(d.PublishedTitleAliases, d.Published.Title)
 		}
 		d.Status = "draft"
 		d.Published = nil
@@ -412,6 +428,7 @@ func (s *Store) Delete(id string, version int) error {
 		return bad(500, "删除失败，请重试。")
 	}
 	s.search.invalidate(id)
+	s.links.invalidate()
 	dir, err := os.Open(filepath.Join(s.root, "documents"))
 	if err != nil {
 		return bad(500, "无法确认删除状态。")

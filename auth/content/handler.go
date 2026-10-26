@@ -55,6 +55,8 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	path := r.URL.Path
 	switch {
+	case path == "/api/graph" || path == "/api/link-targets" || path == "/api/random":
+		h.knowledge(w, r, path)
 	case path == "/api/dashboard":
 		if r.Method != "GET" && r.Method != "HEAD" {
 			method(w, "GET, HEAD")
@@ -152,6 +154,10 @@ func (h *handler) document(w http.ResponseWriter, r *http.Request, path string) 
 	}
 	id := parts[0]
 	if len(parts) == 2 {
+		if parts[1] == "links" {
+			h.documentLinks(w, r, id)
+			return
+		}
 		if parts[1] == "export" {
 			if r.Method != "GET" {
 				method(w, "GET")
@@ -238,6 +244,10 @@ func (h *handler) preview(w http.ResponseWriter, r *http.Request) {
 		respondError(w, err)
 		return
 	}
+	if err := validateSource(value.Source); err != nil {
+		respondError(w, err)
+		return
+	}
 	var aliases map[string]string
 	if value.DocumentID != "" {
 		h.store.mu.RLock()
@@ -249,7 +259,13 @@ func (h *handler) preview(w http.ResponseWriter, r *http.Request) {
 		}
 		aliases = d.Aliases
 	}
-	result, err := renderMarkdown(value.Source, aliases)
+	h.store.mu.RLock()
+	var resolver wikiResolver
+	if strings.Contains(value.Source, "[[") {
+		resolver = h.store.wikiResolverLocked("working")
+	}
+	result, err := renderMarkdownResolved(value.Source, aliases, resolver)
+	h.store.mu.RUnlock()
 	if err != nil {
 		respondError(w, err)
 		return

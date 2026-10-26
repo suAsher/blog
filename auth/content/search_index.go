@@ -22,9 +22,10 @@ type searchView struct {
 	ready                          bool
 }
 type searchRecord struct {
-	status             string
-	working, published *searchView
-	activity           []activityBucket
+	status                           string
+	working, published               *searchView
+	activity                         []activityBucket
+	workingAliases, publishedAliases []string
 }
 type searchEntry struct {
 	id    string
@@ -137,6 +138,11 @@ func recordBytes(value searchRecord) int64 {
 	for _, bucket := range value.activity {
 		total += int64(80 + len(bucket.Date) + len(bucket.FirstAt) + len(bucket.LastAt))
 	}
+	for _, history := range [][]string{value.workingAliases, value.publishedAliases} {
+		for _, alias := range history {
+			total += int64(32 + len(alias))
+		}
+	}
 	if value.published != value.working {
 		total += viewBytes(value.published)
 	}
@@ -182,7 +188,7 @@ func (c *searchCache) get(id string, info os.FileInfo, published, query bool, lo
 }
 func indexRecord(d *record) searchRecord {
 	working := &searchView{summary: summary(d, d.Working), source: d.Working.Source}
-	result := searchRecord{status: d.Status, working: working, activity: append([]activityBucket{}, d.Activity...)}
+	result := searchRecord{status: d.Status, working: working, activity: append([]activityBucket{}, d.Activity...), workingAliases: append([]string{}, d.WorkingTitleAliases...), publishedAliases: append([]string{}, d.PublishedTitleAliases...)}
 	if d.Published != nil {
 		if sameContent(d.Working, *d.Published) {
 			result.published = working

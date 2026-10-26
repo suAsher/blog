@@ -8,10 +8,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 )
 
@@ -46,10 +43,14 @@ func safeLink(destination string) bool {
 }
 
 func renderMarkdown(source string, aliases map[string]string) (Preview, error) {
+	return renderMarkdownResolved(source, aliases, nil)
+}
+
+func renderMarkdownResolved(source string, aliases map[string]string, resolve wikiResolver) (Preview, error) {
 	if err := validateSource(source); err != nil {
 		return Preview{}, err
 	}
-	renderer := goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithParserOptions(parser.WithAutoHeadingID()))
+	renderer := knowledgeMarkdown(resolve)
 	data := []byte(source)
 	document := renderer.Parser().Parse(text.NewReader(data))
 	headings := []Heading{}

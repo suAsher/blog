@@ -10,7 +10,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
 	"go.yaml.in/yaml/v3"
@@ -125,7 +124,7 @@ func parseImported(name string, data []byte) (Content, error) {
 
 func markdownImages(source string) []string {
 	reader := text.NewReader([]byte(source))
-	document := goldmark.New().Parser().Parse(reader)
+	document := knowledgeMarkdown(nil).Parser().Parse(reader)
 	result := []string{}
 	seen := map[string]bool{}
 	_ = ast.Walk(document, func(node ast.Node, entering bool) (ast.WalkStatus, error) {

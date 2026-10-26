@@ -3,6 +3,8 @@ package content
 import (
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 )
 
 // Disk files are an input boundary too: restoration, corruption, or external
@@ -20,6 +22,19 @@ func validateStoredRecord(d *record) error {
 	}
 	if d.Status == "draft" && d.Published != nil {
 		return bad(400, "草稿不应包含发布快照。")
+	}
+	for _, history := range [][]string{d.WorkingTitleAliases, d.PublishedTitleAliases} {
+		if len(history) > maxTitleAliases || titleAliasBytes(history) > maxTitleAliasBytes {
+			return bad(400, "标题历史超出大小限制。")
+		}
+		seen := map[string]bool{}
+		for _, title := range history {
+			key := normalized(strings.TrimSpace(title))
+			if key == "" || utf8.RuneCountInString(title) > 200 || strings.IndexFunc(title, unicode.IsControl) >= 0 || seen[key] {
+				return bad(400, "标题历史格式无效。")
+			}
+			seen[key] = true
+		}
 	}
 	for _, stamp := range []string{d.CreatedAt, d.UpdatedAt} {
 		if _, err := time.Parse(time.RFC3339Nano, stamp); err != nil {
