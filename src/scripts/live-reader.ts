@@ -63,10 +63,19 @@ async function openDocument() {
     });
     toc(data);
     const images = [...body.querySelectorAll<HTMLImageElement>('img')];
-    await Promise.race([Promise.all(images.map(image => image.decode().catch(() => undefined))), new Promise(resolve => setTimeout(resolve, 1800))]);
+    images.forEach(image => {
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.addEventListener('load', () => window.dispatchEvent(new Event('resize')), { once: true });
+      image.addEventListener('error', () => window.dispatchEvent(new Event('resize')), { once: true });
+    });
+    const cover = document.querySelector<HTMLImageElement>('#live-cover');
+    if (cover && data.cover) {
+      cover.src = data.cover;
+      cover.hidden = false;
+    }
     root.hidden = false; if (loading) loading.hidden = true;
     initReader(); syncBookmarkButtons();
-    images.forEach(image => image.addEventListener('load', () => window.dispatchEvent(new Event('resize')), { once: true }));
   } catch (error) {
     if (loading) loading.hidden = true;
     if (failure) failure.hidden = false;

@@ -1,0 +1,15 @@
+---
+interface Props { src?: string; live?: boolean }
+const { src, live = false } = Astro.props;
+---
+{(src || live) && <img
+  id={live ? 'live-cover' : undefined}
+  class="article-cover"
+  src={src}
+  alt=""
+  width="1200"
+  height="720"
+  decoding="async"
+  hidden={live && !src}
+  style="view-transition-name: article-cover"
+/>}

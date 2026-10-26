@@ -2,6 +2,31 @@ import { commandMatches, highlightSegments, nextCommandIndex } from '../lib/comm
 import './motion';
 import { articleUrl, element, getState, loadLibraryIndex, queryPublished, patchEntry, syncBookmarkButtons, toast, usingExamples } from './shared';
 
+// A shared name belongs only to the chosen card, never every image in a grid.
+// Normal links and full-document navigation remain usable without this effect.
+document.addEventListener('click', event => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null;
+  if (!link || link.origin !== location.origin || !/^\/articles\/[^/]+\/$/.test(link.pathname)) return;
+  const card = link.closest('.article-card, .featured-card');
+  const image = card?.querySelector<HTMLImageElement>('.card-cover img, .featured-image img');
+  if (!image) return;
+  document.querySelectorAll<HTMLElement>('[data-cover-transition]').forEach(previous => {
+    previous.style.removeProperty('view-transition-name');
+    previous.removeAttribute('data-cover-transition');
+  });
+  image.dataset.coverTransition = '';
+  image.style.viewTransitionName = 'article-cover';
+}, { capture: true });
+
+window.addEventListener('pageshow', event => {
+  if (!event.persisted) return;
+  document.querySelectorAll<HTMLElement>('[data-cover-transition]').forEach(image => {
+    image.style.removeProperty('view-transition-name');
+    image.removeAttribute('data-cover-transition');
+  });
+});
+
 const themeButton = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
 function updateThemeLabel() {
   themeButton?.setAttribute('aria-label', `切换到${document.documentElement.dataset.theme === 'dark' ? '浅' : '深'}色主题`);
