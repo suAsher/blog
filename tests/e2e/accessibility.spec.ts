@@ -5,7 +5,7 @@ for (const theme of ['dark', 'light']) {
   test(`example pages and writing workspace meet WCAG AA in ${theme} theme`, async ({ page, context }) => {
     await page.addInitScript(value => localStorage.setItem('asher-theme', value), theme);
     const violations: unknown[] = [];
-    for (const path of ['/?examples=1', '/articles/?examples=1', '/articles/build-a-learning-system/', '/manage/', '/login/']) {
+    for (const path of ['/?examples=1', '/articles/?examples=1', '/articles/build-a-learning-system/', '/manage/', '/graph/', '/login/']) {
       if (path === '/login/') await context.clearCookies();
       await page.goto(path);
       await expect(page.locator('h1')).toBeVisible();

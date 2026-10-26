@@ -13,14 +13,14 @@ import Icon from '../components/Icon.astro';
         <label for="graph-search">搜索知识节点</label>
         <div class="graph-search"><Icon name="search" size={16}/><input id="graph-search" type="search" autocomplete="off" placeholder="输入文章标题…" /></div>
         <p class="graph-guide">悬停节点会突出它的直接邻居；拖动节点整理局部，拖动空白处移动视野。</p>
-        <div id="graph-node-list" class="graph-node-list" aria-label="知识节点列表"></div>
+        <nav id="graph-node-list" class="graph-node-list" aria-label="知识节点列表"></nav>
       </aside>
       <div class="graph-stage" id="graph-stage" data-layout-mode="force">
         <canvas id="knowledge-graph-canvas" aria-label="知识连接图；请使用旁边的节点列表进行键盘导航"></canvas>
-        <div class="graph-controls" aria-label="图谱缩放"><button id="graph-zoom-in" aria-label="放大图谱">＋</button><button id="graph-zoom-out" aria-label="缩小图谱">−</button><button id="graph-reset">复位</button></div>
+        <div class="graph-controls" role="group" aria-label="图谱缩放"><button id="graph-zoom-in" aria-label="放大图谱">＋</button><button id="graph-zoom-out" aria-label="缩小图谱">−</button><button id="graph-reset">复位</button></div>
         <div class="graph-state" id="graph-state" role="status">正在梳理知识之间的连接…</div>
         <button class="button" id="graph-retry" hidden>重新读取</button>
-        <span class="graph-truncated" id="graph-truncated" hidden>已显示最近 300 个节点</span>
+        <span class="graph-truncated" id="graph-truncated" hidden>已达到展示上限，部分节点或连线未显示</span>
       </div>
     </div>
   </section>

@@ -103,6 +103,8 @@
   padding-right: 4px;
 }
 .graph-node-list a {
+  flex: 0 0 auto;
+  min-height: 32px;
   padding: 8px 9px;
   border-radius: 7px;
   color: var(--muted);

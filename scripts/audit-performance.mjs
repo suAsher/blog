@@ -18,6 +18,9 @@ function diagnosticDetails(lhr, origin) {
   };
   return {
     lcpSelector: selector,
+    accessibilityFailures: lhr.categories.accessibility.auditRefs.filter(ref => audits[ref.id]?.score === 0).map(ref => ({
+      id: ref.id, selectors: (audits[ref.id].details?.items || []).map(item => item.node?.selector).filter(Boolean),
+    })),
     lcpSubparts: subparts.map(item => ({ part: item.subpart, durationMs: item.duration })),
     mainThread: (audits['mainthread-work-breakdown']?.details?.items || []).map(item => ({ group: item.group, durationMs: item.duration })),
     scripts: (audits['bootup-time']?.details?.items || []).slice(0, 8).map(item => ({
@@ -34,26 +37,45 @@ const samples = Number(process.env.BLOG_PERF_SAMPLES || 3);
 if (!Number.isInteger(samples) || samples < 3 || samples > 10) throw new Error('Performance audits require 3–10 samples.');
 const devices = (process.env.BLOG_PERF_DEVICES || 'mobile,desktop').split(',');
 if (!devices.length || devices.some(value => !['mobile', 'desktop'].includes(value)) || new Set(devices).size !== devices.length) throw new Error('Audit devices must be mobile and/or desktop.');
-const count = Number(process.env.BLOG_PERF_DOCUMENTS || 30);
-if (!Number.isInteger(count) || count < 1 || count > 200) throw new Error('Invalid QA dataset size.');
+const graphPreset = process.env.BLOG_PERF_GRAPH === '1';
+const count = Number(process.env.BLOG_PERF_DOCUMENTS || (graphPreset ? 300 : 30));
+if (!Number.isInteger(count) || count < (graphPreset ? 9 : 1) || count > 300) throw new Error('Invalid QA dataset size.');
 const service = await startPrivateServer();
 let browser;
 let chrome;
 try {
   const credentials = await readLocalCredentials(service.origin, service.fixture);
   browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome' });
-  const context = await browser.newContext({ baseURL: service.origin, ignoreHTTPSErrors: true });
-  const response = await context.request.post('/auth/login', { headers: { Origin: service.origin }, data: { username: credentials.username, password: credentials.password } });
-  if (response.status() !== 200) throw new Error('Local performance login failed.');
+  const login = async () => {
+    const context = await browser.newContext({ baseURL: service.origin, ignoreHTTPSErrors: true });
+    const response = await context.request.post('/auth/login', { headers: { Origin: service.origin }, data: { username: credentials.username, password: credentials.password } });
+    if (response.status() !== 200) throw new Error('Local performance login failed.');
+    return context;
+  };
+  let context = await login();
+  const titleAt = index => `QA 性能样本 ${String(index + 1).padStart(3, '0')}`;
   for (let index = 0; index < count; index++) {
+    if (index && index % 100 === 0) { await context.close(); context = await login(); }
+    const connections = graphPreset ? Array.from({ length: 8 }, (_, offset) => `[[${titleAt((index + offset + 1) % count)}]]`).join('\n\n') : '';
     const created = await context.request.post('/api/documents', { headers: { Origin: service.origin }, data: {
-      title: `QA 性能样本 ${String(index + 1).padStart(3, '0')}`, description: '自动生成的性能验收数据。', date: '2026-10-25',
-      tags: ['QA性能'], category: 'QA示例', cover: '', source: `## 性能测试\n\n${'这是只存在于临时测试环境中的示例正文。'.repeat(80)}`,
+      title: titleAt(index), description: '自动生成的性能验收数据。', date: '2026-10-25',
+      tags: ['QA性能'], category: 'QA示例', cover: '', source: `## 性能测试\n\n${'这是只存在于临时测试环境中的示例正文。'.repeat(80)}\n\n${connections}`,
     } });
     if (!created.ok()) throw new Error('Performance QA dataset creation failed.');
     const { data } = await created.json();
     const published = await context.request.post(`/api/documents/${data.id}/publish`, { headers: { Origin: service.origin }, data: { version: data.version } });
     if (!published.ok()) throw new Error('Performance QA dataset publication failed.');
+  }
+  await context.close();
+  context = await login();
+  let graphBudget;
+  if (graphPreset) {
+    const response = await context.request.get('/api/graph?limit=300&view=published');
+    if (!response.ok()) throw new Error('QA graph dataset validation failed.');
+    const { data } = await response.json();
+    if (data.nodes.length !== count || data.edges.length !== count * 8 || data.truncated) throw new Error('QA graph dataset did not reach the expected real node/edge budget.');
+    graphBudget = { nodes: data.nodes.length, edges: data.edges.length };
+    console.log(`Validated real QA graph: ${graphBudget.nodes} nodes, ${graphBudget.edges} edges`);
   }
   const cookie = (await context.cookies(service.origin)).find(value => value.name === '__Host-asher_session');
   if (!cookie) throw new Error('Local audit session unavailable.');
@@ -93,7 +115,7 @@ try {
       results.push({ formFactor, path, metrics, runs, diagnostics });
     }
   }
-  const summary = { measuredAt: new Date().toISOString(), chromeVersion, lighthouseVersion: (await import('lighthouse/package.json', { with: { type: 'json' } })).default.version, samples, devices, dataset: { documents: count, source: 'Generated QA fixtures only; temporary real Go store' }, transport: 'loopback HTTPS; self-signed certificate; real cookie authentication', cache: 'Lighthouse resets HTTP cache and browser storage before each sample', results };
+  const summary = { measuredAt: new Date().toISOString(), chromeVersion, lighthouseVersion: (await import('lighthouse/package.json', { with: { type: 'json' } })).default.version, samples, devices, dataset: { documents: count, graph: graphBudget, source: 'Generated QA fixtures only; temporary real Go store' }, transport: 'loopback HTTPS; self-signed certificate; real cookie authentication', cache: 'Lighthouse resets HTTP cache and browser storage before each sample', results };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(summary, null, 2) + '\n');
   console.log(`Aggregate performance report: ${output}`);

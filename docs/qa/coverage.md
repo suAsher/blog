@@ -24,6 +24,10 @@ The scope now also includes `animation-clock.ts`, `daily.ts`, and `quick-note.ts
 
 Separate `go test -race -cover ./...` reports authentication 87.7% and content service 88.0%. No thresholds were lowered to admit new features.
 
+## Stage three: knowledge links and graph
+
+The stage-three snapshot adds `graph.ts` and `wikilinks.ts`, bringing the selected scope to thirteen library modules. Its 100 unit tests across fourteen files pass; coverage is 97.09% statements, 93.54% branches, 95.61% functions and 98.55% lines. Separate Go race coverage is authentication 87.7% and content 89.0%. The full browser gate passes 258 cases with zero skips; the final graph landmark and 32px target repairs also pass eighteen focused regressions. Performance and screenshot evidence is recorded in [performance.md](performance.md).
+
 ## Why four module rows initially appeared absent
 
 Vitest 4.1.12 detects agent environments and sets the text reporter's `skipFull` option to `true` unless the reporter explicitly overrides it. This hides files whose statement, branch, and function coverage are all 100%. The HTML report and total denominators already included all eight modules; collection and source maps were working correctly.

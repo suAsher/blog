@@ -5,8 +5,8 @@ import { resolve, join } from 'node:path';
 import { readLocalCredentials } from './local-private-server.mjs';
 
 const mode = process.env.BLOG_CAPTURE_MODE || 'examples';
-if (!['examples', 'today'].includes(mode)) throw new Error('Capture mode must be examples or today.');
-if (mode === 'today' && process.env.BLOG_TEST_LOCAL_AUTH !== '1') throw new Error('Today captures require temporary local QA authentication.');
+if (!['examples', 'today', 'knowledge'].includes(mode)) throw new Error('Capture mode must be examples, today or knowledge.');
+if (mode !== 'examples' && process.env.BLOG_TEST_LOCAL_AUTH !== '1') throw new Error('Generated private captures require temporary local QA authentication.');
 
 async function seedToday(request, origin, record) {
   const day = new Date().toISOString().slice(0, 10);
@@ -37,6 +37,36 @@ async function seedToday(request, origin, record) {
   return documents;
 }
 
+async function seedKnowledge(request, origin, record) {
+  const titles = ['让知识形成可回看的连接', '把一个好问题留下来', '读完以后，写下自己的判断', '给结论补一条证据', '从片段到主题', '常青笔记的下一次修订', '测试一个反例', '留住失败后的下一步', '让目录变成路标', '两段想法之间的桥', '图谱里的一个新节点', '回顾今天的理解'].map(title => `QA · ${title}`);
+  let documents = [];
+  for (let index = 0; index < titles.length; index++) {
+    const next = index + 1 === titles.length ? 1 : index + 1;
+    const targets = index === 0 ? [titles[1], titles[2]] : [titles[0], titles[next]];
+    const links = targets.map(title => `[[${title}]]`).join('，以及 ');
+    const missing = index === 0 ? '\n\n[[QA · 下一次想继续研究的问题]]' : '';
+    const response = await request.post('/api/documents', { headers: { Origin: origin }, data: {
+      title: titles[index], description: '仅用于本次本地知识连接验收的生成内容。', date: new Date().toISOString().slice(0, 10),
+      tags: [['QA知识连接', 'QA阅读笔记', 'QA实践记录'][index % 3]], category: '临时验收', cover: '',
+      kind: index % 3 === 1 ? 'note' : 'article', maturity: index % 2 ? 'growing' : 'evergreen', related: [], series: 'QA知识花园',
+      source: `## 从一个问题开始\n\n一条知识不必孤立存在。保留判断的来路，也为下一次回顾留下一条线索。\n\n## 让想法连接起来\n\n继续阅读 ${links}。${missing}\n\n> 本文与所有连接均为本地验收生成的 QA 内容。`,
+    } });
+    if (!response.ok()) throw new Error('QA knowledge dataset creation failed.');
+    let { data } = await response.json();
+    record(data);
+    const published = await request.post(`/api/documents/${data.id}/publish`, { headers: { Origin: origin }, data: { version: data.version } });
+    if (!published.ok()) throw new Error('QA knowledge dataset publication failed.');
+    ({ data } = await published.json());
+    record(data);
+    documents = [...documents, data];
+  }
+  const graph = await request.get('/api/graph?limit=300&view=published');
+  if (!graph.ok()) throw new Error('QA knowledge graph validation failed.');
+  const { data } = await graph.json();
+  if (data.nodes.length !== 12 || data.edges.length !== 24) throw new Error('QA knowledge graph did not contain exactly its generated connections.');
+  return documents;
+}
+
 async function cleanupToday(request, origin, documents) {
   for (let document of documents) {
     if (document.status !== 'trash') {
@@ -62,12 +92,13 @@ let captures = 0;
 let seedContext;
 let owned = [];
 try {
-  if (mode === 'today') {
+  if (mode !== 'examples') {
     seedContext = await browser.newContext({ baseURL: base.origin, ignoreHTTPSErrors: true });
     const credentials = await readLocalCredentials(base.origin);
     const response = await seedContext.request.post('/auth/login', { headers: { Origin: base.origin }, data: { username: credentials.username, password: credentials.password } });
     if (!response.ok()) throw new Error('Local QA capture login failed.');
-    owned = await seedToday(seedContext.request, base.origin, document => { owned = [...owned.filter(item => item.id !== document.id), document]; });
+    const seed = mode === 'knowledge' ? seedKnowledge : seedToday;
+    owned = await seed(seedContext.request, base.origin, document => { owned = [...owned.filter(item => item.id !== document.id), document]; });
   }
   for (const name of viewports) {
     const context = await browser.newContext({ viewport: allowed[name], deviceScaleFactor: 1, baseURL: base.origin, ignoreHTTPSErrors: process.env.BLOG_TEST_LOCAL_AUTH === '1', reducedMotion: 'reduce' });
@@ -80,10 +111,12 @@ try {
       await context.addInitScript(value => localStorage.setItem('asher-theme', value), theme);
       const page = await context.newPage();
       // Today mode uses only documents generated above in the temporary local QA store.
-      const paths = mode === 'today' ? [['today', '/'], ['today-articles', '/articles/'], ['today-article', `/articles/${owned.find(document => document.status === 'published').id}/`]] : [['home', '/?examples=1'], ['articles', '/articles/?examples=1'], ['article', '/articles/build-a-learning-system/']];
+      const paths = mode === 'knowledge' ? [['graph', '/graph/'], ['backlinks', `/articles/${owned[0].id}/`]] : mode === 'today' ? [['today', '/'], ['today-articles', '/articles/'], ['today-article', `/articles/${owned.find(document => document.status === 'published').id}/`]] : [['home', '/?examples=1'], ['articles', '/articles/?examples=1'], ['article', '/articles/build-a-learning-system/']];
       for (const [label, path] of paths) {
         await page.goto(path, { waitUntil: 'networkidle' });
         if (new URL(page.url()).pathname.startsWith('/login')) throw new Error('Capture requires an authenticated local fixture.');
+        if (label === 'graph') await page.locator('#graph-stage[data-layout-ready="true"]').waitFor();
+        if (label === 'backlinks') await page.getByRole('region', { name: '反向链接' }).getByRole('link').first().waitFor();
         if (label === 'today') await page.locator('#today-lists .today-document-link').first().waitFor();
         await page.screenshot({ path: join(output, `${label}-${name}-${theme}.png`), fullPage: !label.endsWith('article') });
         captures++;

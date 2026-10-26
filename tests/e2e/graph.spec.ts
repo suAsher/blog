@@ -183,6 +183,10 @@ test.describe("knowledge graph", () => {
       "true",
     );
     await expect(page.locator("#graph-node-list").getByRole("link")).toHaveCount(300);
+    const targets = await page.locator('#graph-node-list a').evaluateAll(links =>
+      links.map(link => link.getBoundingClientRect().height),
+    );
+    expect(Math.min(...targets)).toBeGreaterThanOrEqual(32);
     await page.getByRole("button", { name: "放大图谱" }).click();
     const search = page.getByRole("searchbox", { name: "搜索知识节点" });
     await search.fill("Budget node 299");

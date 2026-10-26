@@ -105,3 +105,42 @@ The Today screenshot dataset is separate: four generated QA documents, consistin
 - [Mobile dark](evolution-stage2-home-mobile-dark.png), [mobile light](evolution-stage2-home-mobile-light.png)
 
 All screenshot content was generated for local QA. The capture removes its own documents, and the wrapper shuts down the local auth/proxy/preview processes and removes temporary credentials/data. No real account, remote server or private notes were accessed.
+
+## Real graph performance dataset
+
+`BLOG_PERF_GRAPH=1` changes the generated audit dataset to 300 published documents with eight distinct forward Wiki references per document. The script verifies the real Go graph API returns exactly 300 nodes and 2,400 edges before measuring. Seeding uses independent authenticated QA sessions after each 100 documents, then a fresh audit session; the real per-client request limit remains active. No graph response is mocked.
+
+```sh
+BLOG_TEST_LOCAL_DIST=/tmp/asher-blog-stage3-dist \
+  BLOG_PERF_GRAPH=1 BLOG_PERF_PATHS=/graph/ \
+  BLOG_PERF_OUTPUT=/tmp/asher-blog-stage3-graph-cold.json \
+  node scripts/audit-performance.mjs
+```
+
+The default homepage dataset remains 30 documents for comparison with earlier stages. The graph stress dataset is a separate workload, so its LCP must not be described as the homepage LCP or pooled with the 30-document homepage samples. Audit summaries also record failed accessibility rule IDs and selectors, without retaining HTML or page text.
+
+`BLOG_CAPTURE_MODE=knowledge` uses a separate legible dataset of 12 generated published QA documents and 24 real Wiki edges. It captures the graph and a generated article with outgoing, unresolved and backlink examples in both themes and all three viewports, then removes only those generated documents. The screenshot dataset is not the 300-node stress dataset.
+
+## Stage-three validation
+
+The complete stage-three gate passed 258 browser tests with zero skips in 1.7 minutes, preserving all 234 prior cases and adding 24 knowledge-connection cases across the three device projects. It includes the 300-node/2,400-edge interaction budget, published-snapshot isolation, backlinks, Wiki completion and related-document selection.
+
+The final graph markup and target-size repairs then passed 18 focused checks across all three projects: four graph cases per device and both-theme accessibility checks. The final graph list uses a named navigation landmark; its anchors retain at least 32px height instead of shrinking to 16px inside the scrolling column. These repairs address the observed `aria-prohibited-attr` and populated-list `target-size` findings. No accessibility rule was disabled.
+
+| Workload | Device | Performance (median / worst) | Accessibility | Best practices | LCP (ms, median / worst) | TBT (ms, median / worst) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Home, 30 published documents | Mobile | 98 / 98 | 100 / 100 | 100 / 100 | 2128 / 2160 | 0 / 28 |
+| Home, 30 published documents | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 475 / 495 | 0 / 0 |
+| Graph, 300 nodes / 2,400 real edges | Mobile | 92 / 91 | 100 / 100 | 100 / 100 | 3312 / 3315 | 0 / 0 |
+| Graph, 300 nodes / 2,400 real edges | Desktop | 100 / 100 | 100 / 100 | 100 / 100 | 731 / 768 | 0 / 0 |
+
+Every workload/device row has three cold-browser-cache samples with the same Chrome/Lighthouse settings. Home and mobile graph figures come from the initial stage-three audit batch; the desktop graph row was remeasured on the final repaired build (18:29:44). The final populated-graph desktop audits report no failed accessibility rules. The graph's 3.315-second worst mobile LCP belongs to the separate maximum-size graph stress workload; the homepage remains below 2.5 seconds. Mobile graph CLS was 0.04021; final desktop graph CLS was zero.
+
+The final screenshot dataset contains 12 generated published QA documents, 24 real Wiki connections, and one unresolved example. It demonstrates outgoing links, the visible “待创建” state and 11 backlinks without using user notes. Seven selected views are retained; the other five reader theme/device views remain temporary.
+
+- [Graph desktop dark](evolution-stage3-graph-desktop-dark.png), [desktop light](evolution-stage3-graph-desktop-light.png)
+- [Graph tablet dark](evolution-stage3-graph-tablet-dark.png), [tablet light](evolution-stage3-graph-tablet-light.png)
+- [Graph mobile dark](evolution-stage3-graph-mobile-dark.png), [mobile light](evolution-stage3-graph-mobile-light.png)
+- [Published reader with Wiki links and backlinks](evolution-stage3-reader-backlinks-desktop-dark.png)
+
+All screenshot documents were removed after capture, and all temporary authentication credentials, content stores and QA processes were shut down. The stage-three build snapshots and aggregate reports remain under `/tmp` only for subsequent comparison.
