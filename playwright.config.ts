@@ -30,7 +30,9 @@ const baseURL = resolveBaseURL(process.env.BLOG_TEST_BASE_URL ?? (localAuth ? `h
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
-  workers: 3,
+  // One private service owns one upload slot and shared account state. Running
+  // independent browser workers against it creates intentional HTTP 429s.
+  workers: 1,
   retries: 0,
   reporter: deployed || localAuth ? [['list']] : [['list'], ['html', { open: 'never' }]],
   use: {
