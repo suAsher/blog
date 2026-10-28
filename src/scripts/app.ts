@@ -165,6 +165,12 @@ function commands(): Command[] {
       href: "/manage/?import=1",
     },
     {
+      title: "专题工作台",
+      detail: "整理阅读路径、问题与对照研究",
+      aliases: ["workspace", "topic", "研究", "专题", "对照"],
+      href: "/workspaces/",
+    },
+    {
       title: "知识图谱",
       detail: "沿着引用与关联探索文档",
       aliases: ["graph", "连接", "双链", "图谱"],

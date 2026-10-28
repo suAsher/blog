@@ -1,0 +1,189 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/workspaces.css';
+---
+<Layout
+  title="主题工作区"
+  active="workspaces"
+  description="围绕一个问题，组织阅读路径、对照文章，让知识形成自己的连接。"
+>
+  <section class="shell ws-page">
+    <header class="ws-heading">
+      <div>
+        <span class="eyebrow">FOLLOW A THREAD OF CURIOSITY</span>
+        <h1>让想法，<br />在这里<span>相遇。</span></h1>
+        <p>
+          围绕一个问题，把散落的知识编成一条线。<br />循序阅读、并置思考，也给新的连接留一点空间。
+        </p>
+      </div>
+      <div class="ws-orbit" aria-hidden="true"><span>✳</span><i></i><b>IDEAS, IN ORBIT</b></div>
+    </header>
+    <div class="ws-layout">
+      <aside class="ws-sidebar">
+        <div class="ws-sidebar-heading">
+          <h2>我的主题</h2>
+          <span id="ws-count">—</span>
+        </div>
+        <button id="ws-new" class="button button-primary" type="button">
+          新建主题 <span aria-hidden="true">＋</span>
+        </button>
+        <nav id="ws-list" aria-label="主题列表"><p>正在读取主题…</p></nav>
+        <button id="ws-retry" class="button" type="button" hidden>重新读取主题</button>
+        <p class="ws-sidebar-note">
+          一个主题，一段专注的探索。<br />你的阅读顺序与问题会随账号保存。
+        </p>
+      </aside>
+      <div class="ws-main">
+        <p id="ws-status" class="ws-status" role="status" aria-live="polite">
+          正在准备你的思考空间…
+        </p>
+        <section id="ws-welcome" class="ws-welcome" hidden>
+          <span aria-hidden="true">✧</span>
+          <p class="eyebrow">A SPACE FOR THE NEXT QUESTION</p>
+          <h2>从一个好问题开始。</h2>
+          <p>
+            新建一个主题，加入值得一起读的文章。<br />你的阅读路径、问题清单与连接画布，会在这里慢慢生长。
+          </p>
+        </section>
+        <section id="ws-editor" hidden aria-label="主题工作区">
+          <div class="ws-editor-top">
+            <span class="eyebrow">YOUR RESEARCH, CONNECTED</span>
+            <div class="ws-actions">
+              <button id="ws-discard" type="button" class="quiet-link" hidden>放弃本地修改</button
+              ><button id="ws-delete" type="button" class="quiet-link" hidden>删除主题</button
+              ><button id="ws-save" type="button" class="button button-primary">保存主题</button>
+            </div>
+          </div>
+          <label class="sr-only" for="ws-title">主题标题</label
+          ><input
+            id="ws-title"
+            class="ws-title"
+            maxlength="320"
+            placeholder="为这次探索起个名字"
+            autocomplete="off"
+          />
+          <label class="sr-only" for="ws-description">主题说明</label
+          ><textarea
+            id="ws-description"
+            class="ws-description"
+            maxlength="8000"
+            rows="2"
+            placeholder="你想理解什么？写下一点背景，给未来的自己。"
+          ></textarea>
+          <div id="ws-conflict" class="ws-alert" hidden role="alert">
+            <strong>这个主题已在另一处更新。</strong>
+            <p>
+              你的本地编辑仍在页面中。重新读取会放弃本地编辑；重新应用会用本地内容替换最新版本。
+            </p>
+            <div>
+              <button id="ws-reload" type="button" class="button">放弃本地编辑并读取最新版本</button
+              ><button id="ws-reapply" type="button" class="button">将本地编辑应用到新版本</button>
+            </div>
+          </div>
+          <div id="ws-delete-confirm" class="ws-alert" hidden>
+            <p>删除后无法恢复这个主题；主题内的文档会继续保留。</p>
+            <button id="ws-delete-yes" type="button" class="button">确认删除主题</button
+            ><button id="ws-delete-no" type="button" class="button">取消删除</button>
+          </div>
+          <div class="ws-tabs" role="tablist" aria-label="主题视图">
+            <button
+              id="ws-tab-path"
+              role="tab"
+              aria-selected="true"
+              aria-controls="ws-view-path"
+              data-ws-view="path"
+            >
+              阅读路径</button
+            ><button
+              id="ws-tab-compare"
+              role="tab"
+              aria-selected="false"
+              aria-controls="ws-view-compare"
+              tabindex="-1"
+              data-ws-view="compare"
+            >
+              文章对照</button
+            ><button
+              id="ws-tab-canvas"
+              role="tab"
+              aria-selected="false"
+              aria-controls="ws-view-canvas"
+              tabindex="-1"
+              data-ws-view="canvas"
+            >
+              连接画布
+            </button>
+          </div>
+          <section id="ws-view-path" role="tabpanel" aria-labelledby="ws-tab-path">
+            <div class="ws-section-heading">
+              <div>
+                <span class="eyebrow">01 / READING PATH</span>
+                <h2>先读什么，再想什么。</h2>
+              </div>
+              <span id="ws-path-count" class="ws-count"></span>
+            </div>
+            <ol id="ws-reading-path" class="ws-reading-path"></ol>
+            <div class="ws-add">
+              <label for="ws-document-search">搜索可加入的文档</label
+              ><input
+                id="ws-document-search"
+                type="search"
+                placeholder="搜索文章或草稿标题…"
+                autocomplete="off"
+              />
+              <div id="ws-picker" class="ws-picker"></div>
+            </div>
+            <div class="ws-section-heading">
+              <div>
+                <span class="eyebrow">02 / OPEN QUESTIONS</span>
+                <h2>带着问题往下读。</h2>
+              </div>
+              <span id="ws-question-count" class="ws-count"></span>
+            </div>
+            <ul id="ws-questions" class="ws-questions"></ul>
+            <form id="ws-question-form" class="ws-question-form">
+              <label class="sr-only" for="ws-question">新问题</label
+              ><input
+                id="ws-question"
+                maxlength="2000"
+                placeholder="记下一个问题，或下一步探索…"
+              /><button type="submit" class="button">添加问题</button>
+            </form>
+          </section>
+          <section id="ws-view-compare" role="tabpanel" aria-labelledby="ws-tab-compare" hidden>
+            <div class="ws-section-heading">
+              <div>
+                <span class="eyebrow">SIDE BY SIDE / FIND THE DIFFERENCE</span>
+                <h2>把两种视角，放在一起。</h2>
+              </div>
+            </div>
+            <p class="ws-guide">对照只读取已发布正文。草稿和未发布修改不会出现在这里。</p>
+            <div class="ws-compare-selectors">
+              <label>左侧文章<select id="ws-compare-left"></select></label
+              ><label>右侧文章<select id="ws-compare-right"></select></label>
+            </div>
+            <div id="ws-comparison" class="ws-comparison" aria-live="polite"></div>
+          </section>
+          <section id="ws-view-canvas" role="tabpanel" aria-labelledby="ws-tab-canvas" hidden>
+            <div class="ws-section-heading">
+              <div>
+                <span class="eyebrow">IDEAS IN RELATION</span>
+                <h2>让阅读路径，长成一幅图。</h2>
+              </div>
+            </div>
+            <p class="ws-guide">
+              连线表示你安排的阅读顺序。拖动卡片整理位置，或聚焦卡片后使用方向键（Shift
+              加速）。整理后点击「保存主题」。
+            </p>
+            <div class="ws-canvas-scroll">
+              <div id="ws-canvas" class="ws-canvas" aria-label="阅读路径连接画布"></div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </section>
+  <script>
+    import "../scripts/workspaces/index";
+  </script>
+</Layout>
