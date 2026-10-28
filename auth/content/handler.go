@@ -55,6 +55,14 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	path := r.URL.Path
 	switch {
+	case path == "/api/annotations" || strings.HasPrefix(path, "/api/annotations/"):
+		h.annotations(w, r, path)
+	case path == "/api/workspaces" || strings.HasPrefix(path, "/api/workspaces/"):
+		h.workspaces(w, r, path)
+	case path == "/api/import/preview":
+		h.importPreview(w, r)
+	case path == "/api/import/reports":
+		h.importReports(w, r)
 	case path == "/api/offline-revisions":
 		h.offlineRevisions(w, r)
 	case path == "/api/reading-state":
@@ -160,6 +168,10 @@ func (h *handler) document(w http.ResponseWriter, r *http.Request, path string) 
 	}
 	id := parts[0]
 	if len(parts) == 2 {
+		if parts[1] == "history" {
+			h.documentHistory(w, r, id)
+			return
+		}
 		if parts[1] == "links" {
 			h.documentLinks(w, r, id)
 			return

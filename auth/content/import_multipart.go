@@ -21,6 +21,7 @@ var uploadSlot = make(chan struct{}, 1)
 type stagedFile struct {
 	Path, Temp string
 	Size       int64
+	Decisions  *importDecisions
 }
 
 func beginUpload(w http.ResponseWriter) bool {
@@ -126,6 +127,7 @@ func (s *Store) stageUpload(w http.ResponseWriter, r *http.Request) ([]stagedFil
 	files := []stagedFile{}
 	var paths []string
 	pathsSeen := false
+	var decisions *importDecisions
 	for {
 		part, err := reader.NextPart()
 		if err == io.EOF {
@@ -133,6 +135,27 @@ func (s *Store) stageUpload(w http.ResponseWriter, r *http.Request) ([]stagedFil
 		}
 		if err != nil {
 			return nil, nil, noop, uploadReadError(err)
+		}
+		if part.FormName() == "decisions" {
+			if decisions != nil {
+				part.Close()
+				return nil, nil, noop, bad(400, "导入决策重复。")
+			}
+			data, readErr := io.ReadAll(io.LimitReader(part, (256<<10)+1))
+			part.Close()
+			if readErr != nil {
+				return nil, nil, noop, uploadReadError(readErr)
+			}
+			decisions = &importDecisions{}
+			decoder := json.NewDecoder(strings.NewReader(string(data)))
+			decoder.DisallowUnknownFields()
+			if len(data) > 256<<10 || decoder.Decode(decisions) != nil || decoder.Decode(new(any)) != io.EOF {
+				return nil, nil, noop, bad(400, "导入决策格式无效。")
+			}
+			if err := validateImportDecisions(decisions); err != nil {
+				return nil, nil, noop, err
+			}
+			continue
 		}
 		if part.FormName() == "paths" {
 			if pathsSeen {
@@ -207,6 +230,16 @@ func (s *Store) stageUpload(w http.ResponseWriter, r *http.Request) ([]stagedFil
 		}
 		seen[value] = true
 		files[i].Path = value
+	}
+	for i := range files {
+		files[i].Decisions = decisions
+	}
+	if decisions != nil {
+		for _, decision := range decisions.Paths {
+			if !seen[decision.Path] {
+				return nil, nil, noop, bad(400, "导入决策包含未上传的路径。")
+			}
+		}
 	}
 	success = true
 	return files, paths, cleanup, nil

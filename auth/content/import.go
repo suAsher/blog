@@ -2,9 +2,7 @@ package content
 
 import (
 	"bytes"
-	"net/http"
 	"net/url"
-	"os"
 	"path"
 	"strings"
 	"time"
@@ -24,11 +22,16 @@ type unresolvedImage struct {
 	Path     string `json:"path"`
 }
 type importReport struct {
-	Imported   []Summary         `json:"imported"`
-	Skipped    []importSkip      `json:"skipped"`
-	Unresolved []unresolvedImage `json:"unresolvedImages"`
-	Warnings   []string          `json:"warnings"`
-	Quota      Quota             `json:"quota"`
+	ID          string            `json:"id"`
+	CreatedAt   string            `json:"createdAt"`
+	Updated     []Summary         `json:"updated"`
+	Outcomes    []importOutcome   `json:"outcomes"`
+	Fingerprint string            `json:"fingerprint,omitempty"`
+	Imported    []Summary         `json:"imported"`
+	Skipped     []importSkip      `json:"skipped"`
+	Unresolved  []unresolvedImage `json:"unresolvedImages"`
+	Warnings    []string          `json:"warnings"`
+	Quota       Quota             `json:"quota"`
 }
 
 func parseImported(name string, data []byte) (Content, error) {
@@ -154,121 +157,4 @@ func imageRelativePath(document, destination string) (string, bool) {
 		return "", false
 	}
 	return resolved, true
-}
-
-func (s *Store) importHTTP(w http.ResponseWriter, r *http.Request) {
-	if !beginUpload(w) {
-		return
-	}
-	defer endUpload()
-	files, _, cleanup, err := s.stageUpload(w, r)
-	if err != nil {
-		respondError(w, err)
-		return
-	}
-	defer cleanup()
-	if len(files) == 0 {
-		respondError(w, bad(400, "请选择要导入的文档。"))
-		return
-	}
-	hasDocument, hasImage := false, false
-	for _, file := range files {
-		if hiddenPath(file.Path) {
-			continue
-		}
-		ext := strings.ToLower(path.Ext(file.Path))
-		hasDocument = hasDocument || ext == ".md" || ext == ".markdown" || ext == ".txt"
-		hasImage = hasImage || imageExtension(file.Path)
-	}
-	if !hasDocument && hasImage {
-		respondError(w, bad(400, "请同时选择 Markdown 或 TXT 文档；单独上传图片请使用编辑器的插图功能。"))
-		return
-	}
-	report := importReport{Imported: []Summary{}, Skipped: []importSkip{}, Unresolved: []unresolvedImage{}, Warnings: []string{}}
-	flatSelection := true
-	for _, file := range files {
-		if strings.Contains(file.Path, "/") {
-			flatSelection = false
-			break
-		}
-	}
-	assets := map[string]string{}
-	basenames := map[string][]string{}
-	for _, file := range files {
-		if hiddenPath(file.Path) {
-			report.Skipped = append(report.Skipped, importSkip{file.Path, "隐藏目录或密钥类文件不导入。"})
-			continue
-		}
-		if imageExtension(file.Path) {
-			asset, err := s.saveAsset(file.Temp, file.Path)
-			if err != nil {
-				report.Skipped = append(report.Skipped, importSkip{file.Path, err.Error()})
-				continue
-			}
-			assets[file.Path] = asset.URL
-			base := path.Base(file.Path)
-			basenames[base] = append(basenames[base], asset.URL)
-		} else if ext := strings.ToLower(path.Ext(file.Path)); ext != ".md" && ext != ".markdown" && ext != ".txt" {
-			report.Skipped = append(report.Skipped, importSkip{file.Path, "仅导入 Markdown、TXT 和 PNG/JPEG/GIF/WebP 配图；SVG 不接受。"})
-		}
-	}
-	for _, file := range files {
-		ext := strings.ToLower(path.Ext(file.Path))
-		if hiddenPath(file.Path) || (ext != ".md" && ext != ".markdown" && ext != ".txt") {
-			continue
-		}
-		data, err := os.ReadFile(file.Temp)
-		if err != nil {
-			report.Skipped = append(report.Skipped, importSkip{file.Path, "文档读取失败。"})
-			continue
-		}
-		content, err := parseImported(file.Path, data)
-		if err != nil {
-			report.Skipped = append(report.Skipped, importSkip{file.Path, err.Error()})
-			continue
-		}
-		aliases := map[string]string{}
-		destinations := markdownImages(content.Source)
-		if content.Cover != "" {
-			destinations = append(destinations, content.Cover)
-		}
-		for _, destination := range destinations {
-			if assetURL.MatchString(destination) {
-				if asset, err := openAsset(s.root, strings.TrimPrefix(destination, "/api/assets/")); err == nil {
-					asset.Close()
-					aliases[destination] = destination
-					continue
-				}
-			}
-			resolved, valid := imageRelativePath(file.Path, destination)
-			if valid {
-				if value, found := assets[resolved]; found {
-					aliases[destination] = value
-					continue
-				}
-				if candidates := basenames[path.Base(resolved)]; flatSelection && len(candidates) == 1 {
-					aliases[destination] = candidates[0]
-					report.Warnings = append(report.Warnings, file.Path+" 的配图按唯一文件名关联；建议使用文件夹上传保留路径。")
-					continue
-				}
-			}
-			report.Unresolved = append(report.Unresolved, unresolvedImage{file.Path, destination})
-		}
-		if content.Cover != "" {
-			if replacement, found := aliases[content.Cover]; found {
-				content.Cover = replacement
-			} else {
-				content.Cover = ""
-				report.Warnings = append(report.Warnings, file.Path+" 的封面未找到，已留空。")
-			}
-		}
-		document, err := s.Create(content, file.Path, aliases)
-		if err != nil {
-			report.Skipped = append(report.Skipped, importSkip{file.Path, err.Error()})
-			continue
-		}
-		report.Imported = append(report.Imported, document.Summary)
-	}
-	report.Quota = s.quota()
-	respond(w, 200, report)
 }

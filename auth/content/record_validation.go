@@ -23,6 +23,17 @@ func validateStoredRecord(d *record) error {
 	if d.Status == "draft" && d.Published != nil {
 		return bad(400, "草稿不应包含发布快照。")
 	}
+	if d.Published == nil && d.PublishedAliases != nil {
+		return bad(400, "未发布文档不应包含发布配图快照。")
+	}
+	if err := validateAliases(d.Aliases); err != nil {
+		return err
+	}
+	if d.PublishedAliases != nil {
+		if err := validateAliases(*d.PublishedAliases); err != nil {
+			return err
+		}
+	}
 	for _, history := range [][]string{d.WorkingTitleAliases, d.PublishedTitleAliases} {
 		if len(history) > maxTitleAliases || titleAliasBytes(history) > maxTitleAliasBytes {
 			return bad(400, "标题历史超出大小限制。")
@@ -72,6 +83,17 @@ func validateStoredRecord(d *record) error {
 				return bad(400, "文档不能关联自身。")
 			}
 		}
+	}
+	if receipt := d.ImportReceipt; receipt != nil {
+		if !documentID.MatchString(receipt.RequestID) || len(receipt.Fingerprint) != 64 || (receipt.Action != "create" && receipt.Action != "update") {
+			return bad(400, "导入回执无效。")
+		}
+		if _, err := safeUploadPath(receipt.Path); err != nil {
+			return err
+		}
+	}
+	if err := validateHistory(d); err != nil {
+		return err
 	}
 	return validateRecordBudget(d)
 }

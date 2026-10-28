@@ -85,19 +85,22 @@ type ListOptions struct {
 	Limit, Offset                int
 }
 type record struct {
-	ID                    string            `json:"id"`
-	Version               int               `json:"version"`
-	Status                string            `json:"status"`
-	Working               Content           `json:"working"`
-	Published             *Content          `json:"published,omitempty"`
-	CreatedAt             string            `json:"createdAt"`
-	UpdatedAt             string            `json:"updatedAt"`
-	PublishedAt           string            `json:"publishedAt,omitempty"`
-	SourcePath            string            `json:"sourcePath,omitempty"`
-	Aliases               map[string]string `json:"aliases,omitempty"`
-	Activity              []activityBucket  `json:"activity,omitempty"`
-	WorkingTitleAliases   []string          `json:"workingTitleAliases,omitempty"`
-	PublishedTitleAliases []string          `json:"publishedTitleAliases,omitempty"`
+	ImportReceipt         *importReceipt     `json:"importReceipt,omitempty"`
+	History               []HistorySnapshot  `json:"history,omitempty"`
+	ID                    string             `json:"id"`
+	Version               int                `json:"version"`
+	Status                string             `json:"status"`
+	Working               Content            `json:"working"`
+	PublishedAliases      *map[string]string `json:"publishedAliases,omitempty"`
+	Published             *Content           `json:"published,omitempty"`
+	CreatedAt             string             `json:"createdAt"`
+	UpdatedAt             string             `json:"updatedAt"`
+	PublishedAt           string             `json:"publishedAt,omitempty"`
+	SourcePath            string             `json:"sourcePath,omitempty"`
+	Aliases               map[string]string  `json:"aliases,omitempty"`
+	Activity              []activityBucket   `json:"activity,omitempty"`
+	WorkingTitleAliases   []string           `json:"workingTitleAliases,omitempty"`
+	PublishedTitleAliases []string           `json:"publishedTitleAliases,omitempty"`
 }
 type apiError struct {
 	Status        int

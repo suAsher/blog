@@ -46,12 +46,14 @@ func (s *Store) exportHTTP(w http.ResponseWriter, r *http.Request, id string) {
 		return
 	}
 	content := document.Working
+	aliases := document.Aliases
 	if r.URL.Query().Get("view") == "published" {
 		if document.Status != "published" || document.Published == nil {
 			respondError(w, bad(404, "这篇文档尚未发布。"))
 			return
 		}
 		content = *document.Published
+		aliases = publishedAliases(document)
 	}
 	format := r.URL.Query().Get("format")
 	if format != "" && format != "md" && format != "zip" {
@@ -123,7 +125,7 @@ func (s *Store) exportHTTP(w http.ResponseWriter, r *http.Request, id string) {
 		entries = append(entries, exportAsset{assetMember, assetID})
 		return nil
 	}
-	for destination, location := range document.Aliases {
+	for destination, location := range aliases {
 		if err := addAsset(destination, location); err != nil {
 			respondError(w, err)
 			return

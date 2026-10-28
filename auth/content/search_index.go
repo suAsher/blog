@@ -13,7 +13,7 @@ import (
 )
 
 const searchCacheBudget int64 = 16 << 20
-const maxRecordBytes = MaxSourceBytes*5 + (192 << 10)
+const maxRecordBytes = MaxSourceBytes*5 + (192 << 10) + maxHistoryBytes
 
 type searchView struct {
 	summary                        Summary

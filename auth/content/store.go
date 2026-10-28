@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -137,18 +138,37 @@ func (s *Store) loadLocked(id string) (*record, error) {
 	if !documentID.MatchString(id) {
 		return nil, bad(404, "文档不存在。")
 	}
-	name := filepath.Join(s.root, "documents", id+".json")
-	info, err := os.Lstat(name)
+	directory, err := s.openDocumentRoot()
+	if err != nil {
+		return nil, err
+	}
+	defer directory.Close()
+	name := id + ".json"
+	info, err := directory.Lstat(name)
 	if os.IsNotExist(err) {
 		return nil, bad(404, "文档不存在。")
 	}
 	if err != nil || !info.Mode().IsRegular() || info.Size() > maxRecordBytes {
 		return nil, bad(500, "文档暂时无法读取，请稍后重试。")
 	}
-	data, err := os.ReadFile(name)
+	file, err := directory.OpenFile(name, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
 	if err != nil {
 		return nil, bad(500, "文档暂时无法读取，请稍后重试。")
 	}
+	defer file.Close()
+	before, err := file.Stat()
+	if err != nil || !sameSearchFile(info, before) {
+		return nil, bad(500, "文档读取期间发生变化，请重试。")
+	}
+	data, err := io.ReadAll(io.LimitReader(file, maxRecordBytes+1))
+	if err != nil || int64(len(data)) > maxRecordBytes {
+		return nil, bad(500, "文档暂时无法读取，请稍后重试。")
+	}
+	after, err := file.Stat()
+	if err != nil || !sameSearchFile(before, after) {
+		return nil, bad(500, "文档读取期间发生变化，请重试。")
+	}
+
 	var d record
 	if json.Unmarshal(data, &d) != nil || d.ID != id || d.Version < 1 {
 		return nil, bad(500, "文档记录异常，请从备份恢复。")
@@ -211,13 +231,21 @@ func (s *Store) saveLocked(d *record) error {
 		return err
 	}
 	defer releaseSpace()
-	directory := filepath.Join(s.root, "documents")
-	file, err := os.CreateTemp(directory, ".write-")
+	directory, err := s.openDocumentRoot()
+	if err != nil {
+		return err
+	}
+	defer directory.Close()
+	random, err := newImportID()
+	if err != nil {
+		return err
+	}
+	name := ".write-" + random
+	file, err := directory.OpenFile(name, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 	if err != nil {
 		return bad(500, "无法创建保存文件，请检查存储权限。")
 	}
-	name := file.Name()
-	defer os.Remove(name)
+	defer directory.Remove(name)
 	if _, err = file.Write(data); err == nil {
 		err = file.Sync()
 	}
@@ -228,12 +256,12 @@ func (s *Store) saveLocked(d *record) error {
 	if err != nil {
 		return bad(500, "文档尚未保存，请保留当前编辑并重试。")
 	}
-	if err = os.Rename(name, filepath.Join(directory, d.ID+".json")); err != nil {
+	if err = directory.Rename(name, d.ID+".json"); err != nil {
 		return bad(500, "文档尚未保存，请重试。")
 	}
 	s.search.invalidate(d.ID)
 	s.links.invalidate()
-	dir, err := os.Open(directory)
+	dir, err := directory.Open(".")
 	if err != nil {
 		return bad(500, "无法确认文档保存状态，请重新加载核对。")
 	}
@@ -245,6 +273,10 @@ func (s *Store) saveLocked(d *record) error {
 }
 
 func (s *Store) Create(c Content, sourcePath string, aliases map[string]string) (Detail, error) {
+	return s.createImported(c, sourcePath, aliases, nil)
+}
+
+func (s *Store) createImported(c Content, sourcePath string, aliases map[string]string, receipt *importReceipt) (Detail, error) {
 	c, err := normalizeContent(c)
 	if err != nil {
 		return Detail{}, err
@@ -256,7 +288,7 @@ func (s *Store) Create(c Content, sourcePath string, aliases map[string]string) 
 	now := s.now().UTC().Format(time.RFC3339Nano)
 	d := &record{
 		ID: hex.EncodeToString(random), Version: 1, Status: "draft", Working: c,
-		CreatedAt: now, UpdatedAt: now, SourcePath: sourcePath, Aliases: aliases,
+		CreatedAt: now, UpdatedAt: now, SourcePath: sourcePath, Aliases: copyAliases(aliases), ImportReceipt: receipt,
 	}
 	if strings.TrimSpace(c.Source) != "" {
 		d.Activity = addActivity(nil, s.now())
@@ -289,7 +321,7 @@ func summary(d *record, c Content) Summary {
 		Tags: append([]string{}, c.Tags...), Category: c.Category, Cover: c.Cover,
 		ReadingMinutes: readingMinutes(c.Source), Status: d.Status, Version: d.Version,
 		CreatedAt: d.CreatedAt, UpdatedAt: d.UpdatedAt, PublishedAt: d.PublishedAt,
-		HasUnpublishedChanges: d.Published != nil && !sameContent(d.Working, *d.Published),
+		HasUnpublishedChanges: d.Published != nil && (!sameContent(d.Working, *d.Published) || !sameAliases(d.Aliases, publishedAliases(d))),
 		Kind:                  kind, Maturity: c.Maturity, Series: c.Series,
 		Related: append([]string{}, c.Related...),
 	}
@@ -297,17 +329,19 @@ func summary(d *record, c Content) Summary {
 
 func (s *Store) detail(d *record, view string) (Detail, error) {
 	c := d.Working
+	aliases := d.Aliases
 	if view == "published" {
 		if d.Status != "published" || d.Published == nil {
 			return Detail{}, bad(404, "这篇文档尚未发布。")
 		}
 		c = *d.Published
+		aliases = publishedAliases(d)
 	}
 	var resolver wikiResolver
 	if strings.Contains(c.Source, "[[") {
 		resolver = s.wikiResolverLocked(view)
 	}
-	rendered, err := renderMarkdownResolved(c.Source, d.Aliases, resolver)
+	rendered, err := renderMarkdownResolved(c.Source, aliases, resolver)
 	if err != nil {
 		return Detail{}, err
 	}
@@ -344,6 +378,10 @@ func (s *Store) update(id string, c Content, version int, present metadataPresen
 			return Detail{}, bad(400, "文档不能关联自身。")
 		}
 	}
+	if sameContent(d.Working, c) {
+		return s.detail(d, "")
+	}
+	rememberHistory(d, "update")
 	if d.Working.Source != c.Source && strings.TrimSpace(c.Source) != "" {
 		d.Activity = addActivity(d.Activity, s.now())
 	}
@@ -374,11 +412,16 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		if d.Status == "trash" || strings.TrimSpace(d.Working.Source) == "" {
 			return Detail{}, bad(400, "请恢复文档并填写正文后再发布。")
 		}
+		if d.Published == nil || !sameContent(d.Working, *d.Published) || !sameAliases(d.Aliases, publishedAliases(d)) {
+			rememberHistory(d, "publish")
+		}
 		if d.Published != nil && d.Published.Title != d.Working.Title {
 			d.PublishedTitleAliases = rememberTitle(d.PublishedTitleAliases, d.Published.Title)
 		}
 		snapshot := copyContent(d.Working)
 		d.Published = &snapshot
+		aliasSnapshot := copyAliases(d.Aliases)
+		d.PublishedAliases = &aliasSnapshot
 		d.Status = "published"
 		d.PublishedAt = s.now().UTC().Format(time.RFC3339Nano)
 	case "unpublish":
@@ -388,6 +431,7 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		d.PublishedTitleAliases = rememberTitle(d.PublishedTitleAliases, d.Published.Title)
 		d.Status = "draft"
 		d.Published = nil
+		d.PublishedAliases = nil
 		d.PublishedAt = ""
 	case "trash":
 		if d.Status == "trash" {
@@ -403,6 +447,7 @@ func (s *Store) Action(id, action string, version int) (Detail, error) {
 		}
 		d.Status = "draft"
 		d.Published = nil
+		d.PublishedAliases = nil
 		d.PublishedAt = ""
 	default:
 		return Detail{}, bad(404, "操作不存在。")
@@ -432,12 +477,17 @@ func (s *Store) Delete(id string, version int) error {
 	if d.Status != "trash" {
 		return bad(409, "请先移至垃圾箱，再永久删除。")
 	}
-	if os.Remove(filepath.Join(s.root, "documents", id+".json")) != nil {
+	directory, err := s.openDocumentRoot()
+	if err != nil {
+		return err
+	}
+	defer directory.Close()
+	if directory.Remove(id+".json") != nil {
 		return bad(500, "删除失败，请重试。")
 	}
 	s.search.invalidate(id)
 	s.links.invalidate()
-	dir, err := os.Open(filepath.Join(s.root, "documents"))
+	dir, err := directory.Open(".")
 	if err != nil {
 		return bad(500, "无法确认删除状态。")
 	}
