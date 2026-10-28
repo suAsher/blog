@@ -1,5 +1,18 @@
 # Local performance and accessibility baseline
 
+## Research workflow release — 2026-10-29
+
+The final build was measured against 30 generated published documents with real local HTTPS authentication, three fresh-profile/cold-HTTP-cache samples per device. These are controlled localhost results, not public-network or physical-phone guarantees. Browser, Lighthouse versions and per-sample diagnostics are in [the final aggregate](research/performance.json).
+
+| Page | Device | Performance median / worst | Accessibility | Best practices | LCP median / worst |
+| --- | --- | --- | --- | --- | --- |
+| Home | Mobile | 99 / 99 | 100 / 100 | 100 / 100 | 1965 / 1972 ms |
+| Home | Desktop | 100 / 93 | 100 / 100 | 100 / 100 | 538 / 543 ms |
+
+The [initial measurement](research/performance-before-small-screen-policy.json) is retained: one mobile run scored 69 with a 2133 ms blocking task attributed to first-time `nebula` WebGL initialization. Narrow screens below 768 px now use the existing CSS constellation, with working pause, visibility, offscreen and reduced-motion controls; larger capable surfaces retain WebGL. All three final mobile samples have 0 ms TBT. The desktop worst sample has 224 ms TBT and remains above the 90-point budget. System GPU/driver caches are not reset by fresh browser profiles, and hardware variability remains relevant.
+
+The full 348-case browser suite passed after the policy change. Fifteen additional generated-content research states passed WCAG AA. No animation, TLS, authentication or accessibility checks were disabled to obtain these results. Earlier measurements below are historical.
+
 Measured 2026-10-26 against the preserved pre-upgrade production build. Chrome 155.0.8059.85, Lighthouse 13.5.0, three cold-cache navigation samples for each page/device. Lighthouse resets browser storage and HTTP cache before every sample; only the explicit session cookie header carries authentication. Scores are on a 0–100 scale. Each cell lists median / worst; for LCP, worst means highest latency.
 
 | Page | Device | Performance | Accessibility | Best practices | LCP (ms) |

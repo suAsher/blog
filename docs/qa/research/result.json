@@ -1,0 +1,18 @@
+{
+  "generatedOnly": true,
+  "importedDocuments": 5,
+  "writtenDocuments": 2,
+  "publishedDocuments": 6,
+  "draftDocuments": 1,
+  "annotations": 1,
+  "workspaces": 1,
+  "viewports": [
+    "desktop",
+    "tablet",
+    "mobile"
+  ],
+  "themes": [
+    "dark",
+    "light"
+  ]
+}

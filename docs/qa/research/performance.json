@@ -1,0 +1,826 @@
+{
+  "measuredAt": "2026-10-28T16:26:32.738Z",
+  "chromeVersion": "156.0.8078.48",
+  "lighthouseVersion": "13.5.0",
+  "samples": 3,
+  "devices": [
+    "mobile",
+    "desktop"
+  ],
+  "dataset": {
+    "documents": 30,
+    "source": "Generated QA fixtures only; temporary real Go store"
+  },
+  "transport": "loopback HTTPS; self-signed certificate; real browser cookie authentication",
+  "cache": "A fresh Chrome profile provides cold browser storage and HTTP cache for every sample",
+  "results": [
+    {
+      "formFactor": "mobile",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 99,
+          "worst": 99
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 1964.542,
+          "worst": 1972.0060499999997
+        },
+        "fcpMs": {
+          "median": 1582.932,
+          "worst": 1587.0032999999999
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.0001047924517326597,
+          "worst": 0.0001047924517326597
+        },
+        "speedIndexMs": {
+          "median": 1582.932,
+          "worst": 1587.0032999999999
+        },
+        "scriptBootupMs": {
+          "median": 25.13199999999999,
+          "worst": 26.335999999999988
+        },
+        "mainThreadMs": {
+          "median": 342.512,
+          "worst": 350.69600000000025
+        }
+      },
+      "runs": [
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1972.0060499999997,
+          "fcpMs": 1587.0032999999999,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1587.0032999999999,
+          "scriptBootupMs": 26.335999999999988,
+          "mainThreadMs": 350.69600000000025
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1963.9204999999997,
+          "fcpMs": 1582.5929999999998,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1582.5929999999998,
+          "scriptBootupMs": 25.13199999999999,
+          "mainThreadMs": 340.70799999999997
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1964.542,
+          "fcpMs": 1582.932,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1582.932,
+          "scriptBootupMs": 23.123999999999977,
+          "mainThreadMs": 342.512
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 4.775999992370606
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 103.2630000076294
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "other",
+              "durationMs": 127.60400000000025
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 124.43200000000004
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 51.007999999999974
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 37.571999999999996
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 8.075999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.0040000000000004
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 196.764,
+              "evaluationMs": 4.623999999999999,
+              "parseCompileMs": 1.448
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 93.27199999999996,
+              "evaluationMs": 20.26399999999999,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 99037
+            },
+            {
+              "type": "script",
+              "requests": 11,
+              "transferBytes": 37348
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36795
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6730
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.322
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 99.751
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 135.44000000000003
+            },
+            {
+              "group": "other",
+              "durationMs": 108.46799999999998
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 46.408
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 40.332000000000015
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 8.043999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.0160000000000005
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 201.176,
+              "evaluationMs": 4.591999999999999,
+              "parseCompileMs": 1.4600000000000002
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 84.21200000000013,
+              "evaluationMs": 19.07999999999999,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 99038
+            },
+            {
+              "type": "script",
+              "requests": 11,
+              "transferBytes": 37348
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36796
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6730
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.3870000076293945
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 107.5169999923706
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 147.69599999999997
+            },
+            {
+              "group": "other",
+              "durationMs": 101.60800000000006
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 47.57199999999997
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 37.228
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.8839999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.5240000000000002
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 201.47999999999996,
+              "evaluationMs": 2.876000000000001,
+              "parseCompileMs": 0.9800000000000001
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 87.36000000000003,
+              "evaluationMs": 19.267999999999976,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 99038
+            },
+            {
+              "type": "script",
+              "requests": 11,
+              "transferBytes": 37348
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36796
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6730
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 100,
+          "worst": 93
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 538.108,
+          "worst": 542.3506
+        },
+        "fcpMs": {
+          "median": 453.072,
+          "worst": 454.9004
+        },
+        "tbtMs": {
+          "median": 4,
+          "worst": 223.99999999999994
+        },
+        "cls": {
+          "median": 0.00005067862051504629,
+          "worst": 0.00005067862051504629
+        },
+        "speedIndexMs": {
+          "median": 454.9004,
+          "worst": 546.7291948391165
+        },
+        "scriptBootupMs": {
+          "median": 101.13600000000025,
+          "worst": 327.64499999999987
+        },
+        "mainThreadMs": {
+          "median": 376.56900000000047,
+          "worst": 614.6459999999938
+        }
+      },
+      "runs": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 542.3506,
+          "fcpMs": 454.9004,
+          "tbtMs": 4,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 454.9004,
+          "scriptBootupMs": 95.88200000000025,
+          "mainThreadMs": 344.71600000000126
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 536.3836,
+          "fcpMs": 450.92240000000004,
+          "tbtMs": 3.999999999999943,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 450.92240000000004,
+          "scriptBootupMs": 101.13600000000025,
+          "mainThreadMs": 376.56900000000047
+        },
+        {
+          "performance": 93,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 538.108,
+          "fcpMs": 453.072,
+          "tbtMs": 223.99999999999994,
+          "cls": 0,
+          "speedIndexMs": 546.7291948391165,
+          "scriptBootupMs": 327.64499999999987,
+          "mainThreadMs": 614.6459999999938
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.687
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 96.058
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 106.55500000000053
+            },
+            {
+              "group": "other",
+              "durationMs": 99.48200000000085
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 83.73500000000004
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 49.24299999999982
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 3.4269999999999947
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7709999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5030000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 158.7830000000003,
+              "evaluationMs": 41.34600000000028,
+              "parseCompileMs": 0.013
+            },
+            {
+              "path": "/",
+              "totalMs": 84.66500000000002,
+              "evaluationMs": 1.1459999999999997,
+              "parseCompileMs": 0.30300000000000005
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 54.87899999999998,
+              "evaluationMs": 53.06099999999997,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 167393
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 105703
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36796
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6730
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.278
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 94.96
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 111.90700000000061
+            },
+            {
+              "group": "other",
+              "durationMs": 108.6030000000001
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 92.96300000000004
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 57.14999999999978
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 3.6959999999999957
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7649999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4850000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 181.60200000000046,
+              "evaluationMs": 46.82900000000026,
+              "parseCompileMs": 0.011
+            },
+            {
+              "path": "/",
+              "totalMs": 90.03099999999999,
+              "evaluationMs": 1.107,
+              "parseCompileMs": 0.28
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 54.74399999999998,
+              "evaluationMs": 52.89599999999998,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 167393
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 105703
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36796
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6730
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.251
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 111.131
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 338.3359999999939
+            },
+            {
+              "group": "other",
+              "durationMs": 118.65500000000007
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 88.68899999999998
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 65.08099999999986
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7629999999999995
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.575999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5460000000000002
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 275.09899999999976,
+              "evaluationMs": 272.8699999999998,
+              "parseCompileMs": 0.018
+            },
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 212.35700000000003,
+              "evaluationMs": 53.053000000000125,
+              "parseCompileMs": 0.012
+            },
+            {
+              "path": "/",
+              "totalMs": 85.845,
+              "evaluationMs": 1.355,
+              "parseCompileMs": 0.337
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 167393
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 105703
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36796
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6730
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

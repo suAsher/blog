@@ -1,0 +1,62 @@
+[
+  {
+    "name": "desktop-import-preview",
+    "violations": []
+  },
+  {
+    "name": "desktop-history-diff",
+    "violations": []
+  },
+  {
+    "name": "desktop-annotation",
+    "violations": []
+  },
+  {
+    "name": "desktop-dark-workspace",
+    "violations": []
+  },
+  {
+    "name": "desktop-dark-compare",
+    "violations": []
+  },
+  {
+    "name": "desktop-light-workspace",
+    "violations": []
+  },
+  {
+    "name": "desktop-light-compare",
+    "violations": []
+  },
+  {
+    "name": "tablet-dark-workspace",
+    "violations": []
+  },
+  {
+    "name": "tablet-dark-compare",
+    "violations": []
+  },
+  {
+    "name": "tablet-light-workspace",
+    "violations": []
+  },
+  {
+    "name": "tablet-light-compare",
+    "violations": []
+  },
+  {
+    "name": "mobile-dark-workspace",
+    "violations": []
+  },
+  {
+    "name": "mobile-dark-compare",
+    "violations": []
+  },
+  {
+    "name": "mobile-light-workspace",
+    "violations": []
+  },
+  {
+    "name": "mobile-light-compare",
+    "violations": []
+  }
+]

@@ -1,0 +1,868 @@
+{
+  "measuredAt": "2026-10-28T15:56:13.859Z",
+  "chromeVersion": "156.0.8078.48",
+  "lighthouseVersion": "13.5.0",
+  "samples": 3,
+  "devices": [
+    "mobile",
+    "desktop"
+  ],
+  "dataset": {
+    "documents": 30,
+    "source": "Generated QA fixtures only; temporary real Go store"
+  },
+  "transport": "loopback HTTPS; self-signed certificate; real browser cookie authentication",
+  "cache": "A fresh Chrome profile provides cold browser storage and HTTP cache for every sample",
+  "results": [
+    {
+      "formFactor": "mobile",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 99,
+          "worst": 69
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 2013.7049999999997,
+          "worst": 2268.2848000000004
+        },
+        "fcpMs": {
+          "median": 1588.623,
+          "worst": 1743.2848000000004
+        },
+        "tbtMs": {
+          "median": 6,
+          "worst": 2133
+        },
+        "cls": {
+          "median": 0.0001047924517326597,
+          "worst": 0.0001047924517326597
+        },
+        "speedIndexMs": {
+          "median": 1588.623,
+          "worst": 1836.000417998125
+        },
+        "scriptBootupMs": {
+          "median": 175.80399999999986,
+          "worst": 2317.4439999999986
+        },
+        "mainThreadMs": {
+          "median": 980.3840000000005,
+          "worst": 3231.7759999999903
+        }
+      },
+      "runs": [
+        {
+          "performance": 69,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2268.2848000000004,
+          "fcpMs": 1743.2848000000004,
+          "tbtMs": 2133,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1836.000417998125,
+          "scriptBootupMs": 2317.4439999999986,
+          "mainThreadMs": 3231.7759999999903
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1967.2604999999999,
+          "fcpMs": 1585.3563,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1585.3563,
+          "scriptBootupMs": 137.17200000000003,
+          "mainThreadMs": 980.3840000000005
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2013.7049999999997,
+          "fcpMs": 1588.623,
+          "tbtMs": 6,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1588.623,
+          "scriptBootupMs": 175.80399999999986,
+          "mainThreadMs": 732.7560000000007
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 4.247
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 710.881
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 2342.5199999999904
+            },
+            {
+              "group": "other",
+              "durationMs": 401.3160000000013
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 259.61599999999976
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 206.25599999999866
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 10.43999999999999
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 9.723999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.9040000000000004
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 2183.1319999999987,
+              "evaluationMs": 2179.411999999999,
+              "parseCompileMs": 0.048
+            },
+            {
+              "path": "/_astro/runtime.CRxuyx9X.js",
+              "totalMs": 590.5959999999994,
+              "evaluationMs": 109.39999999999998,
+              "parseCompileMs": 0.036
+            },
+            {
+              "path": "/",
+              "totalMs": 247.56799999999993,
+              "evaluationMs": 4.244,
+              "parseCompileMs": 1.24
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 146.48400000000018,
+              "evaluationMs": 23.063999999999986,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 25,
+              "transferBytes": 115395
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 53682
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36818
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6731
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.875
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 94.997
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "other",
+              "durationMs": 343.1360000000016
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 230.1440000000001
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 200.36800000000025
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 191.2079999999986
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.951999999999998
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 6.395999999999994
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.18
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/runtime.CRxuyx9X.js",
+              "totalMs": 541.015999999999,
+              "evaluationMs": 101.66799999999999,
+              "parseCompileMs": 0.04
+            },
+            {
+              "path": "/",
+              "totalMs": 223.572,
+              "evaluationMs": 5.635999999999999,
+              "parseCompileMs": 1.436
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 125.03599999999999,
+              "evaluationMs": 28.39200000000001,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 25,
+              "transferBytes": 115395
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 53682
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36818
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6731
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 8.171
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 115.868
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "other",
+              "durationMs": 219.92000000000033
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 206.39200000000014
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 198.96399999999994
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 89.44800000000026
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 11.539999999999994
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 4.791999999999996
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.7000000000000004
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/runtime.CRxuyx9X.js",
+              "totalMs": 243.8719999999998,
+              "evaluationMs": 53.30399999999992,
+              "parseCompileMs": 0.048
+            },
+            {
+              "path": "/",
+              "totalMs": 226.3640000000002,
+              "evaluationMs": 4.639999999999999,
+              "parseCompileMs": 1.036
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 146.9560000000003,
+              "evaluationMs": 58.23199999999996,
+              "parseCompileMs": 0
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 62.17199999999998,
+              "evaluationMs": 58.48399999999998,
+              "parseCompileMs": 0.06
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 25,
+              "transferBytes": 115395
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 53682
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36818
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6731
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 100,
+          "worst": 100
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 538.192,
+          "worst": 561.8907999999999
+        },
+        "fcpMs": {
+          "median": 452.12800000000004,
+          "worst": 463.42719999999997
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 14
+        },
+        "cls": {
+          "median": 0.00005067862051504629,
+          "worst": 0.00005067862051504629
+        },
+        "speedIndexMs": {
+          "median": 452.12800000000004,
+          "worst": 463.42719999999997
+        },
+        "scriptBootupMs": {
+          "median": 116.10600000000031,
+          "worst": 139.0630000000004
+        },
+        "mainThreadMs": {
+          "median": 389.96200000000084,
+          "worst": 440.8129999999993
+        }
+      },
+      "runs": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 561.8907999999999,
+          "fcpMs": 463.42719999999997,
+          "tbtMs": 0,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 463.42719999999997,
+          "scriptBootupMs": 139.0630000000004,
+          "mainThreadMs": 440.8129999999993
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 536.8642,
+          "fcpMs": 451.2428,
+          "tbtMs": 14,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 451.2428,
+          "scriptBootupMs": 116.10600000000031,
+          "mainThreadMs": 389.96200000000084
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 538.192,
+          "fcpMs": 452.12800000000004,
+          "tbtMs": 0,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 452.12800000000004,
+          "scriptBootupMs": 97.75900000000023,
+          "mainThreadMs": 356.2320000000015
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.097
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 130.127
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 149.04299999999898
+            },
+            {
+              "group": "other",
+              "durationMs": 115.16400000000048
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 104.48900000000005
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 68.62799999999979
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7119999999999993
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.2599999999999991
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5170000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 228.20900000000051,
+              "evaluationMs": 58.875000000000355,
+              "parseCompileMs": 0.012
+            },
+            {
+              "path": "/",
+              "totalMs": 88.64599999999999,
+              "evaluationMs": 1.1260000000000001,
+              "parseCompileMs": 0.3370000000000001
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 86.76200000000006,
+              "evaluationMs": 78.69900000000005,
+              "parseCompileMs": 0.014
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 167170
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 105457
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36818
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6731
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.889
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 94.398
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 127.18900000000066
+            },
+            {
+              "group": "other",
+              "durationMs": 112.67200000000037
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 84.97300000000004
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 59.85399999999979
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 3.011999999999995
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7569999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5050000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 196.5320000000003,
+              "evaluationMs": 50.81700000000031,
+              "parseCompileMs": 0.011
+            },
+            {
+              "path": "/",
+              "totalMs": 82.662,
+              "evaluationMs": 1.313,
+              "parseCompileMs": 0.326
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 65.423,
+              "evaluationMs": 63.623,
+              "parseCompileMs": 0.016
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 167170
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 105457
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36818
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6731
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.769
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 91.261
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 109.06800000000094
+            },
+            {
+              "group": "other",
+              "durationMs": 104.51600000000042
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 82.83800000000006
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 55.715000000000025
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.8909999999999973
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7339999999999993
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4700000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 181.97400000000036,
+              "evaluationMs": 47.10100000000024,
+              "parseCompileMs": 0.012
+            },
+            {
+              "path": "/",
+              "totalMs": 81.48700000000002,
+              "evaluationMs": 0.8850000000000001,
+              "parseCompileMs": 0.271
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 51.26399999999999,
+              "evaluationMs": 49.47699999999999,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 167170
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 105457
+            },
+            {
+              "type": "other",
+              "requests": 8,
+              "transferBytes": 36818
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 6731
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
