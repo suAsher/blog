@@ -14,6 +14,23 @@ const capable = {
   memory: 8,
 };
 describe("progressive motion capabilities", () => {
+  it("keeps narrow-screen decoration on CSS without starting a WebGL context", () => {
+    expect(motionPolicy({ ...capable, viewportWidth: 390 })).toMatchObject({
+      scene: false,
+      css: true,
+    });
+    expect(motionPolicy({ ...capable, viewportWidth: 767 })).toMatchObject({
+      scene: false,
+      css: true,
+    });
+    expect(motionPolicy({ ...capable, viewportWidth: 768 })).toMatchObject({
+      scene: true,
+      css: true,
+    });
+    expect(
+      motionPolicy({ ...capable, viewportWidth: 390, reduced: true }),
+    ).toMatchObject({ scene: false, css: false });
+  });
   it("limits motion libraries to discovery surfaces, including routes without trailing slashes", () => {
     for (const route of ["/", "/articles/", "/articles", "/library/", "/lab/"])
       expect(motionSurface(route)).not.toBe("native");

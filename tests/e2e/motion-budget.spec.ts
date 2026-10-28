@@ -32,10 +32,45 @@ test("motion engine downloads follow the pointer budget while the scene really r
   });
 
   await page.goto("/?examples=1");
-  const finePointer = await page.evaluate(() =>
-    matchMedia("(hover: hover) and (pointer: fine)").matches,
+  const finePointer = await page.evaluate(
+    () => matchMedia("(hover: hover) and (pointer: fine)").matches,
   );
   const scene = page.locator("[data-hero-scene]");
+  if ((page.viewportSize()?.width || 0) < 768) {
+    await expect(scene).toHaveAttribute("data-scene-state", "fallback");
+    await expect(scene.locator("canvas")).toHaveCount(0);
+    await page.waitForLoadState("networkidle");
+    expect(scripts.some((url) => /\/nebula[^/]*\.js(?:\?|$)/.test(url))).toBe(
+      false,
+    );
+    expect(
+      await page.evaluate(
+        () =>
+          (window as Window & { __mobileSceneDraws?: number })
+            .__mobileSceneDraws,
+      ),
+    ).toBe(0);
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-visual-engine",
+      "css",
+    );
+    await page.getByRole("button", { name: "暂停动效", exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "paused");
+    await page.getByRole("button", { name: "继续动效", exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-motion", "active");
+    await page.evaluate(() =>
+      window.scrollTo(0, document.documentElement.scrollHeight),
+    );
+    await expect(page.locator("[data-hero-art]")).toHaveAttribute(
+      "data-motion-offscreen",
+      "",
+    );
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator("[data-hero-art]")).not.toHaveAttribute(
+      "data-motion-offscreen",
+    );
+    return;
+  }
   await expect(scene).toHaveAttribute("data-scene-state", "active");
   await expect(scene.locator("canvas")).toHaveCount(1);
   await expect

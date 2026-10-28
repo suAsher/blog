@@ -6,6 +6,7 @@ export type MotionCapabilities = {
   saveData: boolean;
   cores?: number;
   memory?: number;
+  viewportWidth?: number;
 };
 
 export function motionSurface(
@@ -25,7 +26,11 @@ export function motionPolicy(capabilities: MotionCapabilities) {
     (capabilities.memory ?? 8) <= 2;
   const enabled = surface !== "native" && !capabilities.reduced && !constrained;
   return {
-    scene: enabled && surface === "home",
+    scene:
+      enabled &&
+      surface === "home" &&
+      (capabilities.viewportWidth ?? 1024) >= 768,
+    css: enabled && surface === "home",
     smooth: enabled && capabilities.finePointer,
     effects: enabled && capabilities.finePointer,
   };

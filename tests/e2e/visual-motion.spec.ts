@@ -107,7 +107,11 @@ test("a missing WebGL context uses the static artwork without a broken heading o
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute(
     "data-visual-runtime",
-    isMobile ? "paused" : "active",
+    (page.viewportSize()?.width || 0) < 768
+      ? "active"
+      : isMobile
+        ? "paused"
+        : "active",
   );
   await expect(page.locator("[data-hero-scene]")).toHaveAttribute(
     "data-scene-state",
@@ -252,18 +256,34 @@ test("an initially hidden document starts no effects and repeated pause/resume s
   );
   for (let cycle = 0; cycle < 2; cycle++) {
     const before = await frameCount();
-    await expect.poll(frameCount).toBeGreaterThan(before);
+    const cssOnly =
+      (await page.locator("html").getAttribute("data-visual-engine")) === "css";
+    const runningCSS = () =>
+      page.evaluate(
+        () =>
+          document
+            .querySelector(".orbit-art")
+            ?.getAnimations({ subtree: true })
+            .filter((animation) => animation.playState === "running").length ||
+          0,
+      );
+    if (cssOnly) {
+      expect(await frameCount()).toBe(before);
+      await expect.poll(runningCSS).toBeGreaterThan(0);
+    } else await expect.poll(frameCount).toBeGreaterThan(before);
     await page.locator("[data-motion-toggle]").click();
     await expect(page.locator("html")).toHaveAttribute(
       "data-visual-runtime",
       "paused",
     );
     await expectSleeping();
+    if (cssOnly) await expect.poll(runningCSS).toBe(0);
     await page.locator("[data-motion-toggle]").click();
     await expect(page.locator("html")).toHaveAttribute(
       "data-visual-runtime",
       "active",
     );
+    if (cssOnly) await expect.poll(runningCSS).toBeGreaterThan(0);
   }
 });
 
@@ -271,6 +291,7 @@ test("the offscreen hero stops GPU draws and WebGL context loss cleanly returns 
   page,
   isMobile,
 }) => {
+  await page.setViewportSize({ width: 1024, height: 900 });
   await capableDevice(page);
   await page.addInitScript(() => {
     const animationWindow = window as Window & { __sceneDraws?: number };
@@ -324,6 +345,7 @@ test("the offscreen hero stops GPU draws and WebGL context loss cleanly returns 
 test("aborting while the optional effects chunk loads immediately releases the scene", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1024, height: 900 });
   await capableDevice(page);
   await page.addInitScript(() => {
     const original = window.matchMedia.bind(window);
