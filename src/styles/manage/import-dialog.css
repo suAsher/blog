@@ -159,3 +159,133 @@
   border-radius: 6px;
   margin-top: 15px;
 }
+
+.import-preview {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+.import-preview h3 {
+  font-size: 15px;
+  font-weight: 500;
+}
+.import-preview > p,
+.import-preview li {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.import-preview > p {
+  margin-top: 8px;
+}
+.import-preview > ul {
+  margin: 8px 0;
+  padding-left: 18px;
+  max-height: 160px;
+  overflow: auto;
+}
+.import-candidates {
+  margin-top: 15px;
+  max-height: 340px;
+  overflow: auto;
+}
+.import-candidate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.import-candidate strong,
+.import-candidate code,
+.import-candidate small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.import-candidate strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.import-candidate code {
+  color: var(--faint);
+  font: 10px/1.8 var(--mono);
+  margin: 3px 0 6px;
+}
+.import-candidate small {
+  color: var(--faint);
+  font-size: 10px;
+  margin-top: 5px;
+}
+.candidate-status {
+  font-size: 10px;
+  color: var(--muted);
+}
+.candidate-status.new {
+  color: var(--accent);
+}
+.candidate-status.changed {
+  color: var(--text);
+}
+.import-candidate select {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+  padding: 9px 7px;
+  max-width: 190px;
+  font-size: 11px;
+}
+.import-report-tools {
+  margin-top: 18px;
+}
+.import-report-tools > button,
+#retry-import-preview {
+  color: var(--accent);
+  font-size: 11px;
+  padding: 8px 0;
+}
+.import-report-history {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.import-report-history button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  padding: 11px 0;
+  line-height: 1.8;
+}
+.import-report-history button:hover {
+  color: var(--accent);
+}
+@media (max-width: 620px) {
+  .import-candidate {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .import-candidate select {
+    width: 100%;
+    max-width: none;
+    min-height: 44px;
+  }
+  .import-preview {
+    padding: 13px;
+  }
+}
+.import-report-documents {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+}
+.import-report-documents button {
+  text-align: left;
+  margin: 0;
+  padding: 5px 0;
+  overflow-wrap: anywhere;
+}

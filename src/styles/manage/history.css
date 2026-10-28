@@ -1,0 +1,201 @@
+.revision-dialog {
+  width: min(960px, calc(100% - 32px));
+  max-height: 88dvh;
+  margin-top: 6dvh;
+  padding: 28px;
+  overflow: auto;
+}
+.revision-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.revision-heading > div {
+  min-width: 0;
+}
+.revision-heading h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 10px 0;
+  letter-spacing: -0.5px;
+}
+.revision-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.revision-intro {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 18px 0;
+}
+.revision-layout {
+  display: grid;
+  grid-template-columns: 235px minmax(0, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.revision-list {
+  max-height: 450px;
+  overflow: auto;
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--muted);
+}
+.revision-list > button {
+  width: 100%;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.revision-list strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.revision-list span {
+  display: block;
+  color: var(--faint);
+  font-size: 10px;
+  line-height: 1.8;
+  margin-top: 7px;
+}
+.revision-list button[aria-pressed="true"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.revision-detail {
+  min-width: 0;
+  padding: 17px;
+  border-left: 1px solid var(--line);
+}
+.revision-detail h3 {
+  font-size: 12px;
+  font-weight: 500;
+}
+.diff-legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--muted);
+  margin: 10px 0 15px;
+}
+.revision-comparison {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  max-height: 400px;
+  overflow: auto;
+}
+.revision-fields {
+  margin: 0 0 15px;
+}
+.revision-fields dt {
+  color: var(--text);
+  font-size: 11px;
+  margin-top: 10px;
+}
+.revision-fields dd {
+  margin: 4px 0 0;
+}
+.revision-fields del,
+.revision-fields ins {
+  display: block;
+  padding: 4px 8px;
+  text-decoration: none;
+  white-space: pre-wrap;
+}
+.revision-fields del,
+.diff-removed {
+  background: color-mix(in srgb, #bd7767 12%, transparent);
+  color: var(--text);
+}
+.revision-fields ins,
+.diff-added {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.revision-source {
+  margin: 0;
+  font: 11px/1.9 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.revision-source > span {
+  display: block;
+  padding: 1px 8px;
+  min-height: 1.9em;
+}
+.revision-comparison > p {
+  font-size: 11px;
+  margin: 12px 0;
+}
+.revision-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.revision-footer .button {
+  font-size: 11px;
+  min-height: 40px;
+}
+#revision-busy {
+  color: var(--muted);
+  font-size: 11px;
+  margin-right: auto;
+}
+.publish-comparison {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 15px;
+}
+@media (max-width: 620px) {
+  .revision-dialog {
+    padding: 19px;
+    width: calc(100% - 20px);
+    max-height: 94dvh;
+    margin-top: 3dvh;
+  }
+  .revision-heading h2 {
+    font-size: 21px;
+  }
+  .revision-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .revision-list {
+    max-height: 165px;
+  }
+  .revision-list > button {
+    padding: 12px;
+    min-height: 54px;
+  }
+  .revision-detail {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 12px;
+  }
+  .revision-comparison {
+    max-height: 300px;
+  }
+  .revision-footer {
+    flex-wrap: wrap;
+  }
+  .revision-footer .button {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .revision-dialog *,
+  .import-preview * {
+    scroll-behavior: auto;
+  }
+}

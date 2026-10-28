@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import '../styles/article.css';
 import '../styles/manage.css';
+import '../styles/manage/history.css';
 ---
 <Layout title="写作空间" active="manage" description="写下想法，整理文档，让值得留下的知识慢慢生长。">
   <div class="writing-shell">
@@ -20,7 +21,7 @@ import '../styles/manage.css';
       <section class="writing-canvas" aria-label="文档编辑器">
         <div id="editor-empty" class="editor-empty"><span class="empty-paper" aria-hidden="true">✧</span><span class="eyebrow">YOUR NEXT IDEA STARTS HERE</span><h2>给一个想法，留一页纸。</h2><p>站内写作会自动保存草稿。也可以把 Markdown、TXT 和配套图片一起带进来。</p><div><button class="button button-primary" id="empty-new-document">写第一篇文档</button><button class="quiet-link mint" id="empty-import">导入已有文档 <Icon name="arrow" size={16} /></button></div><span class="empty-footnote">草稿只在写作空间出现，发布后才进入阅读与搜索。</span></div>
         <div id="editor-panel" hidden>
-          <div class="editor-topbar"><div class="editor-state"><span id="document-status" class="status-pill">草稿</span><span id="save-status" role="status" aria-live="polite">所有修改已保存</span></div><div class="editor-actions"><button class="small-action" id="focus-writing" aria-pressed="false">专注写作</button><button class="small-action" id="save-document">保存 <kbd>⌘ S</kbd></button><a class="small-action" id="view-document" href="/articles/" hidden>查看文章 ↗</a><button class="small-action" id="unpublish-document" hidden>撤回发布</button><button class="small-action" id="restore-document" hidden>恢复为草稿</button><button class="small-action danger" id="trash-document">移入垃圾箱</button><button class="small-action danger" id="delete-document" hidden>永久删除</button><button class="button button-primary publish-button" id="publish-document">发布文档 <Icon name="arrow" size={15} /></button></div></div>
+          <div class="editor-topbar"><div class="editor-state"><span id="document-status" class="status-pill">草稿</span><span id="save-status" role="status" aria-live="polite">所有修改已保存</span></div><div class="editor-actions"><button class="small-action" id="open-document-history">历史版本</button><button class="small-action" id="focus-writing" aria-pressed="false">专注写作</button><button class="small-action" id="save-document">保存 <kbd>⌘ S</kbd></button><a class="small-action" id="view-document" href="/articles/" hidden>查看文章 ↗</a><button class="small-action" id="unpublish-document" hidden>撤回发布</button><button class="small-action" id="restore-document" hidden>恢复为草稿</button><button class="small-action danger" id="trash-document">移入垃圾箱</button><button class="small-action danger" id="delete-document" hidden>永久删除</button><button class="button button-primary publish-button" id="publish-document">发布文档 <Icon name="arrow" size={15} /></button></div></div>
           <div id="editor-problem" class="editor-problem" role="alert" hidden><p id="editor-problem-text"></p><div><button class="quiet-link" id="retry-save">重新保存</button><button class="quiet-link" id="reload-document" hidden>重新加载服务器版本</button><button class="quiet-link" id="download-local">下载当前未保存原文</button></div></div>
           <div class="document-metadata">
             <label class="sr-only" for="document-title">文档标题</label>
@@ -72,7 +73,57 @@ import '../styles/manage.css';
       </section>
     </div>
   </div>
-  <dialog id="import-dialog" aria-labelledby="import-title"><div class="import-heading"><div><span class="eyebrow">BRING YOUR KNOWLEDGE HOME</span><h2 id="import-title">把已有的思考，带进来<span>。</span></h2></div><button class="icon-button" id="close-import" aria-label="关闭导入"><Icon name="close" /></button></div><p class="import-intro">Markdown、TXT 与 PNG / JPG / GIF / WebP 图片。配图请与文档一起选择文件夹，保留原有相对路径。</p><div class="import-dropzone" id="import-dropzone"><span aria-hidden="true">↥</span><h3>拖入文档和配套图片</h3><p>每批最多 32 MB、500 个文件 · 单篇正文 2 MB · 单图 8 MB</p><div><button class="button button-primary" id="choose-import-files">选择文件</button><button class="button" id="choose-import-folder">选择文件夹</button></div></div><input id="import-files" class="sr-only" tabindex="-1" aria-hidden="true" type="file" multiple accept=".md,.markdown,.txt,.png,.jpg,.jpeg,.gif,.webp" /><input id="import-folder" class="sr-only" tabindex="-1" aria-hidden="true" type="file" multiple /><div class="import-selection" id="import-selection" hidden><div><strong id="import-selection-count"></strong><button id="clear-import-selection" class="quiet-link">清空选择</button></div><p id="import-selection-detail"></p><ul id="import-file-list"></ul><p id="import-skip-note" hidden></p></div><p id="import-error" class="form-error" role="alert" hidden></p><div id="import-report" class="import-report" hidden></div><div class="import-footer"><span>导入后先保存为草稿，检查后再发布。</span><button class="button button-primary" id="confirm-import" disabled>导入为草稿 <Icon name="arrow" size={15} /></button></div></dialog>
+  <dialog id="import-dialog" aria-labelledby="import-title">
+    <div class="import-heading">
+      <div><span class="eyebrow">BRING YOUR KNOWLEDGE HOME</span><h2 id="import-title">把已有的思考，带进来<span>。</span></h2></div>
+      <button class="icon-button" id="close-import" aria-label="关闭导入"><Icon name="close" /></button>
+    </div>
+    <p class="import-intro">Markdown、TXT 与 PNG / JPG / GIF / WebP 图片。配图请与文档一起选择文件夹，保留原有相对路径。</p>
+    <div class="import-dropzone" id="import-dropzone">
+      <span aria-hidden="true">↥</span><h3>拖入文档和配套图片</h3>
+      <p>每批最多 32 MB、500 个文件 · 单篇正文 2 MB · 单图 8 MB</p>
+      <div><button class="button button-primary" id="choose-import-files">选择文件</button><button class="button" id="choose-import-folder">选择文件夹</button></div>
+    </div>
+    <input id="import-files" class="sr-only" tabindex="-1" aria-hidden="true" type="file" multiple accept=".md,.markdown,.txt,.png,.jpg,.jpeg,.gif,.webp" />
+    <input id="import-folder" class="sr-only" tabindex="-1" aria-hidden="true" type="file" multiple />
+    <div class="import-selection" id="import-selection" hidden>
+      <div><strong id="import-selection-count"></strong><button id="clear-import-selection" class="quiet-link">清空选择</button></div>
+      <p id="import-selection-detail"></p><ul id="import-file-list"></ul><p id="import-skip-note" hidden></p>
+    </div>
+    <div id="import-preview" class="import-preview" role="region" aria-label="导入预检结果" aria-live="polite" hidden></div>
+    <p id="import-error" class="form-error" role="alert" hidden></p>
+    <button id="retry-import-preview" class="quiet-link" hidden>重新预检所选文件</button>
+    <div id="import-report" class="import-report" role="status" hidden></div>
+    <div class="import-report-tools">
+      <button id="open-import-reports" class="quiet-link" aria-controls="import-report-history">查看最近导入报告</button>
+      <div id="import-report-history" class="import-report-history" aria-live="polite" hidden></div>
+    </div>
+    <div class="import-footer"><span>先确认导入预检，再保存到工作副本。</span><button class="button button-primary" id="confirm-import" disabled>导入为草稿 <Icon name="arrow" size={15} /></button></div>
+  </dialog>
+  <dialog id="history-dialog" class="revision-dialog" aria-labelledby="history-title">
+    <div class="revision-heading">
+      <div><span class="eyebrow">VERSIONS OF YOUR THINKING</span><h2 id="history-title">找回思考的一个版本</h2><p id="history-document-title"></p></div>
+      <button class="icon-button" id="close-document-history" aria-label="关闭历史版本"><Icon name="close" /></button>
+    </div>
+    <p class="revision-intro">服务器保留最近 12 个历史版本（总计最多 6 MB）。恢复会生成新的工作副本，已发布内容保留原样。</p>
+    <div class="revision-layout">
+      <nav id="revision-list" class="revision-list" aria-label="已保存的历史版本"></nav>
+      <section class="revision-detail" aria-labelledby="revision-comparison-title">
+        <h3 id="revision-comparison-title">历史版本 → 当前工作副本</h3>
+        <p class="diff-legend"><span>− 历史版本</span><span>+ 当前工作副本</span></p>
+        <div id="revision-comparison" class="revision-comparison"></div>
+      </section>
+    </div>
+    <p id="revision-error" class="form-error" role="alert" hidden></p>
+    <div class="revision-footer"><span id="revision-busy" role="status"></span><button class="button button-primary" id="restore-revision" disabled>恢复此版本到工作副本</button></div>
+  </dialog>
+  <dialog id="publish-review-dialog" class="revision-dialog" aria-labelledby="publish-review-title">
+    <div class="revision-heading"><div><span class="eyebrow">READY FOR YOUR READERS</span><h2 id="publish-review-title">发布前，再看一眼变化</h2><p id="publish-review-document"></p></div></div>
+    <p class="revision-intro">确认后，读者将看到当前工作副本。取消会保留已保存的修改。</p>
+    <p class="diff-legend"><span>− 线上已发布版本</span><span>+ 当前工作副本</span></p>
+    <div id="publish-comparison" class="revision-comparison publish-comparison"></div>
+    <div class="revision-footer"><button class="button" id="cancel-publish-review">继续编辑</button><button class="button button-primary" id="confirm-publish">确认发布这些修改</button></div>
+  </dialog>
   <input id="editor-image-input" class="sr-only" tabindex="-1" aria-hidden="true" type="file" accept="image/png,image/jpeg,image/gif,image/webp" />
   <script>import '../scripts/manage/index';</script>
 </Layout>

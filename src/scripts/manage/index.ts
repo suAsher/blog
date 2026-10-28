@@ -5,11 +5,12 @@ import {
   type DocumentDetail,
   type DocumentList,
   type DocumentSummary,
-  type ImportReport,
   type Quota,
 } from "../../lib/documents";
 import { DocumentEditor, errorMessage, today } from "./editor";
 import { DocumentImporter } from "./import";
+import { RevisionDialogs } from "./history";
+import type { SavedImportReport } from "../../lib/import-inbox";
 import {
   draftTemplate,
   manageIntent,
@@ -58,15 +59,23 @@ document.addEventListener("content:before-reload", (event) => {
   ).detail;
   if (typeof detail?.waitUntil === "function") detail.waitUntil(editor.flush());
 });
+const revisions = new RevisionDialogs();
 const importer = new DocumentImporter({
   quota,
-  imported: async (result: ImportReport) => {
+  openDocument: selectDocument,
+  imported: async (result: SavedImportReport) => {
     status = "draft";
     query = "";
     element<HTMLInputElement>("manage-search").value = "";
     syncTabs();
     await loadList();
-    if (result.imported[0]) await selectDocument(result.imported[0].id);
+    const affected = result.imported[0] || result.updated?.[0];
+    if (affected && editor.current?.id === affected.id) {
+      const doc = await requestJSON<DocumentDetail>(
+        `/api/documents/${encodeURIComponent(affected.id)}`,
+      );
+      editor.open(doc);
+    } else if (affected) await selectDocument(affected.id);
   },
 });
 
@@ -277,6 +286,12 @@ async function mutate(
   try {
     if (!(await editor.flush()) || !editor.current) return;
     const doc = editor.current;
+    if (
+      action === "publish" &&
+      doc.status === "published" &&
+      !(await revisions.reviewPublished(doc))
+    )
+      return;
     if (action === "delete") {
       await requestJSON(
         `/api/documents/${doc.id}`,
@@ -315,6 +330,32 @@ async function mutate(
     });
   }
 }
+async function openDocumentHistory() {
+  if (busy || !editor.current) return;
+  busy = true;
+  editor.lock(true);
+  try {
+    if (!(await editor.flush()) || !editor.current) return;
+    const restored = await revisions.open(editor.current);
+    if (restored) {
+      editor.open(restored);
+      notice(
+        "历史版本已恢复到工作副本，线上已发布内容保持原样。检查后可以再次发布。",
+      );
+      await loadList();
+    }
+  } catch (error) {
+    notice(errorMessage(error), true);
+  } finally {
+    busy = false;
+    editor.lock(false);
+  }
+}
+element("open-document-history").addEventListener(
+  "click",
+  () => void openDocumentHistory(),
+);
+
 async function exportDocument(bundle: boolean) {
   if (!editor.current || busy || !(await editor.flush())) return;
   const link = document.createElement("a");
