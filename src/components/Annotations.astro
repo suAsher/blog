@@ -1,0 +1,41 @@
+---
+import '../styles/annotations.css';
+---
+<section id="annotations" class="annotations" aria-labelledby="annotations-title" hidden>
+  <header class="annotations-heading">
+    <div>
+      <span class="eyebrow">READ & REFLECT</span>
+      <h2 id="annotations-title">在字里行间留下想法</h2>
+    </div>
+    <button id="annotation-capture" class="button annotation-capture" type="button" disabled>
+      批注选中文字
+    </button>
+  </header>
+  <p id="annotation-status" class="annotation-status" role="status" aria-live="polite">
+    选中正文，留下一条批注。批注保存到私有服务。
+  </p>
+  <button id="annotation-reload" type="button" class="button" hidden>重新读取批注</button>
+  <form id="annotation-editor" class="annotation-editor" hidden>
+    <p id="annotation-editor-title">写下这次阅读的想法</p>
+    <blockquote id="annotation-selected-quote"></blockquote>
+    <label for="annotation-body">我的批注</label
+    ><textarea
+      id="annotation-body"
+      rows="4"
+      maxlength="16000"
+      placeholder="这段文字让我想到…"
+    ></textarea>
+    <label for="annotation-color">标记颜色</label
+    ><select id="annotation-color">
+      <option value="mint">薄荷</option>
+      <option value="violet">紫藤</option>
+      <option value="amber">琥珀</option>
+    </select>
+    <div class="annotation-actions">
+      <button id="annotation-save" type="submit" class="button button-primary">保存批注</button
+      ><button id="annotation-cancel" type="button" class="button">取消编辑</button>
+    </div>
+    <p class="annotation-help">失败或冲突时保留当前输入；离开此页前请完成保存。</p>
+  </form>
+  <ol id="annotation-list" class="annotation-list" aria-label="段落批注"></ol>
+</section>
