@@ -1,0 +1,58 @@
+{
+  "title": "AI 推理基础设施 · 从请求到可验证的服务（演示）",
+  "description": "从输入契约与张量单位，走到缓存载荷、流式测量和预算准入。3 章 6 篇构造演示，先学会提出可验证的问题。",
+  "accent": "violet",
+  "chapters": [
+    {
+      "id": "ai-inputs",
+      "title": "第1章 · 请求与数据",
+      "description": "先把输入、形状与单位说清楚。",
+      "lessons": [
+        {
+          "file": "01-request-contract.md",
+          "title": "演示 · 推理 01｜先写清请求，再讨论模型快慢",
+          "description": "区分文本、token、输出约束与请求标识，建立可验证的输入契约。"
+        },
+        {
+          "file": "02-tensor-shapes.md",
+          "title": "演示 · 推理 02｜用形状和单位读懂张量预算",
+          "description": "先学会计算元素与字节，不把玩具数组当成真实模型。"
+        }
+      ]
+    },
+    {
+      "id": "ai-state",
+      "title": "第2章 · 阶段与状态预算",
+      "description": "分开理解预填充、生成与缓存载荷。",
+      "lessons": [
+        {
+          "file": "03-prefill-decode.md",
+          "title": "演示 · 推理 03｜分开理解预填充与逐步生成",
+          "description": "用可运行的工作量模型区分两个阶段，保留模型与测量的边界。"
+        },
+        {
+          "file": "04-kv-budget.md",
+          "title": "演示 · 推理 04｜只估算 KV 载荷，不冒充整机容量",
+          "description": "明确层数、KV 头、头维度和精度，给显存计算写上假设。"
+        }
+      ]
+    },
+    {
+      "id": "ai-service",
+      "title": "第3章 · 测量与服务约束",
+      "description": "定义指标，再验证准入和退出。",
+      "lessons": [
+        {
+          "file": "05-stream-metrics.md",
+          "title": "演示 · 推理 05｜先定义事件，再计算首响与间隔",
+          "description": "用构造时间线区分流式事件间隔和每输出 token 平均耗时。"
+        },
+        {
+          "file": "06-admission.md",
+          "title": "演示 · 推理 06｜用预算准入和退出路径保护服务",
+          "description": "在小型纯函数模拟中检查接收、拒绝与释放，不把队列当无限缓冲。"
+        }
+      ]
+    }
+  ]
+}

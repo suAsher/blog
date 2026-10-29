@@ -1,0 +1,58 @@
+{
+  "title": "容器与交付 · 从进程到可维护服务（演示）",
+  "description": "理解镜像、运行配置、数据边界与恢复路径，再把一个小服务放进容器。",
+  "accent": "blue",
+  "chapters": [
+    {
+      "id": "containers-delivery-1",
+      "title": "第1章 · 认识运行边界",
+      "description": "分清镜像内容、容器进程与构建输入。",
+      "lessons": [
+        {
+          "file": "01-image-process.md",
+          "title": "演示 · 容器 01｜镜像不是正在运行的服务",
+          "description": "用启动命令与退出状态理解容器的生命周期。"
+        },
+        {
+          "file": "02-build-context.md",
+          "title": "演示 · 容器 02｜构建上下文决定哪些文件可以进入镜像",
+          "description": "先缩小输入范围，再讨论缓存和构建速度。"
+        }
+      ]
+    },
+    {
+      "id": "containers-delivery-2",
+      "title": "第2章 · 网络、存储与权限",
+      "description": "把服务可达性和数据寿命拆开设计。",
+      "lessons": [
+        {
+          "file": "03-ports-storage.md",
+          "title": "演示 · 容器 03｜端口映射与持久化是两条不同的边界",
+          "description": "区分进程监听、宿主机发布和内容卷，避免误把程序目录当数据备份。"
+        },
+        {
+          "file": "04-least-privilege.md",
+          "title": "演示 · 容器 04｜从最少权限开始推导运行配置",
+          "description": "把可写位置、用户和资源限制逐项解释，而不是照抄一串安全参数。"
+        }
+      ]
+    },
+    {
+      "id": "containers-delivery-3",
+      "title": "第3章 · 健康与版本切换",
+      "description": "把能启动、能服务与能恢复分别验证。",
+      "lessons": [
+        {
+          "file": "05-health-layers.md",
+          "title": "演示 · 容器 05｜一个绿色状态不能代表所有依赖都正常",
+          "description": "用存活、就绪和业务探针区分失败位置。"
+        },
+        {
+          "file": "06-release-switch.md",
+          "title": "演示 · 容器 06｜用产物身份和恢复证据完成版本切换",
+          "description": "让部署步骤能回答更新了什么、失败到哪里、怎样恢复。"
+        }
+      ]
+    }
+  ]
+}

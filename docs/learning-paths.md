@@ -20,6 +20,16 @@ API `/api/learning-paths` 与 `/api/learning-paths/:id` 均在现有登录、写
 
 `examples/learning/go/` 为生成演示资料，包含 6 章、12 篇入门文章，附目标、代码、验证方法与练习。它不代表作者经历，也不宣称是完整 Go 教程。源文件不会自动进入你的空间。
 
+## 多方向知识空间
+
+`examples/learning/README.md` 说明完整示例目录：Go、Linux 与网络、Python、Git 与工程协作、容器与交付、分布式系统、性能与可观测性、AI 推理基础设施。合计 8 条路线、27 章、54 篇文章；七个新增方向各 3 章 6 篇。每篇都有具体例子和练习，并使用精确的 `[[标题]]` 连接同方向及其他方向的文章。它们由普通内容和路线数据组成，应用没有技术名称枚举。
+
+可复现的完整内容验收为 `node scripts/showcase-learning-catalog.mjs`：通过真实导入与发布接口创建 54 篇文章，检查 8 张方向卡片、筛选、连续阅读、跨方向图谱关系，以及桌面/平板/手机的深浅主题。截图与结果在 `docs/qa/learning-catalog/`。
+
+扩展导入脚本为 `deploy/seed-learning-catalog.py`，每方向独立记录导入收据、文档来源哈希与版本，支持中断重试；同方向持有进程锁避免并发重复导入，已完成时不覆盖人工修改。`python3 -m unittest discover -s tests -p 'test_learning_catalog.py' -v` 验证路径、预算、断点恢复、手工修改保护、锁与幂等。
+
+这些文章是可扩写的起点。Python、Git 和教学数值模型已执行验证；Docker 未在当前开发环境运行，Linux 专用命令也没有冒充 macOS 验证，具体条件在正文和各方向 README 中说明。
+
 服务器可运行 `deploy/seed-learning-demo.py --help` 查看导入方式。该工具通过真实鉴权接口创建和发布自己的演示文档，保留私有导入标记以便中断重试，不读取电脑上的私人资料，不输出服务器密码或会话，重复运行不会覆盖已有演示内容。
 
 ## 验收记录（2026-10-29）

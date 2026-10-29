@@ -1,0 +1,58 @@
+{
+  "title": "Git 与工程协作 · 从改动到可信交付（演示）",
+  "description": "先看懂改动，再把评审、验证和回退连成一条可重复的交付路径。",
+  "accent": "violet",
+  "chapters": [
+    {
+      "id": "git-engineering-1",
+      "title": "第1章 · 理解一次改动",
+      "description": "先分清工作区、暂存区与提交。",
+      "lessons": [
+        {
+          "file": "01-three-states.md",
+          "title": "演示 · Git 01｜一次修改经过哪三个位置",
+          "description": "用三个差异视图解释保存文件与提交快照的区别。"
+        },
+        {
+          "file": "02-small-commits.md",
+          "title": "演示 · Git 02｜让提交成为可以复查的单位",
+          "description": "通过一个小校验器，学习如何把实现、测试和意图留在同一份快照。"
+        }
+      ]
+    },
+    {
+      "id": "git-engineering-2",
+      "title": "第2章 · 分支与合并",
+      "description": "在隔离练习里观察共同祖先和冲突。",
+      "lessons": [
+        {
+          "file": "03-branch-diffs.md",
+          "title": "演示 · Git 03｜分支差异需要先确定参照点",
+          "description": "区别端点差异与从共同祖先出发的评审范围。"
+        },
+        {
+          "file": "04-conflict-resolution.md",
+          "title": "演示 · Git 04｜冲突解决是在重建一个新结论",
+          "description": "用同一行的两种修改，观察Git为何需要人工判断。"
+        }
+      ]
+    },
+    {
+      "id": "git-engineering-3",
+      "title": "第3章 · 验证与交付",
+      "description": "把本地证据带到可回退的发布过程。",
+      "lessons": [
+        {
+          "file": "05-local-ci.md",
+          "title": "演示 · Git 05｜先把检查做成本地的一条命令",
+          "description": "用失败即停止的脚本，把自动验证的输入与退出状态固定下来。"
+        },
+        {
+          "file": "06-reversible-release.md",
+          "title": "演示 · Git 06｜回退计划要早于发布动作",
+          "description": "把源码版本、构建产物与内容数据分别记录，避免只回退界面却损坏状态。"
+        }
+      ]
+    }
+  ]
+}

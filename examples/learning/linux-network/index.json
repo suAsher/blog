@@ -1,0 +1,58 @@
+{
+  "title": "Linux 与网络 · 从终端到连接证据（演示）",
+  "description": "从路径、进程和文件句柄开始，逐层理解连接、HTTP与排查证据。3章6篇生成演示，练习只使用自己的临时目录与回环地址。",
+  "accent": "blue",
+  "chapters": [
+    {
+      "id": "linux-network-1",
+      "title": "第1章 · 认识运行环境",
+      "description": "建立路径、进程与打开资源的基本模型。",
+      "lessons": [
+        {
+          "file": "01-paths.md",
+          "title": "演示 · 从终端路径开始，建立一个可丢弃的练习目录",
+          "description": "区分当前目录、相对路径和绝对路径，避免命令作用在错误的位置。"
+        },
+        {
+          "file": "02-process-files.md",
+          "title": "演示 · 进程与文件描述符：名字背后还有一次打开",
+          "description": "用一个临时文件观察打开、读取位置与关闭之间的关系。"
+        }
+      ]
+    },
+    {
+      "id": "linux-network-2",
+      "title": "第2章 · 看清一条连接",
+      "description": "把名称、地址、端口和HTTP约定分开验证。",
+      "lessons": [
+        {
+          "file": "03-addresses.md",
+          "title": "演示 · 地址、名称与端口：先把连接目标说完整",
+          "description": "分开理解名字解析、IP 地址和监听端口，不把所有连接失败都叫网络故障。"
+        },
+        {
+          "file": "04-http-loopback.md",
+          "title": "演示 · 让 HTTP 在本机走一趟：请求、状态与响应体",
+          "description": "用仅绑定回环的临时服务观察一次真实 HTTP 请求。"
+        }
+      ]
+    },
+    {
+      "id": "linux-network-3",
+      "title": "第3章 · 用预算和证据排查",
+      "description": "先明确时间成本，再把猜测变成可复查的下一步。",
+      "lessons": [
+        {
+          "file": "05-timeouts.md",
+          "title": "演示 · 超时与重试：先限制总预算，再决定是否再试",
+          "description": "用确定性模拟观察尝试次数、退避和剩余时间之间的关系。"
+        },
+        {
+          "file": "06-evidence.md",
+          "title": "演示 · 只读排查练习：把“服务很慢”拆成可核对的证据",
+          "description": "建立可复查的观察记录，区分事实、假设和下一步验证。"
+        }
+      ]
+    }
+  ]
+}

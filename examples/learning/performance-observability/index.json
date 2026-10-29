@@ -1,0 +1,58 @@
+{
+  "title": "性能与可观测性 · 从数字到证据（演示）",
+  "description": "先统一指标、分位数和请求范围，再用排队、结构化事件及可重复对照建立排查证据；所有数值都是构造练习。",
+  "accent": "mint",
+  "chapters": [
+    {
+      "id": "metrics",
+      "title": "第1章 · 读懂一组数字",
+      "description": "先把单位、统计口径和样本范围写在指标旁边。",
+      "lessons": [
+        {
+          "file": "01-units.md",
+          "title": "演示 · 性能 01｜先写单位，再谈快慢",
+          "description": "区别单次延迟、总耗时与单位时间完成数。"
+        },
+        {
+          "file": "02-percentiles.md",
+          "title": "演示 · 性能 02｜平均数之外，读懂尾部延迟",
+          "description": "用明确的分位数算法观察少量慢请求。"
+        }
+      ]
+    },
+    {
+      "id": "signals",
+      "title": "第2章 · 连接负载与信号",
+      "description": "从排队模型走到可追踪、可核对的事件。",
+      "lessons": [
+        {
+          "file": "03-queues.md",
+          "title": "演示 · 性能 03｜吞吐稳定，队列仍可能增长",
+          "description": "用离散队列看清到达、服务与积压的关系。"
+        },
+        {
+          "file": "04-correlated-events.md",
+          "title": "演示 · 性能 04｜让日志可以沿着一个请求读下去",
+          "description": "用结构化事件串起阶段、结果与关联标识。"
+        }
+      ]
+    },
+    {
+      "id": "evidence",
+      "title": "第3章 · 把结论变成可复查证据",
+      "description": "固定输入、保留反例，也允许当前证据不足。",
+      "lessons": [
+        {
+          "file": "05-controlled-comparison.md",
+          "title": "演示 · 性能 05｜比较优化前后，先固定问题",
+          "description": "用成对样本区分观察到的变化和因果结论。"
+        },
+        {
+          "file": "06-diagnostic-record.md",
+          "title": "演示 · 性能 06｜写一份不抢跑结论的排障记录",
+          "description": "把现象、假设、证据和下一步分开保存。"
+        }
+      ]
+    }
+  ]
+}

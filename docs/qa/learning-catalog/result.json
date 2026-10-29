@@ -1,0 +1,42 @@
+{
+  "generatedOnly": true,
+  "directions": 8,
+  "documents": 54,
+  "chapters": 27,
+  "uploadedThroughRealImport": true,
+  "filterAndContinue": "passed",
+  "graphNodes": 54,
+  "graphEdges": 50,
+  "audits": [
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "device": "tablet",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "device": "tablet",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "device": "mobile",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    }
+  ]
+}

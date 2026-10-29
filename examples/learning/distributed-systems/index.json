@@ -1,0 +1,58 @@
+{
+  "title": "分布式系统 · 从状态到失败恢复（演示）",
+  "description": "从单进程状态模型出发，理解超时、重复、顺序与陈旧读取；用确定性模拟练习失败恢复，不把玩具模型当生产实现。",
+  "accent": "violet",
+  "chapters": [
+    {
+      "id": "state",
+      "title": "第1章 · 先认识状态与失败",
+      "description": "先说明结果如何产生，再讨论跨进程之后会失去哪些确定性。",
+      "lessons": [
+        {
+          "file": "01-state-machine.md",
+          "title": "演示 · 分布式 01｜先把状态变化写清楚",
+          "description": "从一份账本理解状态、命令、事件与不变量。"
+        },
+        {
+          "file": "02-timeout.md",
+          "title": "演示 · 分布式 02｜超时为什么不等于失败",
+          "description": "用三种结果区分未提交、已提交和暂时不知道。"
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "title": "第2章 · 重复与顺序",
+      "description": "让输入可以重放，并且不会悄悄产生不同的副作用。",
+      "lessons": [
+        {
+          "file": "03-idempotency.md",
+          "title": "演示 · 分布式 03｜幂等键必须绑定请求内容",
+          "description": "识别同一请求的重试，并拒绝同键不同参数。"
+        },
+        {
+          "file": "04-ordering.md",
+          "title": "演示 · 分布式 04｜消息到达顺序与业务顺序",
+          "description": "用带序号的事件理解乱序、重复和缺口。"
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "title": "第3章 · 读取与恢复实践",
+      "description": "通过可检查的约定讨论取舍，避免用一句强一致掩盖需求。",
+      "lessons": [
+        {
+          "file": "05-versioned-read.md",
+          "title": "演示 · 分布式 05｜用版本号识别陈旧读取",
+          "description": "把能否接受旧数据写成明确的读取要求。"
+        },
+        {
+          "file": "06-retry-budget.md",
+          "title": "演示 · 分布式 06｜让重试服从总预算",
+          "description": "把最大次数、退避和总等待一起写进恢复演练。"
+        }
+      ]
+    }
+  ]
+}

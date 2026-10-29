@@ -1,0 +1,58 @@
+{
+  "title": "Python · 从数据处理到可靠小工具（演示）",
+  "description": "用标准库练习类型、异常、文件边界、惰性处理与测试，最终写出有清楚输入和退出状态的小命令。3章6篇生成演示。",
+  "accent": "mint",
+  "chapters": [
+    {
+      "id": "python-1",
+      "title": "第1章 · 把规则写成程序",
+      "description": "看懂值、分支、函数与失败约定。",
+      "lessons": [
+        {
+          "file": "01-values.md",
+          "title": "演示 · 从值和分支开始，写一个能解释结果的小程序",
+          "description": "区分数字、字符串、列表与布尔判断，用明确规则处理输入。"
+        },
+        {
+          "file": "02-functions-errors.md",
+          "title": "演示 · 函数与异常：让失败保留原因，而不是变成空结果",
+          "description": "为一个纯函数写清输入约定，并在调用边界处理预期错误。"
+        }
+      ]
+    },
+    {
+      "id": "python-2",
+      "title": "第2章 · 数据与资源边界",
+      "description": "区分语法、业务校验与资源生命周期。",
+      "lessons": [
+        {
+          "file": "03-json-files.md",
+          "title": "演示 · 读写 JSON：把文件格式检查留在系统边界",
+          "description": "在自己的临时目录完成一次写入、读取和结构校验。"
+        },
+        {
+          "file": "04-generators.md",
+          "title": "演示 · 生成器与资源：按需读取，也要按时关闭",
+          "description": "理解 yield 的暂停点，避免把惰性执行误当成自动释放。"
+        }
+      ]
+    },
+    {
+      "id": "python-3",
+      "title": "第3章 · 留下可重复的验证",
+      "description": "用测试固定边界，再接上命令行入口。",
+      "lessons": [
+        {
+          "file": "05-unittest.md",
+          "title": "演示 · 用 unittest 固定边界：测试应解释哪种输入被接受",
+          "description": "把正常值与错误值放进可重复执行的测试，不依赖人工盯输出。"
+        },
+        {
+          "file": "06-cli.md",
+          "title": "演示 · 做一个小命令：参数、计算与退出状态分开",
+          "description": "用标准库 argparse 把纯函数接到命令行边界。"
+        }
+      ]
+    }
+  ]
+}
