@@ -29,6 +29,8 @@ export default defineConfig({
         "src/lib/annotations.ts",
         "src/lib/import-inbox.ts",
         "src/lib/workspaces.ts",
+        "src/lib/learning-paths.ts",
+        "src/lib/learning-navigation.ts",
       ],
       thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
       // Vitest's agent formatter otherwise hides fully covered modules in text output.

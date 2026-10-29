@@ -1,0 +1,61 @@
+{
+  "title": "Go · 从第一行到独立实践（演示）",
+  "description": "从工具链、基本语法走到可测试的小命令。6 章 12 篇生成演示，练习阅读、运行、修改与回顾；不是作者真实经历或完整课程承诺。",
+  "accent": "blue",
+  "chapters": [
+    {
+      "id": "go-start",
+      "title": "第1章 · 起步",
+      "description": "先认识工具，再写第一行。",
+      "files": [
+        "01-toolchain.md",
+        "02-first-program.md"
+      ]
+    },
+    {
+      "id": "go-values",
+      "title": "第2章 · 变量与类型",
+      "description": "让数据有名字，让变化有边界。",
+      "files": [
+        "03-variables.md",
+        "04-types.md"
+      ]
+    },
+    {
+      "id": "go-control",
+      "title": "第3章 · 流程控制",
+      "description": "用条件和循环描述真正的规则。",
+      "files": [
+        "05-conditions.md",
+        "06-loops.md"
+      ]
+    },
+    {
+      "id": "go-functions",
+      "title": "第4章 · 函数与错误",
+      "description": "拆出意图，让失败可以被处理。",
+      "files": [
+        "07-functions.md",
+        "08-errors.md"
+      ]
+    },
+    {
+      "id": "go-data",
+      "title": "第5章 · 集合与结构",
+      "description": "从一串数据走向一个小模型。",
+      "files": [
+        "09-slices-maps.md",
+        "10-structs.md"
+      ]
+    },
+    {
+      "id": "go-engineering",
+      "title": "第6章 · 工程化第一步",
+      "description": "让程序能验证，也让失败可排查。",
+      "files": [
+        "11-tests.md",
+        "12-cli.md"
+      ]
+    }
+  ]
+}

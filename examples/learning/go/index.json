@@ -1,0 +1,109 @@
+{
+  "title": "Go · 从第一行到独立实践（演示）",
+  "description": "从工具链、基本语法走到可测试的小命令。6 章 12 篇生成演示，练习阅读、运行、修改与回顾；不是作者真实经历或完整课程承诺。",
+  "accent": "blue",
+  "chapters": [
+    {
+      "id": "go-start",
+      "title": "第1章 · 起步",
+      "description": "先认识工具，再写第一行。",
+      "lessons": [
+        {
+          "file": "01-toolchain.md",
+          "title": "演示 · Go 01｜把 Go 工具链准备好",
+          "description": "理解终端、编译器和编辑器的职责，建立可验证的本机环境。"
+        },
+        {
+          "file": "02-first-program.md",
+          "title": "演示 · Go 02｜读懂第一个程序和模块",
+          "description": "把文件、包、入口和模块放进一张简单的心智地图。"
+        }
+      ]
+    },
+    {
+      "id": "go-values",
+      "title": "第2章 · 变量与类型",
+      "description": "让数据有名字，让变化有边界。",
+      "lessons": [
+        {
+          "file": "03-variables.md",
+          "title": "演示 · Go 03｜变量、常量与作用域",
+          "description": "用明确的名字表达数据，并看懂值何时可以改变。"
+        },
+        {
+          "file": "04-types.md",
+          "title": "演示 · Go 04｜整数、浮点数与字符串",
+          "description": "区别计算精度和文字编码，避免看似合理的隐式假设。"
+        }
+      ]
+    },
+    {
+      "id": "go-control",
+      "title": "第3章 · 流程控制",
+      "description": "用条件和循环描述真正的规则。",
+      "lessons": [
+        {
+          "file": "05-conditions.md",
+          "title": "演示 · Go 05｜if 与 switch：把规则写清楚",
+          "description": "区分输入无效、普通分支和默认分支。"
+        },
+        {
+          "file": "06-loops.md",
+          "title": "演示 · Go 06｜for 与 range：让重复工作可预测",
+          "description": "理解次数、退出条件与遍历值之间的区别。"
+        }
+      ]
+    },
+    {
+      "id": "go-functions",
+      "title": "第4章 · 函数与错误",
+      "description": "拆出意图，让失败可以被处理。",
+      "lessons": [
+        {
+          "file": "07-functions.md",
+          "title": "演示 · Go 07｜函数：把重复逻辑变成明确约定",
+          "description": "认识参数、返回值和职责边界。"
+        },
+        {
+          "file": "08-errors.md",
+          "title": "演示 · Go 08｜错误返回值：让失败被看见",
+          "description": "遇到无效输入时，返回原因而不是伪造一个正常结果。"
+        }
+      ]
+    },
+    {
+      "id": "go-data",
+      "title": "第5章 · 集合与结构",
+      "description": "从一串数据走向一个小模型。",
+      "lessons": [
+        {
+          "file": "09-slices-maps.md",
+          "title": "演示 · Go 09｜切片与 map：顺序和查找各有所长",
+          "description": "选择集合时，先确认是否需要稳定顺序和存在性判断。"
+        },
+        {
+          "file": "10-structs.md",
+          "title": "演示 · Go 10｜结构体与方法：为概念建立形状",
+          "description": "用小模型描述文章，避免到处传递互不关联的变量。"
+        }
+      ]
+    },
+    {
+      "id": "go-engineering",
+      "title": "第6章 · 工程化第一步",
+      "description": "让程序能验证，也让失败可排查。",
+      "lessons": [
+        {
+          "file": "11-tests.md",
+          "title": "演示 · Go 11｜表驱动测试：留下可以重复的验证",
+          "description": "把手工核对转成每次修改后都能执行的检查。"
+        },
+        {
+          "file": "12-cli.md",
+          "title": "演示 · Go 12｜做一个能检查参数的小命令",
+          "description": "把输入、业务逻辑和退出状态连成一个完整的可运行程序。"
+        }
+      ]
+    }
+  ]
+}

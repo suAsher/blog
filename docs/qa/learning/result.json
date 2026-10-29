@@ -1,0 +1,43 @@
+{
+  "generatedOnly": true,
+  "chapters": 6,
+  "documents": 12,
+  "viewports": 3,
+  "themes": 2,
+  "audits": [
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "device": "tablet",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "device": "tablet",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "device": "mobile",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "editor",
+      "violations": []
+    }
+  ]
+}
