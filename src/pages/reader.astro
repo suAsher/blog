@@ -5,6 +5,7 @@ import ArticleCover from '../components/ArticleCover.astro';
 import Backlinks from '../components/Backlinks.astro';
 import Annotations from '../components/Annotations.astro';
 import '../styles/article.css';
+import '../styles/learning-reader.css';
 ---
 <Layout title="阅读空间" active="articles" article>
   <div id="reader-loading" class="shell reader-loading" role="status"><span class="eyebrow">OPENING YOUR NOTE</span><h1>让文字，慢慢展开。</h1><p>正在读取已发布的文档…</p></div>
@@ -16,6 +17,7 @@ import '../styles/article.css';
     <header class="article-heading"><div class="article-labels"><span class="mono">FIELD NOTES</span><a id="live-edit" class="quiet-link mint" href="/manage/">编辑文档 <Icon name="northeast" size={13}/></a></div><h1 id="live-title"></h1><p id="live-description"></p><div class="article-meta"><span class="author-avatar">a</span><strong>asher</strong><span class="meta-divider"></span><time id="live-date"></time><span><Icon name="clock" size={14}/><span id="live-minutes"></span> 分钟阅读</span></div><div class="tag-row" id="live-tags"></div></header>
     <ArticleCover live />
     <div class="reader-layout"><aside class="toc-sidebar"><span class="eyebrow">ON THIS PAGE</span><h2>在这篇文章里</h2><nav aria-label="文章目录" id="live-toc"></nav><div class="toc-progress"><span>阅读进度</span><strong id="reading-percent">0%</strong></div><p class="sidebar-note">慢慢读，让想法停留一会儿。</p></aside><div class="reader-main"><div class="reader-toolbar"><div><button class="reader-tool" id="live-bookmark" data-bookmark="" aria-pressed="false"><Icon name="bookmark" size={17}/><span data-bookmark-label>收藏</span></button><button class="reader-tool" id="mark-read" aria-pressed="false"><Icon name="check" size={18}/><span>标为已读</span></button></div><button class="reader-tool" id="focus-toggle" aria-pressed="false"><Icon name="focus" size={17}/><span>专注阅读</span><kbd>F</kbd></button></div><details class="mobile-toc"><summary>文章目录 <span>＋</span></summary><nav aria-label="移动端文章目录" id="live-mobile-toc"></nav></details><article class="prose" id="article-body"></article>
+          <section id="learning-navigation" class="learning-reader" aria-label="技术路线章节导航" hidden></section>
           <Annotations />
           <Backlinks /><div class="article-end"><span>— END OF NOTE —</span><p>读到这里，有没有一个想法值得留下？</p><span class="local-note">本机即时保存；连接私有服务后同步。状态与冲突请查看页脚。</span></div><a class="next-article" href="/articles/"><div><span class="eyebrow">KEEP EXPLORING</span><h2>回到知识花园，继续探索</h2></div><Icon name="arrow" size={24}/></a></div></div>
   </div>

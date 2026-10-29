@@ -1,0 +1,33 @@
+<section class="shell learning-entrance">
+  <div class="section-heading">
+    <div><span class="eyebrow">ONE DIRECTION, A LITTLE DEEPER</span><h2>给探索，一条自己的路线<span class="mint-dot">.</span></h2></div>
+    <a class="quiet-link mint" href="/learn/">全部技术路线 →</a>
+  </div>
+  <p class="learning-entrance-note">从第一行代码，到理解背后的原理。把文章编成章节，也允许自己随时岔开，去发现。</p>
+  <div id="home-learning-paths" class="learning-entrance-grid" aria-live="polite"><a class="learning-entrance-card" href="/learn/"><span class="eyebrow">BUILD YOUR OWN MAP</span><h3>把想学的方向，慢慢写成体系。</h3><p>创建方向 · 组织章节 · 继续学习 →</p></a></div>
+</section>
+<style is:global>
+  .learning-entrance { margin-block: 4rem; }
+  .learning-entrance-note { color: var(--muted); line-height: 1.9; max-width: 45rem; margin-block: -1rem 2rem; }
+  .learning-entrance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 1.2rem; }
+  .learning-entrance-card { display: block; padding: 1.8rem; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent); transition: transform .2s; }
+  .learning-entrance-card:hover { transform: translateY(-3px); }
+  .learning-entrance-card h3 { margin-block: 1rem; font-size: 1.3rem; line-height: 1.6; }
+  .learning-entrance-card p { color: var(--muted); line-height: 1.8; }
+  @media (prefers-reduced-motion: reduce) { .learning-entrance-card { transition: none; } .learning-entrance-card:hover { transform: none; } }
+</style>
+<script>
+  import { requestJSON } from '../lib/documents';
+  import { element } from '../scripts/shared';
+  const target = document.getElementById('home-learning-paths');
+  if (target) requestJSON<{ paths: {id: string; title: string; chapters: {documentIds: string[]}[]}[] }>('/api/learning-paths')
+    .then(({paths}) => {
+      if (!paths.length) return;
+      target.replaceChildren(...paths.slice(0, 3).map(path => {
+        const card = element('a', 'learning-entrance-card');
+        card.href = `/learn/?id=${path.id}`;
+        card.append(element('span', 'eyebrow', 'YOUR KNOWLEDGE, IN CHAPTERS'), element('h3', '', path.title), element('p', '', `${path.chapters.length} 章 · ${path.chapters.reduce((sum, chapter) => sum + chapter.documentIds.length, 0)} 篇文档 · 打开路线 →`));
+        return card;
+      }));
+    }).catch(() => { /* Keep the functional entry link when the API is unavailable. */ });
+</script>

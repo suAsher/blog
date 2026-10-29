@@ -165,6 +165,12 @@ function commands(): Command[] {
       href: "/manage/?import=1",
     },
     {
+      title: "技术学习路线",
+      detail: "按方向、章节循序学习，回到上次读到的地方",
+      aliases: ["learn", "course", "路线", "课程", "章节"],
+      href: "/learn/",
+    },
+    {
       title: "专题工作台",
       detail: "整理阅读路径、问题与对照研究",
       aliases: ["workspace", "topic", "研究", "专题", "对照"],

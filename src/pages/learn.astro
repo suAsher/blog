@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/learn.css';
+---
+<Layout title="技术路线" active="learn" description="从第一步，到自己的体系。按方向、章节与文章，构建可持续学习的个人技术知识库。">
+  <div class="shell learn-page">
+    <header class="learn-hero">
+      <div><span class="eyebrow">BUILD YOUR OWN UNDERSTANDING / 01</span><h1>知识有方向，<br />探索<span>有章可循。</span></h1><p>从零开始，把每一次阅读写进自己的知识体系。<br />技术栈、研究方向、长期课题，都能在这里慢慢成形。</p></div>
+      <div class="learn-constellation" aria-hidden="true"><span>01</span><i></i><span>02</span><i></i><span>∞</span><small>ONE CHAPTER AT A TIME</small></div>
+    </header>
+    <div class="learn-toolbar"><label for="learn-search">我的技术方向 <input id="learn-search" type="search" placeholder="搜索方向或章节…" /></label><button id="learn-create" class="button button-primary" type="button">＋ 新建方向</button></div>
+    <p id="learn-status" role="status" aria-live="polite">正在读取你的知识路线…</p>
+    <button id="learn-retry" type="button" class="button" hidden>重新读取</button>
+    <nav id="learn-paths" class="learn-paths" aria-label="技术方向"></nav>
+    <section id="learn-empty" class="learn-empty" hidden><span aria-hidden="true">✧</span><h2>你的下一步，从这里开始。</h2><p>创建一个方向，把已有文章按章节串起来。分类由你决定，文章依然是知识的中心。</p><button id="learn-empty-create" class="button button-primary" type="button">创建第一条路线</button></section>
+    <div id="learn-detail" hidden></div>
+  </div>
+  <dialog id="learn-dialog" class="learn-dialog" aria-labelledby="learn-dialog-title">
+    <form id="learn-form">
+      <div class="learn-dialog-heading"><div><span class="eyebrow">CURATE YOUR PATH</span><h2 id="learn-dialog-title">整理技术路线</h2></div><button id="learn-close" type="button" class="button">关闭</button></div>
+      <p>章节是文章的索引。调整这里的顺序不会修改或删除文章正文。</p>
+      <label>方向名称<input id="learn-title" required maxlength="160" placeholder="例如 Go · 从入门到工程实践" /></label>
+      <label>方向说明<textarea id="learn-description" rows="2" maxlength="4000" placeholder="这条路线适合谁？学完希望理解什么？"></textarea></label>
+      <label>强调色<select id="learn-accent"><option value="mint">薄荷绿</option><option value="blue">星空蓝</option><option value="violet">星云紫</option></select></label>
+      <div id="learn-chapter-editor"></div>
+      <button id="learn-add-chapter" type="button" class="button">＋ 添加章节</button>
+      <a href="/manage/" class="quiet-link" target="_blank" rel="noopener">打开写作空间，创建或导入文章 ↗</a>
+      <p id="learn-save-status" role="status" aria-live="polite"></p>
+      <div id="learn-conflict" class="learn-conflict" hidden><p>另一处已经更新这条路线。你的编辑仍保留在窗口中；先查看最新内容，再选择读取最新版本，或明确用当前编辑替换它。</p><a id="learn-latest" target="_blank" rel="noopener">在新标签页查看最新路线 ↗</a><button id="learn-reload-latest" class="button" type="button">放弃当前编辑并读取最新版本</button><button id="learn-reapply-latest" class="button" type="button">用当前编辑替换最新路线并保存</button></div>
+      <div class="learn-dialog-footer"><button id="learn-delete" type="button" class="button" hidden>删除路线</button><button id="learn-save" class="button button-primary" type="submit">保存路线</button></div>
+      <div id="learn-delete-confirm" hidden><p>只删除路线目录，所有文章继续保留。确定删除？</p><button id="learn-delete-yes" type="button" class="button">确认删除路线</button><button id="learn-delete-no" type="button" class="button">取消删除</button></div>
+    </form>
+  </dialog>
+  <script>import '../scripts/learn/index';</script>
+</Layout>

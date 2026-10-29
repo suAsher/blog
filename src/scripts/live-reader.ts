@@ -12,6 +12,7 @@ import sql from 'highlight.js/lib/languages/sql';
 import { ApiError, requestJSON, type DocumentDetail } from '../lib/documents';
 import { element, syncBookmarkButtons } from './shared';
 import { initReader } from './reader';
+import { initLearningNavigation } from './learning-reader';
 import { initAnnotations } from './annotations';
 import { projectPublishedSnapshot } from '../lib/offline-snapshot';
 import { waitForOfflineShellReady } from '../lib/pwa-readiness';
@@ -220,6 +221,7 @@ async function openDocument() {
     }
     root.hidden = false; if (loading) loading.hidden = true;
     initReader(); syncBookmarkButtons();
+    void initLearningNavigation(data.id);
     void initAnnotations(data.id, data.version);
     void loadKnowledgeLinks(data.id);
   } catch (error) {

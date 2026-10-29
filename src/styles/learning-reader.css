@@ -1,0 +1,31 @@
+.learning-reader {
+  margin-block: 3rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--accent) 7%, transparent),
+    transparent
+  );
+}
+.learning-reader h2 {
+  margin-block: 1.2rem 0.6rem;
+  font-size: 1.4rem;
+}
+.learning-reader p {
+  color: var(--muted);
+  line-height: 1.8;
+}
+.learning-reader-links {
+  display: grid;
+  gap: 0.8rem;
+  margin-block: 1.5rem;
+}
+.learning-reader .button {
+  white-space: normal;
+  text-align: left;
+}
+.focus-mode .learning-reader {
+  display: none;
+}
