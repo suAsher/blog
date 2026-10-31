@@ -211,13 +211,13 @@
   color: #d6b284;
 }
 html[data-theme="light"] .callout-heading {
-  color: #397e69;
+  color: #24664f;
 }
 html[data-theme="light"] .callout-tip .callout-heading {
-  color: #7461b0;
+  color: #614b96;
 }
 html[data-theme="light"] .callout-warning .callout-heading {
-  color: #96662f;
+  color: #7c501e;
 }
 @media (max-width: 600px) {
   .widget-header {

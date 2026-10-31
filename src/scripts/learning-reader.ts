@@ -53,6 +53,7 @@ export async function initLearningNavigation(documentId: string) {
       );
       return;
     }
+    renderRouteOutline(path, titles, pathId, documentId);
     const heading = element("h2", "", path.title);
     const meta = element(
       "p",
@@ -97,4 +98,40 @@ export async function initLearningNavigation(documentId: string) {
       retry,
     );
   }
+}
+
+function renderRouteOutline(
+  path: Path,
+  titles: Map<string, string>,
+  pathId: string,
+  current: string,
+) {
+  for (const targetId of [
+    "reader-route-outline",
+    "reader-mobile-route-outline",
+  ]) {
+    const target = document.getElementById(targetId);
+    if (!target) continue;
+    const sections = path.chapters.map((chapter) => {
+      const group = element("details", "reader-route-chapter");
+      group.open = chapter.documentIds.includes(current);
+      group.append(element("summary", "", chapter.title));
+      const list = element("ol");
+      chapter.documentIds.forEach((id) => {
+        if (!titles.has(id)) return;
+        const row = element("li");
+        const link = element("a", "", titles.get(id));
+        link.href = `/articles/${id}/?path=${pathId}`;
+        if (id === current) link.setAttribute("aria-current", "page");
+        row.append(link);
+        list.append(row);
+      });
+      if (list.childElementCount) group.append(list);
+      else group.append(element("p", "", "本章尚无可读文章"));
+      return group;
+    });
+    target.replaceChildren(...sections);
+  }
+  document.getElementById("reader-route-sidebar")?.removeAttribute("hidden");
+  document.getElementById("reader-mobile-route")?.removeAttribute("hidden");
 }

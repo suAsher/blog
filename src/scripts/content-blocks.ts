@@ -1,5 +1,6 @@
 import { parseCallout, parseChart, validateDiagram, type ChartSpec } from '../lib/content-blocks';
 import '../styles/content-blocks.css';
+import { scheduleExplorers } from './explorers/loader';
 
 const NS = 'http://www.w3.org/2000/svg';
 const darkColors = ['#8ce3c4', '#a9a0ef', '#e6b985', '#7ac8dd', '#e498ba', '#b1cc77'];
@@ -217,6 +218,7 @@ function callouts(root: HTMLElement) {
 export function enhanceContent(root: HTMLElement): void {
   clearDetachedDiagrams();
   callouts(root);
+  scheduleExplorers(root);
   let diagrams = 0, charts = 0;
   root.querySelectorAll<HTMLElement>('pre > code').forEach(code => {
     if (code.closest('.content-widget')) return;

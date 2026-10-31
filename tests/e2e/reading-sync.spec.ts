@@ -215,8 +215,23 @@ test.describe('cross-device reading state and spaced review', () => {
     document = await content.action(document, 'publish');
     const other = await context.newPage();
     let logout: Promise<void> | undefined;
+    let releaseLogoutRequest!: () => void;
+    const logoutGate = new Promise<void>(resolve => { releaseLogoutRequest = resolve; });
+    let logoutRequestSeen = false;
+    // Exercise the client cleanup/mutation race before revoking the shared
+    // session. Otherwise the other tab can correctly receive 401 and navigate
+    // away before the intended queued mutation; that is a different race.
+    await page.route('**/auth/logout', async route => {
+      logoutRequestSeen = true;
+      await logoutGate;
+      await route.continue();
+    });
     try {
       await Promise.all([page.goto(`/articles/${document.id}/`), other.goto(`/articles/${document.id}/`)]);
+      for (const reader of [page, other]) {
+        await expect(reader.locator('#live-title')).toHaveText(document.title);
+        await expect(reader.locator('#article-body')).toBeVisible();
+      }
       await page.evaluate(() => window.document.addEventListener('auth:clear', () => {
         (window as unknown as { authClearSeen: boolean }).authClearSeen = true;
       }, { once: true }));
@@ -230,22 +245,32 @@ test.describe('cross-device reading state and spaced review', () => {
       });
       await expect.poll(() => other.evaluate(() => (window as unknown as { dataLockHeld: boolean }).dataLockHeld)).toBe(true);
 
+      const response = page.waitForResponse(value => value.url().endsWith('/auth/logout'));
       logout = page.getByRole('button', { name: '退出登录', exact: true }).click();
       await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { authClearSeen?: boolean }).authClearSeen))).toBe(true);
+      await expect.poll(() => logoutRequestSeen).toBe(true);
       await other.getByRole('button', { name: '标为已读', exact: true }).click();
-      await expect.poll(() => other.evaluate(() => Object.keys(localStorage).some(key => key.startsWith('asher-reading-sync-journal-')))).toBe(true);
+      await expect.poll(() => other.evaluate(documentId => Object.keys(localStorage)
+        .filter(key => key.startsWith('asher-reading-sync-journal-'))
+        .some(key => {
+          const journal = JSON.parse(localStorage.getItem(key) || '{}');
+          return journal.key === documentId && journal.patch?.read === true;
+        }), document.id)).toBe(true);
       await other.evaluate(() => (window as unknown as { releaseDataLock?: () => void }).releaseDataLock?.());
+      releaseLogoutRequest();
+      expect((await response).status()).toBe(200);
       await logout;
-      await expect(page).toHaveURL(/\/login\/\?reason=logout/);
+      await expect(page).toHaveURL(/\/login\/\?reason=logout$/);
       await expect.poll(() => page.evaluate(() => ({
         epoch: Boolean(localStorage.getItem('asher-reading-sync-logout-epoch')),
         sync: localStorage.getItem('asher-reading-sync-v1'),
         journals: Object.keys(localStorage).filter(key => key.startsWith('asher-reading-sync-journal-')).length,
       }))).toEqual({ epoch: true, sync: null, journals: 0 });
     } finally {
+      releaseLogoutRequest();
       await other.evaluate(() => (window as unknown as { releaseDataLock?: () => void }).releaseDataLock?.()).catch(() => {});
-      await logout?.catch(() => {});
       await other.close().catch(() => {});
+      await logout?.catch(() => {});
       await establishSession(context, baseURL);
     }
   });

@@ -52,7 +52,7 @@
   color: #9c5c14;
 }
 [data-theme="light"] .hljs-comment {
-  color: #6b7b73;
+  color: var(--code-comment);
 }
 
 /* Keep a known canvas behind both highlighters rather than inheriting ambient page gradients. */

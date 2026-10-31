@@ -31,6 +31,8 @@ export default defineConfig({
         "src/lib/workspaces.ts",
         "src/lib/learning-paths.ts",
         "src/lib/learning-navigation.ts",
+        "src/lib/explorers.ts",
+        "src/lib/editorial-reader.ts",
       ],
       thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
       // Vitest's agent formatter otherwise hides fully covered modules in text output.

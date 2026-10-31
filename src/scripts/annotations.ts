@@ -36,7 +36,7 @@ function textNodes(root: Node): Text[] {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(value) {
       return value.parentElement?.closest(
-        'button,script,style,[hidden],[aria-hidden="true"]',
+        'button,script,style,[hidden],[aria-hidden="true"],.explore-widget',
       )
         ? NodeFilter.FILTER_REJECT
         : NodeFilter.FILTER_ACCEPT;
@@ -205,6 +205,9 @@ export function initAnnotations(
     if (!range) return;
     highlight("annotation-current", [range]);
     const target = range.startContainer.parentElement;
+    target?.closest("[data-output-collapsed]")?.dispatchEvent(
+      new Event("asher:reveal-output"),
+    );
     target?.scrollIntoView({ block: "center", behavior: "instant" });
     article.tabIndex = -1;
     article.focus({ preventScroll: true });
