@@ -1,150 +1,397 @@
 /** Controlled localhost audits. Persist aggregate metrics only: no cookies, credentials, or HTML. */
-import lighthouse from 'lighthouse';
-import { launch } from 'chrome-launcher';
-import { chromium } from '@playwright/test';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import { existsSync } from 'node:fs';
-import { startPrivateServer, readLocalCredentials } from './local-private-server.mjs';
+import lighthouse from "lighthouse";
+import { launch } from "chrome-launcher";
+import { chromium } from "@playwright/test";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { existsSync } from "node:fs";
+import {
+  startPrivateServer,
+  readLocalCredentials,
+} from "./local-private-server.mjs";
 
 function diagnosticDetails(lhr, origin) {
   const audits = lhr.audits;
-  const lcp = audits['lcp-breakdown-insight']?.details?.items || [];
-  const selector = lcp.find(item => item.type === 'node')?.selector || null;
-  const subparts = lcp.find(item => item.type === 'table')?.items || [];
-  const pathOnly = value => {
-    try { const url = new URL(value); return url.origin === origin ? url.pathname : '(external or unattributed)'; }
-    catch { return '(unattributed)'; }
+  const lcp = audits["lcp-breakdown-insight"]?.details?.items || [];
+  const selector = lcp.find((item) => item.type === "node")?.selector || null;
+  const subparts = lcp.find((item) => item.type === "table")?.items || [];
+  const pathOnly = (value) => {
+    try {
+      const url = new URL(value);
+      return url.origin === origin
+        ? url.pathname
+        : "(external or unattributed)";
+    } catch {
+      return "(unattributed)";
+    }
   };
   return {
     lcpSelector: selector,
-    accessibilityFailures: lhr.categories.accessibility.auditRefs.filter(ref => audits[ref.id]?.score === 0).map(ref => ({
-      id: ref.id, selectors: (audits[ref.id].details?.items || []).map(item => item.node?.selector).filter(Boolean),
+    accessibilityFailures: lhr.categories.accessibility.auditRefs
+      .filter((ref) => audits[ref.id]?.score === 0)
+      .map((ref) => ({
+        id: ref.id,
+        selectors: (audits[ref.id].details?.items || [])
+          .map((item) => item.node?.selector)
+          .filter(Boolean),
+      })),
+    lcpSubparts: subparts.map((item) => ({
+      part: item.subpart,
+      durationMs: item.duration,
     })),
-    lcpSubparts: subparts.map(item => ({ part: item.subpart, durationMs: item.duration })),
-    mainThread: (audits['mainthread-work-breakdown']?.details?.items || []).map(item => ({ group: item.group, durationMs: item.duration })),
-    scripts: (audits['bootup-time']?.details?.items || []).slice(0, 8).map(item => ({
-      path: pathOnly(item.url), totalMs: item.total, evaluationMs: item.scripting, parseCompileMs: item.scriptParseCompile,
-    })),
-    resources: (audits['resource-summary']?.details?.items || []).map(item => ({
-      type: item.resourceType, requests: item.requestCount, transferBytes: item.transferSize,
-    })),
+    mainThread: (audits["mainthread-work-breakdown"]?.details?.items || []).map(
+      (item) => ({ group: item.group, durationMs: item.duration }),
+    ),
+    scripts: (audits["bootup-time"]?.details?.items || [])
+      .slice(0, 8)
+      .map((item) => ({
+        path: pathOnly(item.url),
+        totalMs: item.total,
+        evaluationMs: item.scripting,
+        parseCompileMs: item.scriptParseCompile,
+      })),
+    resources: (audits["resource-summary"]?.details?.items || []).map(
+      (item) => ({
+        type: item.resourceType,
+        requests: item.requestCount,
+        transferBytes: item.transferSize,
+      }),
+    ),
   };
 }
 
-const output = resolve(process.env.BLOG_PERF_OUTPUT || '/tmp/asher-blog-performance.json');
+const output = resolve(
+  process.env.BLOG_PERF_OUTPUT || "/tmp/asher-blog-performance.json",
+);
 const samples = Number(process.env.BLOG_PERF_SAMPLES || 3);
-if (!Number.isInteger(samples) || samples < 3 || samples > 10) throw new Error('Performance audits require 3–10 samples.');
-const devices = (process.env.BLOG_PERF_DEVICES || 'mobile,desktop').split(',');
-if (!devices.length || devices.some(value => !['mobile', 'desktop'].includes(value)) || new Set(devices).size !== devices.length) throw new Error('Audit devices must be mobile and/or desktop.');
-const graphPreset = process.env.BLOG_PERF_GRAPH === '1';
-const count = Number(process.env.BLOG_PERF_DOCUMENTS || (graphPreset ? 300 : 30));
-if (!Number.isInteger(count) || count < (graphPreset ? 9 : 1) || count > 300) throw new Error('Invalid QA dataset size.');
+if (!Number.isInteger(samples) || samples < 3 || samples > 10)
+  throw new Error("Performance audits require 3–10 samples.");
+const devices = (process.env.BLOG_PERF_DEVICES || "mobile,desktop").split(",");
+if (
+  !devices.length ||
+  devices.some((value) => !["mobile", "desktop"].includes(value)) ||
+  new Set(devices).size !== devices.length
+)
+  throw new Error("Audit devices must be mobile and/or desktop.");
+const graphPreset = process.env.BLOG_PERF_GRAPH === "1";
+const count = Number(
+  process.env.BLOG_PERF_DOCUMENTS || (graphPreset ? 300 : 30),
+);
+if (!Number.isInteger(count) || count < (graphPreset ? 9 : 1) || count > 300)
+  throw new Error("Invalid QA dataset size.");
 const service = await startPrivateServer({ handleSignals: false });
 let browser;
 let chrome;
 let cleanupPromise;
-const cleanup = () => cleanupPromise ??= (async () => {
-  await browser?.close();
-  chrome?.kill();
-  await service.stop();
-})();
-const onSignal = signal => { void cleanup().finally(() => process.exit(signal === 'SIGINT' ? 130 : 143)); };
-for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, onSignal);
+const cleanup = () =>
+  (cleanupPromise ??= (async () => {
+    await browser?.close();
+    chrome?.kill();
+    await service.stop();
+  })());
+const onSignal = (signal) => {
+  void cleanup().finally(() => process.exit(signal === "SIGINT" ? 130 : 143));
+};
+for (const signal of ["SIGINT", "SIGTERM"]) process.once(signal, onSignal);
 try {
-  const credentials = await readLocalCredentials(service.origin, service.fixture);
+  const credentials = await readLocalCredentials(
+    service.origin,
+    service.fixture,
+  );
   browser = await chromium.launch({
-    channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
+    channel: process.env.PLAYWRIGHT_CHANNEL || "chrome",
     handleSIGINT: false,
     handleSIGTERM: false,
     handleSIGHUP: false,
   });
   const login = async () => {
-    const context = await browser.newContext({ baseURL: service.origin, ignoreHTTPSErrors: true });
-    const response = await context.request.post('/auth/login', { headers: { Origin: service.origin }, data: { username: credentials.username, password: credentials.password } });
-    if (response.status() !== 200) throw new Error('Local performance login failed.');
+    const context = await browser.newContext({
+      baseURL: service.origin,
+      ignoreHTTPSErrors: true,
+    });
+    const response = await context.request.post("/auth/login", {
+      headers: { Origin: service.origin },
+      data: { username: credentials.username, password: credentials.password },
+    });
+    if (response.status() !== 200)
+      throw new Error("Local performance login failed.");
     return context;
   };
   let context = await login();
-  const titleAt = index => `QA 性能样本 ${String(index + 1).padStart(3, '0')}`;
+  const titleAt = (index) =>
+    `QA 性能样本 ${String(index + 1).padStart(3, "0")}`;
   for (let index = 0; index < count; index++) {
-    if (index && index % 100 === 0) { await context.close(); context = await login(); }
-    const connections = graphPreset ? Array.from({ length: 8 }, (_, offset) => `[[${titleAt((index + offset + 1) % count)}]]`).join('\n\n') : '';
-    const created = await context.request.post('/api/documents', { headers: { Origin: service.origin }, data: {
-      title: titleAt(index), description: '自动生成的性能验收数据。', date: '2026-10-25',
-      tags: ['QA性能'], category: 'QA示例', cover: '', source: `## 性能测试\n\n${'这是只存在于临时测试环境中的示例正文。'.repeat(80)}\n\n${connections}`,
-    } });
-    if (!created.ok()) throw new Error('Performance QA dataset creation failed.');
+    if (index && index % 100 === 0) {
+      await context.close();
+      context = await login();
+    }
+    const connections = graphPreset
+      ? Array.from(
+          { length: 8 },
+          (_, offset) => `[[${titleAt((index + offset + 1) % count)}]]`,
+        ).join("\n\n")
+      : "";
+    const created = await context.request.post("/api/documents", {
+      headers: { Origin: service.origin },
+      data: {
+        title: titleAt(index),
+        description: "自动生成的性能验收数据。",
+        date: "2026-10-25",
+        tags: ["QA性能"],
+        category: "QA示例",
+        cover: "",
+        source: `## 性能测试\n\n${"这是只存在于临时测试环境中的示例正文。".repeat(80)}\n\n${connections}`,
+      },
+    });
+    if (!created.ok())
+      throw new Error("Performance QA dataset creation failed.");
     const { data } = await created.json();
-    const published = await context.request.post(`/api/documents/${data.id}/publish`, { headers: { Origin: service.origin }, data: { version: data.version } });
-    if (!published.ok()) throw new Error('Performance QA dataset publication failed.');
+    const published = await context.request.post(
+      `/api/documents/${data.id}/publish`,
+      { headers: { Origin: service.origin }, data: { version: data.version } },
+    );
+    if (!published.ok())
+      throw new Error("Performance QA dataset publication failed.");
+  }
+  let fieldGuidePath;
+  if (process.env.BLOG_PERF_FIELD_GUIDE === "1") {
+    const raw = await readFile("examples/field-guides/inference.md", "utf8");
+    const source = raw.replace(/^---\n[\s\S]*?\n---\n/, "");
+    const response = await context.request.post("/api/documents", {
+      headers: { Origin: service.origin },
+      data: {
+        title: "QA · 一次推理请求的旅程",
+        description: "生成的真实长文性能验收。",
+        date: "2026-10-29",
+        tags: ["生成演示"],
+        category: "",
+        cover: "/images/field-guides/inference.png",
+        source,
+      },
+    });
+    if (!response.ok()) throw new Error("Field guide QA creation failed.");
+    const { data } = await response.json();
+    const published = await context.request.post(
+      `/api/documents/${data.id}/publish`,
+      {
+        headers: { Origin: service.origin },
+        data: { version: data.version },
+      },
+    );
+    if (!published.ok()) throw new Error("Field guide QA publication failed.");
+    fieldGuidePath = `/articles/${data.id}/`;
   }
   await context.close();
   context = await login();
   let graphBudget;
   if (graphPreset) {
-    const response = await context.request.get('/api/graph?limit=300&view=published');
-    if (!response.ok()) throw new Error('QA graph dataset validation failed.');
+    const response = await context.request.get(
+      "/api/graph?limit=300&view=published",
+    );
+    if (!response.ok()) throw new Error("QA graph dataset validation failed.");
     const { data } = await response.json();
-    if (data.nodes.length !== count || data.edges.length !== count * 8 || data.truncated) throw new Error('QA graph dataset did not reach the expected real node/edge budget.');
+    if (
+      data.nodes.length !== count ||
+      data.edges.length !== count * 8 ||
+      data.truncated
+    )
+      throw new Error(
+        "QA graph dataset did not reach the expected real node/edge budget.",
+      );
     graphBudget = { nodes: data.nodes.length, edges: data.edges.length };
-    console.log(`Validated real QA graph: ${graphBudget.nodes} nodes, ${graphBudget.edges} edges`);
+    console.log(
+      `Validated real QA graph: ${graphBudget.nodes} nodes, ${graphBudget.edges} edges`,
+    );
   }
-  const cookie = (await context.cookies(service.origin)).find(value => value.name === '__Host-asher_session');
-  if (!cookie) throw new Error('Local audit session unavailable.');
-  const chromePath = process.env.CHROME_PATH || (existsSync('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome') ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : undefined);
+  const cookie = (await context.cookies(service.origin)).find(
+    (value) => value.name === "__Host-asher_session",
+  );
+  if (!cookie) throw new Error("Local audit session unavailable.");
+  const chromePath =
+    process.env.CHROME_PATH ||
+    (existsSync("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+      ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+      : undefined);
   const chromeVersion = browser.version();
-  await browser.close(); browser = undefined;
-  const paths = (process.env.BLOG_PERF_PATHS || '/,/articles/,/articles/build-a-learning-system/,/manage/').split(',');
+  await browser.close();
+  browser = undefined;
+  const paths = fieldGuidePath
+    ? ["/", fieldGuidePath]
+    : (
+        process.env.BLOG_PERF_PATHS ||
+        "/,/articles/,/articles/build-a-learning-system/,/manage/"
+      ).split(",");
   const results = [];
   for (const formFactor of devices) {
     for (const path of paths) {
-      if (!path.startsWith('/') || path.startsWith('//')) throw new Error('Audit paths must be local paths.');
+      if (!path.startsWith("/") || path.startsWith("//"))
+        throw new Error("Audit paths must be local paths.");
       const runs = [];
       const diagnostics = [];
       for (let sample = 0; sample < samples; sample++) {
-        chrome = await launch({ chromePath, handleSIGINT: false, chromeFlags: ['--headless=new', `--ignore-certificate-errors-spki-list=${credentials.certificateSPKI}`, '--disable-background-networking', '--disable-extensions'] });
+        chrome = await launch({
+          chromePath,
+          handleSIGINT: false,
+          chromeFlags: [
+            "--headless=new",
+            `--ignore-certificate-errors-spki-list=${credentials.certificateSPKI}`,
+            "--disable-background-networking",
+            "--disable-extensions",
+          ],
+        });
         let auditBrowser;
         let report;
         try {
-          auditBrowser = await chromium.connectOverCDP(`http://127.0.0.1:${chrome.port}`);
+          auditBrowser = await chromium.connectOverCDP(
+            `http://127.0.0.1:${chrome.port}`,
+          );
           const [auditContext] = auditBrowser.contexts();
-          if (!auditContext) throw new Error('Fresh Lighthouse browser context unavailable.');
-          await auditContext.addCookies([{ name: cookie.name, value: cookie.value, url: service.origin, httpOnly: true, secure: true, sameSite: 'Lax' }]);
-          report = await lighthouse(service.origin + path, {
-            port: chrome.port, logLevel: 'error', output: 'json', onlyCategories: ['performance', 'accessibility', 'best-practices'],
-            formFactor, screenEmulation: formFactor === 'desktop' ? { mobile: false, width: 1440, height: 1000, deviceScaleFactor: 1, disabled: false } : { mobile: true, width: 390, height: 844, deviceScaleFactor: 1, disabled: false },
-            throttlingMethod: 'simulate', disableStorageReset: true,
-          }, formFactor === 'desktop' ? { extends: 'lighthouse:default', settings: { formFactor: 'desktop', throttling: { rttMs: 40, throughputKbps: 10240, cpuSlowdownMultiplier: 1, requestLatencyMs: 0, downloadThroughputKbps: 0, uploadThroughputKbps: 0 } } } : undefined);
+          if (!auditContext)
+            throw new Error("Fresh Lighthouse browser context unavailable.");
+          await auditContext.addCookies([
+            {
+              name: cookie.name,
+              value: cookie.value,
+              url: service.origin,
+              httpOnly: true,
+              secure: true,
+              sameSite: "Lax",
+            },
+          ]);
+          report = await lighthouse(
+            service.origin + path,
+            {
+              port: chrome.port,
+              logLevel: "error",
+              output: "json",
+              onlyCategories: [
+                "performance",
+                "accessibility",
+                "best-practices",
+              ],
+              formFactor,
+              screenEmulation:
+                formFactor === "desktop"
+                  ? {
+                      mobile: false,
+                      width: 1440,
+                      height: 1000,
+                      deviceScaleFactor: 1,
+                      disabled: false,
+                    }
+                  : {
+                      mobile: true,
+                      width: 390,
+                      height: 844,
+                      deviceScaleFactor: 1,
+                      disabled: false,
+                    },
+              throttlingMethod: "simulate",
+              disableStorageReset: true,
+            },
+            formFactor === "desktop"
+              ? {
+                  extends: "lighthouse:default",
+                  settings: {
+                    formFactor: "desktop",
+                    throttling: {
+                      rttMs: 40,
+                      throughputKbps: 10240,
+                      cpuSlowdownMultiplier: 1,
+                      requestLatencyMs: 0,
+                      downloadThroughputKbps: 0,
+                      uploadThroughputKbps: 0,
+                    },
+                  },
+                }
+              : undefined,
+          );
         } finally {
           await auditBrowser?.close();
           chrome?.kill();
           chrome = undefined;
         }
         const lhr = report.lhr;
-        if (lhr.runtimeError || !lhr.finalDisplayedUrl.startsWith(service.origin + path.split('?')[0]) || lhr.finalDisplayedUrl.includes('/login')) throw new Error('Audit did not measure the authenticated target page.');
-        runs.push({ performance: lhr.categories.performance.score * 100, accessibility: lhr.categories.accessibility.score * 100, bestPractices: lhr.categories['best-practices'].score * 100, lcpMs: lhr.audits['largest-contentful-paint'].numericValue,
-          fcpMs: lhr.audits['first-contentful-paint'].numericValue, tbtMs: lhr.audits['total-blocking-time'].numericValue,
-          cls: lhr.audits['cumulative-layout-shift'].numericValue, speedIndexMs: lhr.audits['speed-index'].numericValue,
-          scriptBootupMs: lhr.audits['bootup-time'].numericValue, mainThreadMs: lhr.audits['mainthread-work-breakdown'].numericValue,
+        if (
+          lhr.runtimeError ||
+          !lhr.finalDisplayedUrl.startsWith(
+            service.origin + path.split("?")[0],
+          ) ||
+          lhr.finalDisplayedUrl.includes("/login")
+        )
+          throw new Error(
+            "Audit did not measure the authenticated target page.",
+          );
+        runs.push({
+          performance: lhr.categories.performance.score * 100,
+          accessibility: lhr.categories.accessibility.score * 100,
+          bestPractices: lhr.categories["best-practices"].score * 100,
+          lcpMs: lhr.audits["largest-contentful-paint"].numericValue,
+          fcpMs: lhr.audits["first-contentful-paint"].numericValue,
+          tbtMs: lhr.audits["total-blocking-time"].numericValue,
+          cls: lhr.audits["cumulative-layout-shift"].numericValue,
+          speedIndexMs: lhr.audits["speed-index"].numericValue,
+          scriptBootupMs: lhr.audits["bootup-time"].numericValue,
+          mainThreadMs: lhr.audits["mainthread-work-breakdown"].numericValue,
         });
         diagnostics.push(diagnosticDetails(lhr, service.origin));
-        console.log(`${formFactor} ${path}: sample ${sample + 1}/${samples} complete`);
+        console.log(
+          `${formFactor} ${path}: sample ${sample + 1}/${samples} complete`,
+        );
       }
-      const metrics = Object.fromEntries(Object.keys(runs[0]).map(key => {
-        const sorted = runs.map(run => run[key]).sort((a, b) => a - b);
-        return [key, { median: sorted.length % 2 ? sorted[Math.floor(sorted.length / 2)] : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2, worst: ['performance', 'accessibility', 'bestPractices'].includes(key) ? sorted[0] : sorted.at(-1) }];
-      }));
+      const metrics = Object.fromEntries(
+        Object.keys(runs[0]).map((key) => {
+          const sorted = runs.map((run) => run[key]).sort((a, b) => a - b);
+          return [
+            key,
+            {
+              median:
+                sorted.length % 2
+                  ? sorted[Math.floor(sorted.length / 2)]
+                  : (sorted[sorted.length / 2 - 1] +
+                      sorted[sorted.length / 2]) /
+                    2,
+              worst: ["performance", "accessibility", "bestPractices"].includes(
+                key,
+              )
+                ? sorted[0]
+                : sorted.at(-1),
+            },
+          ];
+        }),
+      );
       results.push({ formFactor, path, metrics, runs, diagnostics });
     }
   }
-  const summary = { measuredAt: new Date().toISOString(), chromeVersion, lighthouseVersion: (await import('lighthouse/package.json', { with: { type: 'json' } })).default.version, samples, devices, dataset: { documents: count, graph: graphBudget, source: 'Generated QA fixtures only; temporary real Go store' }, transport: 'loopback HTTPS; self-signed certificate; real browser cookie authentication', cache: 'A fresh Chrome profile provides cold browser storage and HTTP cache for every sample', results };
+  const summary = {
+    measuredAt: new Date().toISOString(),
+    chromeVersion,
+    lighthouseVersion: (
+      await import("lighthouse/package.json", { with: { type: "json" } })
+    ).default.version,
+    samples,
+    devices,
+    dataset: {
+      documents: count + (fieldGuidePath ? 1 : 0),
+      fieldGuide: Boolean(fieldGuidePath),
+      graph: graphBudget,
+      source: "Generated QA fixtures only; temporary real Go store",
+    },
+    transport:
+      "loopback HTTPS; self-signed certificate; real browser cookie authentication",
+    cache:
+      "A fresh Chrome profile provides cold browser storage and HTTP cache for every sample",
+    results,
+  };
   await mkdir(dirname(output), { recursive: true });
-  await writeFile(output, JSON.stringify(summary, null, 2) + '\n');
+  await writeFile(output, JSON.stringify(summary, null, 2) + "\n");
   console.log(`Aggregate performance report: ${output}`);
 } catch {
-  throw new Error('Local performance audit failed; raw requests and reports were not retained.');
+  throw new Error(
+    "Local performance audit failed; raw requests and reports were not retained.",
+  );
 } finally {
-  for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, onSignal);
+  for (const signal of ["SIGINT", "SIGTERM"])
+    process.removeListener(signal, onSignal);
   await cleanup();
 }

@@ -1,0 +1,1636 @@
+{
+  "measuredAt": "2026-10-29T14:23:19.175Z",
+  "chromeVersion": "156.0.8078.48",
+  "lighthouseVersion": "13.5.0",
+  "samples": 3,
+  "devices": [
+    "mobile",
+    "desktop"
+  ],
+  "dataset": {
+    "documents": 31,
+    "fieldGuide": true,
+    "source": "Generated QA fixtures only; temporary real Go store"
+  },
+  "transport": "loopback HTTPS; self-signed certificate; real browser cookie authentication",
+  "cache": "A fresh Chrome profile provides cold browser storage and HTTP cache for every sample",
+  "results": [
+    {
+      "formFactor": "mobile",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 98,
+          "worst": 98
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 2110.6794,
+          "worst": 2114.8264
+        },
+        "fcpMs": {
+          "median": 1585.6794,
+          "worst": 1586.1198
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.0000936056662830966,
+          "worst": 0.0000936056662830966
+        },
+        "speedIndexMs": {
+          "median": 1585.6794,
+          "worst": 1586.1198
+        },
+        "scriptBootupMs": {
+          "median": 23.287999999999997,
+          "worst": 28.81599999999999
+        },
+        "mainThreadMs": {
+          "median": 334.8040000000001,
+          "worst": 382.71600000000007
+        }
+      },
+      "runs": [
+        {
+          "performance": 98,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2114.8264,
+          "fcpMs": 1586.1198,
+          "tbtMs": 0,
+          "cls": 0.0000936056662830966,
+          "speedIndexMs": 1586.1198,
+          "scriptBootupMs": 28.81599999999999,
+          "mainThreadMs": 382.71600000000007
+        },
+        {
+          "performance": 98,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2110.6794,
+          "fcpMs": 1585.6794,
+          "tbtMs": 0,
+          "cls": 0.0000936056662830966,
+          "speedIndexMs": 1585.6794,
+          "scriptBootupMs": 22.815999999999985,
+          "mainThreadMs": 334.8040000000001
+        },
+        {
+          "performance": 98,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2108.62,
+          "fcpMs": 1581.465,
+          "tbtMs": 0,
+          "cls": 0.0000936056662830966,
+          "speedIndexMs": 1581.465,
+          "scriptBootupMs": 23.287999999999997,
+          "mainThreadMs": 313.7280000000001
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 4.419
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 110.635
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "other",
+              "durationMs": 141.8440000000001
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 140.464
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 50.37199999999998
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 39.391999999999996
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 8.556
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.0880000000000005
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 217.41199999999998,
+              "evaluationMs": 4.632,
+              "parseCompileMs": 1.4280000000000002
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 99.72800000000016,
+              "evaluationMs": 22.75599999999999,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 129272
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 39003
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37811
+            },
+            {
+              "type": "image",
+              "requests": 2,
+              "transferBytes": 28330
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7387
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.126
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 93.753
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 120.76399999999998
+            },
+            {
+              "group": "other",
+              "durationMs": 116.64000000000019
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 44.17199999999997
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 34.056000000000004
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 10.823999999999982
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.763999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.5840000000000003
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 187.596,
+              "evaluationMs": 3.4000000000000004,
+              "parseCompileMs": 0.928
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 103.2399999999999,
+              "evaluationMs": 18.487999999999985,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 129273
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 39003
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37812
+            },
+            {
+              "type": "image",
+              "requests": 2,
+              "transferBytes": 28330
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7387
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.766
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 97.074
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 132.95199999999997
+            },
+            {
+              "group": "other",
+              "durationMs": 92.22800000000015
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 46.019999999999975
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 33.312
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 7.459999999999998
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.7560000000000007
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 184.27599999999995,
+              "evaluationMs": 3.7240000000000006,
+              "parseCompileMs": 1.1680000000000001
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 78.10799999999999,
+              "evaluationMs": 18.395999999999994,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 27,
+              "transferBytes": 129272
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 39003
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37811
+            },
+            {
+              "type": "image",
+              "requests": 2,
+              "transferBytes": 28330
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7387
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "mobile",
+      "path": "/articles/a296391e591f1ff05786177c0c562045/",
+      "metrics": {
+        "performance": {
+          "median": 87,
+          "worst": 87
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 2861.3392,
+          "worst": 2864.738
+        },
+        "fcpMs": {
+          "median": 1807.3690000000001,
+          "worst": 1955.421
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.168003402600559,
+          "worst": 0.168003402600559
+        },
+        "speedIndexMs": {
+          "median": 1807.3690000000001,
+          "worst": 1955.421
+        },
+        "scriptBootupMs": {
+          "median": 74.47199999999725,
+          "worst": 75.05599999999728
+        },
+        "mainThreadMs": {
+          "median": 355.4759999999981,
+          "worst": 356.86399999999753
+        }
+      },
+      "runs": [
+        {
+          "performance": 87,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2864.738,
+          "fcpMs": 1807.3690000000001,
+          "tbtMs": 0,
+          "cls": 0.168003402600559,
+          "speedIndexMs": 1807.3690000000001,
+          "scriptBootupMs": 74.3839999999972,
+          "mainThreadMs": 349.5119999999978
+        },
+        {
+          "performance": 87,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2861.3392,
+          "fcpMs": 1655.6695999999997,
+          "tbtMs": 0,
+          "cls": 0.168003402600559,
+          "speedIndexMs": 1655.6695999999997,
+          "scriptBootupMs": 74.47199999999725,
+          "mainThreadMs": 355.4759999999981
+        },
+        {
+          "performance": 87,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2857.228,
+          "fcpMs": 1955.421,
+          "tbtMs": 0,
+          "cls": 0.168003402600559,
+          "speedIndexMs": 1955.421,
+          "scriptBootupMs": 75.05599999999728,
+          "mainThreadMs": 356.86399999999753
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > div#live-reader > header.article-heading > h1#live-title",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.294
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 100.402
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 124.46799999999999
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 91.2639999999977
+            },
+            {
+              "group": "other",
+              "durationMs": 87.44800000000012
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 29.455999999999996
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 8.759999999999998
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 5.447999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.6680000000000006
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/articles/a296391e591f1ff05786177c0c562045/",
+              "totalMs": 135.82799999999997,
+              "evaluationMs": 6.359999999999999,
+              "parseCompileMs": 1.716
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 90.02799999999989,
+              "evaluationMs": 19.47599999999999,
+              "parseCompileMs": 0
+            },
+            {
+              "path": "/_astro/reader.astro_astro_type_script_index_0_lang.BWFKgoWi.js",
+              "totalMs": 52.04399999999721,
+              "evaluationMs": 46.57199999999721,
+              "parseCompileMs": 0.26
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 29,
+              "transferBytes": 186029
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 80827
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 44823
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 26907
+            },
+            {
+              "type": "stylesheet",
+              "requests": 5,
+              "transferBytes": 24842
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 8630
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > div#live-reader > header.article-heading > h1#live-title",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.7130000002384187
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 99.38599999976158
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 128.28
+            },
+            {
+              "group": "other",
+              "durationMs": 91.19200000000012
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 90.26799999999801
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 30.252
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 9.347999999999997
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 3.264000000000001
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.8720000000000008
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/articles/a296391e591f1ff05786177c0c562045/",
+              "totalMs": 141.83199999999997,
+              "evaluationMs": 6.9319999999999995,
+              "parseCompileMs": 1.9160000000000001
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 89.02799999999996,
+              "evaluationMs": 19.11999999999999,
+              "parseCompileMs": 0
+            },
+            {
+              "path": "/_astro/reader.astro_astro_type_script_index_0_lang.BWFKgoWi.js",
+              "totalMs": 52.13999999999726,
+              "evaluationMs": 46.275999999997254,
+              "parseCompileMs": 0.228
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 29,
+              "transferBytes": 186022
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 80827
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 44816
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 26907
+            },
+            {
+              "type": "stylesheet",
+              "requests": 5,
+              "transferBytes": 24842
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 8630
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > div#live-reader > header.article-heading > h1#live-title",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.358
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 87.829
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 128.416
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 92.45999999999735
+            },
+            {
+              "group": "other",
+              "durationMs": 88.60000000000022
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 29.656
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 9.651999999999997
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 5.351999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.7280000000000006
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/articles/a296391e591f1ff05786177c0c562045/",
+              "totalMs": 141.2,
+              "evaluationMs": 7.191999999999999,
+              "parseCompileMs": 1.828
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 92.92399999999996,
+              "evaluationMs": 20.88799999999999,
+              "parseCompileMs": 0
+            },
+            {
+              "path": "/_astro/reader.astro_astro_type_script_index_0_lang.BWFKgoWi.js",
+              "totalMs": 50.9039999999973,
+              "evaluationMs": 44.8999999999973,
+              "parseCompileMs": 0.248
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 29,
+              "transferBytes": 186022
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 80827
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 44816
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 26907
+            },
+            {
+              "type": "stylesheet",
+              "requests": 5,
+              "transferBytes": 24842
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 8630
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 100,
+          "worst": 100
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 592.4485,
+          "worst": 592.7964999999999
+        },
+        "fcpMs": {
+          "median": 455.5372,
+          "worst": 459.7672
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 15.5
+        },
+        "cls": {
+          "median": 0.0000451905803915895,
+          "worst": 0.0000451905803915895
+        },
+        "speedIndexMs": {
+          "median": 455.5372,
+          "worst": 459.7672
+        },
+        "scriptBootupMs": {
+          "median": 98.89800000000022,
+          "worst": 125.40600000000033
+        },
+        "mainThreadMs": {
+          "median": 352.73400000000066,
+          "worst": 362.2630000000001
+        }
+      },
+      "runs": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 536.6842000000001,
+          "fcpMs": 459.7672,
+          "tbtMs": 15.5,
+          "cls": 0.0000451905803915895,
+          "speedIndexMs": 459.7672,
+          "scriptBootupMs": 125.40600000000033,
+          "mainThreadMs": 362.2630000000001
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 592.7964999999999,
+          "fcpMs": 455.5372,
+          "tbtMs": 0,
+          "cls": 0.0000451905803915895,
+          "speedIndexMs": 455.5372,
+          "scriptBootupMs": 98.89800000000022,
+          "mainThreadMs": 304.7150000000011
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 592.4485,
+          "fcpMs": 454.75879999999995,
+          "tbtMs": 0,
+          "cls": 0.0000451905803915895,
+          "speedIndexMs": 454.75879999999995,
+          "scriptBootupMs": 98.69900000000024,
+          "mainThreadMs": 352.73400000000066
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.588
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 108.208
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 135.34799999999962
+            },
+            {
+              "group": "other",
+              "durationMs": 93.34800000000028
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 82.9160000000001
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 47.08000000000012
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.6849999999999996
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.3769999999999993
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5090000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 160.20900000000043,
+              "evaluationMs": 43.615000000000286,
+              "parseCompileMs": 0.008
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 82.91400000000006,
+              "evaluationMs": 80.27500000000005,
+              "parseCompileMs": 0.018
+            },
+            {
+              "path": "/",
+              "totalMs": 81.332,
+              "evaluationMs": 1.159,
+              "parseCompileMs": 0.331
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 31,
+              "transferBytes": 197627
+            },
+            {
+              "type": "script",
+              "requests": 17,
+              "transferBytes": 107358
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37811
+            },
+            {
+              "type": "image",
+              "requests": 2,
+              "transferBytes": 28330
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7387
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.454
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 101.12
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 108.76200000000084
+            },
+            {
+              "group": "other",
+              "durationMs": 75.87700000000021
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 75.00900000000004
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 40.798000000000066
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 2.113999999999997
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7349999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4200000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 123.0880000000001,
+              "evaluationMs": 33.13000000000019,
+              "parseCompileMs": 0.01
+            },
+            {
+              "path": "/",
+              "totalMs": 78.03699999999998,
+              "evaluationMs": 0.8160000000000001,
+              "parseCompileMs": 0.227
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 66.85100000000003,
+              "evaluationMs": 64.70200000000003,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 31,
+              "transferBytes": 197628
+            },
+            {
+              "type": "script",
+              "requests": 17,
+              "transferBytes": 107358
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37812
+            },
+            {
+              "type": "image",
+              "requests": 2,
+              "transferBytes": 28330
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7387
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.554
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 105.068
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 110.04100000000037
+            },
+            {
+              "group": "other",
+              "durationMs": 99.41800000000018
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 85.15600000000012
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 54.43800000000001
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7309999999999997
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.5019999999999987
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4480000000000002
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 167.7270000000005,
+              "evaluationMs": 42.34500000000026,
+              "parseCompileMs": 0.012
+            },
+            {
+              "path": "/",
+              "totalMs": 83.28400000000002,
+              "evaluationMs": 0.914,
+              "parseCompileMs": 0.24400000000000002
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 57.27899999999997,
+              "evaluationMs": 55.17099999999997,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 31,
+              "transferBytes": 197627
+            },
+            {
+              "type": "script",
+              "requests": 17,
+              "transferBytes": 107358
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37811
+            },
+            {
+              "type": "image",
+              "requests": 2,
+              "transferBytes": 28330
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7387
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/articles/a296391e591f1ff05786177c0c562045/",
+      "metrics": {
+        "performance": {
+          "median": 96,
+          "worst": 96
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 655.7755999999999,
+          "worst": 656.8272
+        },
+        "fcpMs": {
+          "median": 490.51699999999994,
+          "worst": 507.43010000000004
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.1200444444444444,
+          "worst": 0.1200444444444444
+        },
+        "speedIndexMs": {
+          "median": 490.51699999999994,
+          "worst": 507.43010000000004
+        },
+        "scriptBootupMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "mainThreadMs": {
+          "median": 93.21499999999999,
+          "worst": 93.58699999999934
+        }
+      },
+      "runs": [
+        {
+          "performance": 96,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 655.7755999999999,
+          "fcpMs": 447.8878,
+          "tbtMs": 0,
+          "cls": 0.1200444444444444,
+          "speedIndexMs": 447.8878,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 93.21499999999999
+        },
+        {
+          "performance": 96,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 649.9068000000001,
+          "fcpMs": 507.43010000000004,
+          "tbtMs": 0,
+          "cls": 0.1200444444444444,
+          "speedIndexMs": 507.43010000000004,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 93.58699999999934
+        },
+        {
+          "performance": 96,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 656.8272,
+          "fcpMs": 490.51699999999994,
+          "tbtMs": 0,
+          "cls": 0.1200444444444444,
+          "speedIndexMs": 490.51699999999994,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 92.05300000000022
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "body.article-page > main#main > div#live-reader > img#live-cover",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.601
+            },
+            {
+              "part": "resourceLoadDelay",
+              "durationMs": 87.157
+            },
+            {
+              "part": "resourceLoadDuration",
+              "durationMs": 3.893
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 18.334
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 36.09899999999999
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 22.99999999999996
+            },
+            {
+              "group": "other",
+              "durationMs": 21.68400000000005
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 8.208000000000002
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 2.3369999999999984
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.234999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.6520000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 29,
+              "transferBytes": 186022
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 80827
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 44816
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 26907
+            },
+            {
+              "type": "stylesheet",
+              "requests": 5,
+              "transferBytes": 24842
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 8630
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "body.article-page > main#main > div#live-reader > img#live-cover",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.824
+            },
+            {
+              "part": "resourceLoadDelay",
+              "durationMs": 75.397
+            },
+            {
+              "part": "resourceLoadDuration",
+              "durationMs": 2.389
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 32.455
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 37.859999999999985
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 22.851999999999297
+            },
+            {
+              "group": "other",
+              "durationMs": 21.14500000000005
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 7.728000000000002
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 2.3110000000000004
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.06
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.6310000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 29,
+              "transferBytes": 186022
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 80827
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 44816
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 26907
+            },
+            {
+              "type": "stylesheet",
+              "requests": 5,
+              "transferBytes": 24842
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 8630
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "body.article-page > main#main > div#live-reader > img#live-cover",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.422
+            },
+            {
+              "part": "resourceLoadDelay",
+              "durationMs": 91.141
+            },
+            {
+              "part": "resourceLoadDuration",
+              "durationMs": 2.268
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 23.645
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 35.599000000000004
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 23.110000000000138
+            },
+            {
+              "group": "other",
+              "durationMs": 21.35500000000008
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 7.7600000000000025
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 2.4330000000000003
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.1369999999999991
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.6590000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 29,
+              "transferBytes": 186022
+            },
+            {
+              "type": "script",
+              "requests": 15,
+              "transferBytes": 80827
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 44816
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 26907
+            },
+            {
+              "type": "stylesheet",
+              "requests": 5,
+              "transferBytes": 24842
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 8630
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

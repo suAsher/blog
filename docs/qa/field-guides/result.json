@@ -1,0 +1,68 @@
+{
+  "generatedOnly": true,
+  "guides": 3,
+  "baseArticles": 24,
+  "audits": [
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "slug": "inference",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "slug": "go-request",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "slug": "linux-network",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "light",
+      "slug": "inference",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "light",
+      "slug": "go-request",
+      "violations": []
+    },
+    {
+      "device": "desktop",
+      "theme": "light",
+      "slug": "linux-network",
+      "violations": []
+    },
+    {
+      "device": "tablet",
+      "theme": "dark",
+      "slug": "inference",
+      "violations": []
+    },
+    {
+      "device": "tablet",
+      "theme": "light",
+      "slug": "inference",
+      "violations": []
+    },
+    {
+      "device": "mobile",
+      "theme": "dark",
+      "slug": "inference",
+      "violations": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "slug": "inference",
+      "violations": []
+    }
+  ],
+  "scenarios": "Go timeout 503 and HTTP failure 500 passed"
+}

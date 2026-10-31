@@ -1,5 +1,24 @@
 # Frontend unit coverage scope
 
+## Interactive long-form reading — 2026-10-29
+
+The current selected-library run passes 231 tests across 28 files. The scope adds
+`editorial-reader.ts` (caption/line parsing and overview selection) and
+`explorers.ts` (strict teaching definitions, input budgets and deterministic
+request/network models). Existing global 80% thresholds remain unchanged.
+
+| Metric | Covered / total | Coverage |
+| --- | --- | --- |
+| Statements | 1134 / 1321 | 85.84% |
+| Branches | 1160 / 1371 | 84.60% |
+| Functions | 297 / 325 | 91.38% |
+| Lines | 960 / 1092 | 87.91% |
+
+These are selected Node-library coverage figures, not whole-application or DOM
+coverage. Real-browser reading/annotation/keyboard regressions, generated-guide
+Axe states and the server-side publishing-tool tests provide separate evidence
+in [the long-form QA record](field-guides/README.md).
+
 `npm run test:coverage` measures explicitly selected library modules using Vitest's V8 provider. The 2026-10-26 stage-one run measured eight modules and passed 73 tests across eight test files:
 
 | Metric | Covered / total | Coverage |
