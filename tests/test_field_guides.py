@@ -1,6 +1,9 @@
 import importlib.util
 import tempfile
 import unittest
+from unittest.mock import patch
+from contextlib import redirect_stdout
+import io
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -10,6 +13,30 @@ spec.loader.exec_module(guides)
 
 
 class FieldGuideTests(unittest.TestCase):
+    def test_real_helper_serializes_field_guide_publication(self):
+        catalog, _ = guides.helpers()
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / 'showcases'
+            with catalog.direction_lock(directory, 'field-guides-v1'):
+                with self.assertRaisesRegex(RuntimeError, 'busy'):
+                    with catalog.direction_lock(directory, 'field-guides-v1'):
+                        self.fail('Concurrent publication was allowed')
+            with self.assertRaisesRegex(RuntimeError, 'Unknown'):
+                with catalog.direction_lock(directory, '../other'):
+                    self.fail('Unrecognized lock scope was allowed')
+
+    def test_completed_main_uses_real_lock_and_private_receipt_without_login(self):
+        _, helper = guides.helpers()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            helper.save_marker(root / 'showcases/field-guides-v1.json', {'complete': True})
+            args = ['seed', '--examples', str(ROOT / 'examples/field-guides'),
+                    '--server-root', str(root)]
+            # No access.json exists: successful exit proves it never logs in.
+            with patch('sys.argv', args), redirect_stdout(io.StringIO()) as output:
+                guides.main()
+            self.assertIn('alreadySeeded', output.getvalue())
+
     def test_length_ignores_frontmatter_and_code(self):
         raw = '---\ntitle: "元数据"\n---\n正文\n```python\n' + '中文' * 3000 + '\n```\n'
         self.assertEqual(guides.prose_count(raw), 2)

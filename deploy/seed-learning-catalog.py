@@ -16,6 +16,7 @@ DIRECTIONS = (
     'linux-network', 'python', 'git-engineering', 'containers-delivery',
     'distributed-systems', 'performance-observability', 'ai-inference',
 )
+LOCK_SCOPES = (*DIRECTIONS, 'field-guides-v1')
 
 
 def helpers():
@@ -233,7 +234,7 @@ def seed(client, slug, manifest, payloads, marker, state, helper):
 @contextmanager
 def direction_lock(directory, slug):
     """Lock a persistent inode before reading a marker or generating its receipt."""
-    if slug not in DIRECTIONS:
+    if slug not in LOCK_SCOPES:
         raise RuntimeError('Unknown catalog lock direction.')
     directory.mkdir(mode=0o700, exist_ok=True)
     directory_fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
