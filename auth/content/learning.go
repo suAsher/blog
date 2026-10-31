@@ -124,7 +124,10 @@ func learningDocumentSet(chapters []LearningChapter) map[string]bool {
 	return ids
 }
 func (s *Store) writeLearning(id string, input learningRequest) (LearningPath, error) {
-	value := LearningPath{ID: id, Title: input.Title, Description: input.Description, Accent: input.Accent, Chapters: input.Chapters}
+	value := learningValue(input, LearningPath{})
+	if input.CreationKey != nil && !researchQuestionID.MatchString(*input.CreationKey) {
+		return LearningPath{}, bad(400, "路线创建标识格式无效。")
+	}
 	if err := validateLearning(value); err != nil {
 		return LearningPath{}, err
 	}
@@ -137,6 +140,9 @@ func (s *Store) writeLearning(id string, input learningRequest) (LearningPath, e
 	stamp := s.now().UTC().Format(time.RFC3339Nano)
 	previous := map[string]bool{}
 	if id == "" {
+		if existing, found, err := existingLearningCreation(state, value); err != nil || found {
+			return existing, err
+		}
 		if len(state.Paths) >= 50 {
 			return LearningPath{}, bad(413, "路线数量已达 50 条，请先整理。")
 		}
@@ -155,6 +161,11 @@ func (s *Store) writeLearning(id string, input learningRequest) (LearningPath, e
 		if old.Version != input.Version || old.Version == maxSafeRevision {
 			return LearningPath{}, researchConflict()
 		}
+		if input.CreationKey != nil && *input.CreationKey != old.CreationKey {
+			return LearningPath{}, bad(400, "路线创建标识不能修改。")
+		}
+		value = learningValue(input, old)
+		value.ID = id
 		value.Version = old.Version + 1
 		value.CreatedAt = old.CreatedAt
 		previous = learningDocumentSet(old.Chapters)
