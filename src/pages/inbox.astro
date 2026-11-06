@@ -1,0 +1,113 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/inbox.css';
+---
+<Layout title="资料收件箱" active="inbox" description="让收集的资料，慢慢成为自己的知识。">
+  <div class="shell inbox-page">
+    <header class="inbox-hero">
+      <div>
+        <span class="eyebrow">THE READING DESK / 资料收件箱</span>
+        <h1>收下灵感，<br />再把它<span>读懂。</span></h1>
+        <p>
+          给刚遇见的知识一个落点。整理、归入路线、动手验证，
+          <br class="inbox-desktop-break" />让收藏不止于收藏。
+        </p>
+      </div>
+      <div class="inbox-hero-aside">
+        <span class="inbox-desk-mark" aria-hidden="true">↳</span>
+        <p>从收集，到理解。</p>
+        <a href="/manage/" class="button button-primary">写作与导入 <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+    <nav id="inbox-tabs" class="inbox-tabs" aria-label="整理进度">
+      <button type="button" data-view="pending" aria-pressed="true">待整理 <span>—</span></button>
+      <button type="button" data-view="unassigned" aria-pressed="false">未归路线 <span>—</span></button>
+      <button type="button" data-view="unverified" aria-pressed="false">待验证 <span>—</span></button>
+      <button type="button" data-view="verified" aria-pressed="false">已验证 <span>—</span></button>
+      <button type="button" data-view="all" aria-pressed="false">全部资料 <span>—</span></button>
+    </nav>
+    <section class="inbox-workbench" aria-label="资料整理">
+      <form id="inbox-filter-form" class="inbox-filter-form">
+        <label class="inbox-search-label" for="inbox-search">
+          搜索资料
+          <input
+            id="inbox-search"
+            type="search"
+            maxlength="256"
+            placeholder="标题、摘要、标签或系列…"
+            aria-describedby="inbox-search-help"
+          />
+        </label>
+        <label for="inbox-tag">
+          标签
+          <select id="inbox-tag"><option value="">全部标签</option></select>
+        </label>
+        <label for="inbox-route">
+          所属路线
+          <select id="inbox-route"><option value="">全部路线</option></select>
+        </label>
+        <button id="inbox-filter-submit" class="button" type="submit">应用筛选</button>
+      </form>
+      <p id="inbox-search-help" class="inbox-fine-print">
+        这里搜索资料元数据，包含草稿；正文全文检索请使用全站搜索。
+        整理状态独立保存，不会修改正文或发布文章。
+      </p>
+      <p id="inbox-route-warning" class="inbox-notice" hidden>
+        该筛选对应的路线已删除。筛选仍被保留，你可以选择其他路线。
+      </p>
+      <details class="inbox-views">
+        <summary>我的筛选视图 <span>跨设备保留常用入口</span></summary>
+        <div id="inbox-saved-views" class="inbox-saved-views"></div>
+        <form id="inbox-view-form" class="inbox-view-form">
+          <label for="inbox-view-name">
+            视图名称
+            <input id="inbox-view-name" maxlength="60" placeholder="例如：正在验证的资料" required />
+          </label>
+          <button id="inbox-save-view" class="button" type="submit">保存当前筛选</button>
+        </form>
+      </details>
+      <section id="inbox-batch" class="inbox-batch" aria-label="批量整理">
+        <div>
+          <strong id="inbox-selected-count">尚未选择资料</strong>
+          <p>每次最多 100 篇；只更新整理进度。</p>
+        </div>
+        <label for="inbox-stage">
+          整理进度
+          <select id="inbox-stage">
+            <option value="organized">待验证</option>
+            <option value="verified">已验证</option>
+            <option value="pending">待整理</option>
+          </select>
+        </label>
+        <button id="inbox-apply" class="button button-primary" type="button" disabled>更新所选进度</button>
+        <button id="inbox-clear-selection" class="button" type="button" disabled>清除选择</button>
+      </section>
+      <div class="inbox-list-heading">
+        <label class="inbox-checkbox-label"><input id="inbox-select-page" type="checkbox" />选择本页</label>
+        <span id="inbox-count" class="mono"></span>
+      </div>
+      <p id="inbox-status" role="status" aria-live="polite">正在打开你的资料收件箱…</p>
+      <div class="inbox-recovery">
+        <button id="inbox-retry" class="button" type="button" hidden>重新读取</button>
+        <button id="inbox-conflict-reload" class="button" type="button" hidden>读取最新状态，保留选择</button>
+      </div>
+      <div id="inbox-results" class="inbox-results" aria-busy="true"></div>
+      <section id="inbox-empty" class="inbox-empty" hidden>
+        <span aria-hidden="true">✦</span>
+        <h2>给下一次好奇，留一点空白。</h2>
+        <p>这个筛选下暂无资料。可以调整条件，或从写作空间导入一份文档。</p>
+        <button id="inbox-clear-filter" class="button" type="button">查看全部资料</button>
+        <a href="/manage/" class="quiet-link">去写作与导入 ↗</a>
+      </section>
+      <nav class="inbox-pagination" aria-label="资料分页">
+        <button id="inbox-previous" class="button" type="button" disabled>上一页</button>
+        <span id="inbox-page-number"></span>
+        <button id="inbox-next" class="button" type="button" disabled>下一页</button>
+      </nav>
+    </section>
+
+  </div>
+  <script>
+    import '../scripts/inbox/index';
+  </script>
+</Layout>

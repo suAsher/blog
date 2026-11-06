@@ -55,6 +55,8 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	path := r.URL.Path
 	switch {
+	case path == "/api/inbox" || strings.HasPrefix(path, "/api/inbox/"):
+		h.inbox(w, r, path)
 	case path == "/api/learning-paths" || strings.HasPrefix(path, "/api/learning-paths/"):
 		h.learningPaths(w, r, path)
 	case path == "/api/annotations" || strings.HasPrefix(path, "/api/annotations/"):

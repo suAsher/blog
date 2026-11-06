@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strings"
 	"sync"
@@ -205,6 +204,10 @@ func readSearchRecord(name, id string, expected os.FileInfo) (searchRecord, erro
 		return searchRecord{}, bad(500, "文档暂时无法读取，请稍后重试。")
 	}
 	defer file.Close()
+	return readSearchRecordFile(file, id, expected)
+}
+
+func readSearchRecordFile(file *os.File, id string, expected os.FileInfo) (searchRecord, error) {
 	before, err := file.Stat()
 	if err != nil || !sameSearchFile(expected, before) {
 		return searchRecord{}, bad(500, "文档读取期间发生变化，请重试。")
@@ -227,12 +230,31 @@ func readSearchRecord(name, id string, expected os.FileInfo) (searchRecord, erro
 	return indexRecord(&d), nil
 }
 func (s *Store) searchRecordLocked(id string, published, query bool) (searchRecord, error) {
-	name := filepath.Join(s.root, "documents", id+".json")
-	info, err := os.Lstat(name)
+	directory, err := s.openDocumentRoot()
+	if err != nil {
+		return searchRecord{}, err
+	}
+	defer directory.Close()
+	return s.searchRecordInRootLocked(directory, id, published, query)
+}
+
+func (s *Store) searchRecordInRootLocked(directory *os.Root, id string, published, query bool) (searchRecord, error) {
+	if !documentID.MatchString(id) {
+		return searchRecord{}, bad(404, "文档不存在。")
+	}
+	name := id + ".json"
+	info, err := directory.Lstat(name)
 	if err != nil || !info.Mode().IsRegular() || info.Size() > maxRecordBytes {
 		return searchRecord{}, bad(500, "文档暂时无法读取，请稍后重试。")
 	}
-	return s.search.get(id, info, published, query, func() (searchRecord, error) { return readSearchRecord(name, id, info) })
+	return s.search.get(id, info, published, query, func() (searchRecord, error) {
+		file, err := directory.OpenFile(name, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+		if err != nil {
+			return searchRecord{}, bad(500, "文档暂时无法读取，请稍后重试。")
+		}
+		defer file.Close()
+		return readSearchRecordFile(file, id, info)
+	})
 }
 func (view *searchView) matches(tokens []string) (int, bool) {
 	score := 0
