@@ -1,0 +1,2313 @@
+{
+  "measuredAt": "2026-11-06T13:25:55.891Z",
+  "chromeVersion": "156.0.8078.80",
+  "lighthouseVersion": "13.5.0",
+  "samples": 3,
+  "devices": [
+    "mobile",
+    "desktop"
+  ],
+  "dataset": {
+    "documents": 30,
+    "fieldGuide": false,
+    "source": "Generated QA fixtures only; temporary real Go store"
+  },
+  "transport": "loopback HTTPS; self-signed certificate; real browser cookie authentication",
+  "cache": "A fresh Chrome profile provides cold browser storage and HTTP cache for every sample",
+  "results": [
+    {
+      "formFactor": "mobile",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 98,
+          "worst": 98
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 2116.6808,
+          "worst": 2121.4674999999997
+        },
+        "fcpMs": {
+          "median": 1585.7337499999999,
+          "worst": 1587.5106
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.0001047924517326597,
+          "worst": 0.0001047924517326597
+        },
+        "speedIndexMs": {
+          "median": 1585.7337499999999,
+          "worst": 1587.5106
+        },
+        "scriptBootupMs": {
+          "median": 24.396,
+          "worst": 29.843999999999987
+        },
+        "mainThreadMs": {
+          "median": 344.6960000000004,
+          "worst": 434.7200000000001
+        }
+      },
+      "runs": [
+        {
+          "performance": 98,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2116.6808,
+          "fcpMs": 1587.5106,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1587.5106,
+          "scriptBootupMs": 29.843999999999987,
+          "mainThreadMs": 434.7200000000001
+        },
+        {
+          "performance": 98,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2112.9568,
+          "fcpMs": 1583.098,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1583.098,
+          "scriptBootupMs": 21.74399999999999,
+          "mainThreadMs": 315.6360000000002
+        },
+        {
+          "performance": 98,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 2121.4674999999997,
+          "fcpMs": 1585.7337499999999,
+          "tbtMs": 0,
+          "cls": 0.0001047924517326597,
+          "speedIndexMs": 1585.7337499999999,
+          "scriptBootupMs": 24.396,
+          "mainThreadMs": 344.6960000000004
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 4.195
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 99.178
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "other",
+              "durationMs": 179.99200000000013
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 138.108
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 54.41200000000002
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 42.859999999999985
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 8.887999999999987
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 8.063999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.3960000000000004
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 239.652,
+              "evaluationMs": 6.452,
+              "parseCompileMs": 1.8000000000000003
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 130.9440000000001,
+              "evaluationMs": 21.591999999999985,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 26,
+              "transferBytes": 101857
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 39171
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37118
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7404
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.696
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 107.097
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 132.70000000000005
+            },
+            {
+              "group": "other",
+              "durationMs": 98.05600000000014
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 43.61599999999998
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 32.83599999999999
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.919999999999998
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.5080000000000005
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 196.46800000000005,
+              "evaluationMs": 2.6880000000000006,
+              "parseCompileMs": 0.9720000000000001
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 72.15199999999989,
+              "evaluationMs": 18.08399999999999,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 26,
+              "transferBytes": 101855
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 39171
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37116
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7404
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.486
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 104.823
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 130.37600000000006
+            },
+            {
+              "group": "other",
+              "durationMs": 113.80800000000035
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 52.89199999999999
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 34.27600000000001
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 7.203999999999998
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 4.384
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.7560000000000002
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/",
+              "totalMs": 196.46800000000005,
+              "evaluationMs": 3.3720000000000003,
+              "parseCompileMs": 1.016
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 90.45599999999988,
+              "evaluationMs": 20.008000000000003,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 26,
+              "transferBytes": 101857
+            },
+            {
+              "type": "script",
+              "requests": 13,
+              "transferBytes": 39171
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37118
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7404
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "mobile",
+      "path": "/inbox/",
+      "metrics": {
+        "performance": {
+          "median": 99,
+          "worst": 99
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 1961.5480000000002,
+          "worst": 1962.0216
+        },
+        "fcpMs": {
+          "median": 1583.6609999999998,
+          "worst": 1584.0162
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.00006503521242352356,
+          "worst": 0.00006503521242352356
+        },
+        "speedIndexMs": {
+          "median": 1583.6609999999998,
+          "worst": 1584.0162
+        },
+        "scriptBootupMs": {
+          "median": 22.299999999999994,
+          "worst": 24.11199999999999
+        },
+        "mainThreadMs": {
+          "median": 240.75200000000004,
+          "worst": 241.27200000000005
+        }
+      },
+      "runs": [
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1961.5480000000002,
+          "fcpMs": 1583.6609999999998,
+          "tbtMs": 0,
+          "cls": 0.00006503521242352356,
+          "speedIndexMs": 1583.6609999999998,
+          "scriptBootupMs": 17.563999999999986,
+          "mainThreadMs": 226.02800000000008
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1962.0216,
+          "fcpMs": 1584.0162,
+          "tbtMs": 0,
+          "cls": 0.00006503521242352356,
+          "speedIndexMs": 1584.0162,
+          "scriptBootupMs": 22.299999999999994,
+          "mainThreadMs": 241.27200000000005
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1809.4971999999998,
+          "fcpMs": 1582.1228999999998,
+          "tbtMs": 0,
+          "cls": 0.00006503521242352356,
+          "speedIndexMs": 1582.1228999999998,
+          "scriptBootupMs": 24.11199999999999,
+          "mainThreadMs": 240.75200000000004
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "div.shell > header.inbox-hero > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.69
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 62.947
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 96.27600000000001
+            },
+            {
+              "group": "other",
+              "durationMs": 67.76800000000006
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 38.09999999999999
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 15.379999999999992
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.7079999999999975
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.7960000000000003
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/inbox/",
+              "totalMs": 128.56799999999996,
+              "evaluationMs": 4.008,
+              "parseCompileMs": 1.1840000000000002
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 60.70800000000007,
+              "evaluationMs": 12.371999999999987,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 21,
+              "transferBytes": 81614
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 37820
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 19159
+            },
+            {
+              "type": "other",
+              "requests": 5,
+              "transferBytes": 18977
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5658
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.inbox-hero > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.4610000009536743
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 57.84599999904633
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 100.86000000000001
+            },
+            {
+              "group": "other",
+              "durationMs": 71.67200000000004
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 44.21999999999999
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 15.815999999999997
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.711999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.9920000000000004
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/inbox/",
+              "totalMs": 135.76,
+              "evaluationMs": 5.8999999999999995,
+              "parseCompileMs": 1.4040000000000001
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 67.20800000000001,
+              "evaluationMs": 14.995999999999995,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 21,
+              "transferBytes": 81614
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 37820
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 19159
+            },
+            {
+              "type": "other",
+              "requests": 5,
+              "transferBytes": 18977
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5658
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.inbox-hero > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.824
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 57.356
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 101.11200000000001
+            },
+            {
+              "group": "other",
+              "durationMs": 70.82800000000005
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 45.643999999999984
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 14.659999999999995
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.699999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.8080000000000003
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/inbox/",
+              "totalMs": 133.87599999999998,
+              "evaluationMs": 5.499999999999998,
+              "parseCompileMs": 1.252
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 69.91600000000004,
+              "evaluationMs": 17.359999999999992,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 21,
+              "transferBytes": 81614
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 37820
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 19159
+            },
+            {
+              "type": "other",
+              "requests": 5,
+              "transferBytes": 18977
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5658
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "mobile",
+      "path": "/search/?q=性能",
+      "metrics": {
+        "performance": {
+          "median": 99,
+          "worst": 99
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 1666.2279999999998,
+          "worst": 1669.5511999999999
+        },
+        "fcpMs": {
+          "median": 1584.7368,
+          "worst": 1589.6634
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.000456137380285535,
+          "worst": 0.018046682580541075
+        },
+        "speedIndexMs": {
+          "median": 1584.7368,
+          "worst": 1589.6634
+        },
+        "scriptBootupMs": {
+          "median": 18.82799999999999,
+          "worst": 23.563999999999993
+        },
+        "mainThreadMs": {
+          "median": 231.62799999999996,
+          "worst": 233.24
+        }
+      },
+      "runs": [
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1669.5511999999999,
+          "fcpMs": 1589.6634,
+          "tbtMs": 0,
+          "cls": 0.000456137380285535,
+          "speedIndexMs": 1589.6634,
+          "scriptBootupMs": 18.82799999999999,
+          "mainThreadMs": 233.24
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1663.725,
+          "fcpMs": 1583.2350000000001,
+          "tbtMs": 0,
+          "cls": 0.000456137380285535,
+          "speedIndexMs": 1583.2350000000001,
+          "scriptBootupMs": 15.931999999999992,
+          "mainThreadMs": 196.93599999999998
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 1666.2279999999998,
+          "fcpMs": 1584.7368,
+          "tbtMs": 0,
+          "cls": 0.018046682580541075,
+          "speedIndexMs": 1584.7368,
+          "scriptBootupMs": 23.563999999999993,
+          "mainThreadMs": 231.62799999999996
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "div.shell > header.passage-heading > div > p",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 4.135
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 74.75
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 102.784
+            },
+            {
+              "group": "other",
+              "durationMs": 69.05200000000002
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 40.691999999999986
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 12.399999999999995
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.535999999999998
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.7760000000000005
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/search/",
+              "totalMs": 127.68799999999999,
+              "evaluationMs": 3.2920000000000007,
+              "parseCompileMs": 1.016
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 66.70000000000003,
+              "evaluationMs": 14.519999999999989,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 66998
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 38039
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 18919
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5251
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 4789
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.passage-heading > div > p",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.0029999990463256
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 58.19400000095367
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 81.84799999999998
+            },
+            {
+              "group": "other",
+              "durationMs": 60.43600000000001
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 35.836
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 10.515999999999993
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.807999999999998
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 1.4920000000000002
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/search/",
+              "totalMs": 104.81599999999999,
+              "evaluationMs": 3.0400000000000005,
+              "parseCompileMs": 0.928
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 57.724000000000025,
+              "evaluationMs": 11.963999999999992,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 66998
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 38039
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 18919
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5251
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 4789
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.passage-heading > div > p",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.304
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 60.094
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 85.784
+            },
+            {
+              "group": "other",
+              "durationMs": 78.58799999999998
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 45.53599999999997
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 12.751999999999994
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 6.627999999999999
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 2.3400000000000003
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/search/",
+              "totalMs": 116.50399999999998,
+              "evaluationMs": 5.631999999999999,
+              "parseCompileMs": 1.6800000000000002
+            },
+            {
+              "path": "(unattributed)",
+              "totalMs": 76.33199999999998,
+              "evaluationMs": 16.251999999999992,
+              "parseCompileMs": 0
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 66998
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 38039
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 18919
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5251
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 4789
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/",
+      "metrics": {
+        "performance": {
+          "median": 100,
+          "worst": 100
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 575.3335,
+          "worst": 581.7024999999999
+        },
+        "fcpMs": {
+          "median": 457.36199999999997,
+          "worst": 461.6656
+        },
+        "tbtMs": {
+          "median": 9.999999999999943,
+          "worst": 32.99999999999994
+        },
+        "cls": {
+          "median": 0.00005067862051504629,
+          "worst": 0.00005067862051504629
+        },
+        "speedIndexMs": {
+          "median": 457.36199999999997,
+          "worst": 461.6656
+        },
+        "scriptBootupMs": {
+          "median": 105.09200000000027,
+          "worst": 127.6150000000003
+        },
+        "mainThreadMs": {
+          "median": 373.42700000000076,
+          "worst": 388.3059999999995
+        }
+      },
+      "runs": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 581.7024999999999,
+          "fcpMs": 457.36199999999997,
+          "tbtMs": 9.999999999999943,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 457.36199999999997,
+          "scriptBootupMs": 89.3610000000002,
+          "mainThreadMs": 279.79300000000126
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 538.9566,
+          "fcpMs": 461.6656,
+          "tbtMs": 32.99999999999994,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 461.6656,
+          "scriptBootupMs": 127.6150000000003,
+          "mainThreadMs": 388.3059999999995
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 575.3335,
+          "fcpMs": 452.26680000000005,
+          "tbtMs": 6,
+          "cls": 0.00005067862051504629,
+          "speedIndexMs": 452.26680000000005,
+          "scriptBootupMs": 105.09200000000027,
+          "mainThreadMs": 373.42700000000076
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 4.62
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 105.133
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 100.31200000000105
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 73.50399999999989
+            },
+            {
+              "group": "other",
+              "durationMs": 68.55399999999993
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 33.50000000000035
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.8169999999999997
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.6629999999999991
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4430000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 105.0990000000001,
+              "evaluationMs": 29.450000000000227,
+              "parseCompileMs": 0.015
+            },
+            {
+              "path": "/",
+              "totalMs": 75.70900000000005,
+              "evaluationMs": 0.8160000000000001,
+              "parseCompileMs": 0.23800000000000002
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 60.884999999999984,
+              "evaluationMs": 58.82899999999998,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 30,
+              "transferBytes": 170210
+            },
+            {
+              "type": "script",
+              "requests": 17,
+              "transferBytes": 107524
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37118
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7404
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.819999999046326
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 110.64900000095368
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 138.7349999999992
+            },
+            {
+              "group": "other",
+              "durationMs": 100.53000000000026
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 88.13100000000003
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 56.589999999999954
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 2.044999999999997
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7579999999999993
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5170000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 177.08200000000045,
+              "evaluationMs": 43.925000000000274,
+              "parseCompileMs": 0.009
+            },
+            {
+              "path": "/",
+              "totalMs": 86.008,
+              "evaluationMs": 1.1000000000000003,
+              "parseCompileMs": 0.342
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 84.08100000000003,
+              "evaluationMs": 82.22400000000002,
+              "parseCompileMs": 0.015
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 30,
+              "transferBytes": 170210
+            },
+            {
+              "type": "script",
+              "requests": 17,
+              "transferBytes": 107524
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37118
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7404
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "main#main > section.hero > div.hero-copy > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.987
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 95.468
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 116.42200000000047
+            },
+            {
+              "group": "other",
+              "durationMs": 105.13700000000058
+            },
+            {
+              "group": "styleLayout",
+              "durationMs": 91.31799999999997
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 56.93999999999975
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.8169999999999995
+            },
+            {
+              "group": "garbageCollection",
+              "durationMs": 1.2749999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5180000000000001
+            }
+          ],
+          "scripts": [
+            {
+              "path": "/_astro/effects.Be8ZW4P9.js",
+              "totalMs": 185.1930000000005,
+              "evaluationMs": 48.00300000000029,
+              "parseCompileMs": 0.009
+            },
+            {
+              "path": "/",
+              "totalMs": 87.46300000000001,
+              "evaluationMs": 1.166,
+              "parseCompileMs": 0.323
+            },
+            {
+              "path": "/_astro/nebula.DwETCd73.js",
+              "totalMs": 57.42299999999997,
+              "evaluationMs": 55.577999999999975,
+              "parseCompileMs": 0.013
+            }
+          ],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 30,
+              "transferBytes": 170210
+            },
+            {
+              "type": "script",
+              "requests": 17,
+              "transferBytes": 107524
+            },
+            {
+              "type": "other",
+              "requests": 9,
+              "transferBytes": 37118
+            },
+            {
+              "type": "stylesheet",
+              "requests": 2,
+              "transferBytes": 16741
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 7404
+            },
+            {
+              "type": "image",
+              "requests": 1,
+              "transferBytes": 1423
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/inbox/",
+      "metrics": {
+        "performance": {
+          "median": 100,
+          "worst": 100
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 485.646,
+          "worst": 486.55080000000004
+        },
+        "fcpMs": {
+          "median": 405.13125,
+          "worst": 406.55080000000004
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.005315972222222222,
+          "worst": 0.005315972222222222
+        },
+        "speedIndexMs": {
+          "median": 405.13125,
+          "worst": 406.55080000000004
+        },
+        "scriptBootupMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "mainThreadMs": {
+          "median": 66.01500000000003,
+          "worst": 66.32400000000001
+        }
+      },
+      "runs": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 486.55080000000004,
+          "fcpMs": 406.55080000000004,
+          "tbtMs": 0,
+          "cls": 0.005315972222222222,
+          "speedIndexMs": 406.55080000000004,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 66.32400000000001
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 452.31500000000005,
+          "fcpMs": 405.13125,
+          "tbtMs": 0,
+          "cls": 0.005315972222222222,
+          "speedIndexMs": 405.13125,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 66.01500000000003
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 485.646,
+          "fcpMs": 404.70500000000004,
+          "tbtMs": 0,
+          "cls": 0.005315972222222222,
+          "speedIndexMs": 404.70500000000004,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 63.172
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "div.shell > header.inbox-hero > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.409
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 62.165
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 28.980999999999998
+            },
+            {
+              "group": "other",
+              "durationMs": 18.49400000000001
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 11.825000000000005
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 4.717999999999999
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7419999999999995
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5640000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 21,
+              "transferBytes": 81614
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 37820
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 19159
+            },
+            {
+              "type": "other",
+              "requests": 5,
+              "transferBytes": 18977
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5658
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.inbox-hero > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.853
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 63.627
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 29.499000000000002
+            },
+            {
+              "group": "other",
+              "durationMs": 18.231000000000016
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 11.630000000000008
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 4.368999999999999
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7619999999999998
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5240000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 21,
+              "transferBytes": 81614
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 37820
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 19159
+            },
+            {
+              "type": "other",
+              "requests": 5,
+              "transferBytes": 18977
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5658
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.inbox-hero > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.735
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 71.428
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 28.578000000000003
+            },
+            {
+              "group": "other",
+              "durationMs": 18.314
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 9.847999999999999
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 4.246999999999998
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.7979999999999996
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.38700000000000007
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 21,
+              "transferBytes": 81614
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 37820
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 19159
+            },
+            {
+              "type": "other",
+              "requests": 5,
+              "transferBytes": 18977
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5658
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "formFactor": "desktop",
+      "path": "/search/?q=性能",
+      "metrics": {
+        "performance": {
+          "median": 100,
+          "worst": 100
+        },
+        "accessibility": {
+          "median": 100,
+          "worst": 100
+        },
+        "bestPractices": {
+          "median": 100,
+          "worst": 100
+        },
+        "lcpMs": {
+          "median": 458.5915,
+          "worst": 460.38199999999995
+        },
+        "fcpMs": {
+          "median": 409.29575,
+          "worst": 410.19100000000003
+        },
+        "tbtMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "cls": {
+          "median": 0.04754401114004629,
+          "worst": 0.04754401114004629
+        },
+        "speedIndexMs": {
+          "median": 409.29575,
+          "worst": 410.19100000000003
+        },
+        "scriptBootupMs": {
+          "median": 0,
+          "worst": 0
+        },
+        "mainThreadMs": {
+          "median": 56.21,
+          "worst": 57.399999999999984
+        }
+      },
+      "runs": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 458.5915,
+          "fcpMs": 409.29575,
+          "tbtMs": 0,
+          "cls": 0.04754401114004629,
+          "speedIndexMs": 409.29575,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 57.399999999999984
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 457.01400000000007,
+          "fcpMs": 408.50700000000006,
+          "tbtMs": 0,
+          "cls": 0.04754401114004629,
+          "speedIndexMs": 408.50700000000006,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 56.21
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "bestPractices": 100,
+          "lcpMs": 460.38199999999995,
+          "fcpMs": 410.19100000000003,
+          "tbtMs": 0,
+          "cls": 0.04754401114004629,
+          "speedIndexMs": 410.19100000000003,
+          "scriptBootupMs": 0,
+          "mainThreadMs": 53.068999999999996
+        }
+      ],
+      "diagnostics": [
+        {
+          "lcpSelector": "div.shell > header.passage-heading > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.028
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 57.74
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 24.995
+            },
+            {
+              "group": "other",
+              "durationMs": 16.570999999999987
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 10.592999999999996
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 3.0059999999999985
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.6699999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.5650000000000002
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 66998
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 38039
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 18919
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5251
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 4789
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.passage-heading > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 3.142
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 58.124
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 24.962000000000003
+            },
+            {
+              "group": "other",
+              "durationMs": 15.828999999999999
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 10.296999999999997
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 3.0509999999999975
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.5789999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4920000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 66998
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 38039
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 18919
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5251
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 4789
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        },
+        {
+          "lcpSelector": "div.shell > header.passage-heading > div > h1",
+          "accessibilityFailures": [],
+          "lcpSubparts": [
+            {
+              "part": "timeToFirstByte",
+              "durationMs": 2.705
+            },
+            {
+              "part": "elementRenderDelay",
+              "durationMs": 54.594
+            }
+          ],
+          "mainThread": [
+            {
+              "group": "styleLayout",
+              "durationMs": 24.488000000000007
+            },
+            {
+              "group": "other",
+              "durationMs": 14.927999999999995
+            },
+            {
+              "group": "scriptEvaluation",
+              "durationMs": 8.532999999999998
+            },
+            {
+              "group": "paintCompositeRender",
+              "durationMs": 3.052999999999999
+            },
+            {
+              "group": "parseHTML",
+              "durationMs": 1.6619999999999997
+            },
+            {
+              "group": "scriptParseCompile",
+              "durationMs": 0.4050000000000001
+            }
+          ],
+          "scripts": [],
+          "resources": [
+            {
+              "type": "total",
+              "requests": 23,
+              "transferBytes": 66998
+            },
+            {
+              "type": "script",
+              "requests": 12,
+              "transferBytes": 38039
+            },
+            {
+              "type": "stylesheet",
+              "requests": 3,
+              "transferBytes": 18919
+            },
+            {
+              "type": "document",
+              "requests": 1,
+              "transferBytes": 5251
+            },
+            {
+              "type": "other",
+              "requests": 7,
+              "transferBytes": 4789
+            },
+            {
+              "type": "image",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "media",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "font",
+              "requests": 0,
+              "transferBytes": 0
+            },
+            {
+              "type": "third-party",
+              "requests": 0,
+              "transferBytes": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1355 @@
+{
+  "measuredAt": "2026-11-06T13:11:01.797Z",
+  "completedAt": "2026-11-06T13:11:45.142Z",
+  "passed": false,
+  "generatedOnly": true,
+  "chromeVersion": "156.0.8078.80",
+  "environment": "Local loopback HTTPS; real Go authentication and temporary content store; ephemeral random credentials; no production requests",
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "name": "tablet",
+      "width": 834,
+      "height": 1112
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "themes": [
+    "dark",
+    "light"
+  ],
+  "documents": 10,
+  "audits": [
+    {
+      "view": "inbox-content",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-organized",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-verified",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-saved-view",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-empty",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "practice-records",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            [
+              ".quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record-actions > .quiet-link[type=\"button\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "practice-draft",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-search",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-location",
+      "device": "desktop",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": [
+          {
+            "tag": "CODE",
+            "id": "",
+            "className": "language-recall"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-content",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-organized",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-verified",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-saved-view",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-empty",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "practice-records",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "practice-draft",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodes": [
+            [
+              "button[aria-current=\"true\"] > .document-list-meta > span:nth-child(2)"
+            ],
+            [
+              "#trash-document"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "passage-search",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-location",
+      "device": "desktop",
+      "theme": "light",
+      "overflow": {
+        "viewport": 1440,
+        "width": 1440,
+        "overflowing": [
+          {
+            "tag": "CODE",
+            "id": "",
+            "className": "language-recall"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-content",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-organized",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-verified",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-saved-view",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-empty",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "practice-records",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": [
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "learn-book-orbit"
+          }
+        ]
+      },
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "practice-draft",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-search",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-location",
+      "device": "tablet",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": [
+          {
+            "tag": "CODE",
+            "id": "",
+            "className": "language-recall"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-content",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-organized",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-verified",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-saved-view",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-empty",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "practice-records",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": [
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "learn-book-orbit"
+          }
+        ]
+      },
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(4) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(4) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "practice-draft",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodes": [
+            [
+              "button[aria-current=\"true\"] > .document-list-meta > span:nth-child(2)"
+            ],
+            [
+              "#trash-document"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "passage-search",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": []
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-location",
+      "device": "tablet",
+      "theme": "light",
+      "overflow": {
+        "viewport": 834,
+        "width": 834,
+        "overflowing": [
+          {
+            "tag": "CODE",
+            "id": "",
+            "className": "language-recall"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-content",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-organized",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-verified",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-saved-view",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-empty",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "practice-records",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "learn-book-orbit"
+          },
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(4) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(4) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(5) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(5) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "practice-draft",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-search",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-location",
+      "device": "mobile",
+      "theme": "dark",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "TABLE",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "THEAD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TR",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TH",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TH",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TH",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TBODY",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TR",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TR",
+            "id": "",
+            "className": ""
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-content",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-organized",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-verified",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-saved-view",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "inbox-empty",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "practice-records",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "DIV",
+            "id": "",
+            "className": "learn-book-orbit"
+          },
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(1) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(2) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(3) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(4) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(4) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(5) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(5) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ],
+            [
+              ".learn-record:nth-child(6) > .learn-record-actions > .quiet-link:nth-child(1)"
+            ],
+            [
+              ".learn-record:nth-child(6) > .learn-record-actions > .quiet-link[type=\"button\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "practice-draft",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodes": [
+            [
+              "#count-all"
+            ],
+            [
+              "button[aria-current=\"true\"] > .document-list-meta > span:nth-child(2)"
+            ],
+            [
+              "#trash-document"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "view": "passage-search",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "P",
+            "id": "reading-sync-detail",
+            "className": ""
+          },
+          {
+            "tag": "BUTTON",
+            "id": "reading-sync-retry",
+            "className": "quiet-link mint"
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "className": "reading-sync-export"
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "view": "passage-location",
+      "device": "mobile",
+      "theme": "light",
+      "overflow": {
+        "viewport": 390,
+        "width": 390,
+        "overflowing": [
+          {
+            "tag": "TABLE",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "THEAD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TR",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TH",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TH",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TH",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TBODY",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TR",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TD",
+            "id": "",
+            "className": ""
+          },
+          {
+            "tag": "TR",
+            "id": "",
+            "className": ""
+          }
+        ]
+      },
+      "violations": []
+    }
+  ],
+  "screenshots": [
+    "desktop-dark-inbox-content.png",
+    "desktop-dark-inbox-organized.png",
+    "desktop-dark-inbox-verified.png",
+    "desktop-dark-inbox-saved-view.png",
+    "desktop-dark-inbox-empty.png",
+    "desktop-dark-practice-records.png",
+    "desktop-dark-practice-draft.png",
+    "desktop-dark-passage-search.png",
+    "desktop-dark-passage-location.png",
+    "desktop-light-inbox-content.png",
+    "desktop-light-inbox-organized.png",
+    "desktop-light-inbox-verified.png",
+    "desktop-light-inbox-saved-view.png",
+    "desktop-light-inbox-empty.png",
+    "desktop-light-practice-records.png",
+    "desktop-light-practice-draft.png",
+    "desktop-light-passage-search.png",
+    "desktop-light-passage-location.png",
+    "tablet-dark-inbox-content.png",
+    "tablet-dark-inbox-organized.png",
+    "tablet-dark-inbox-verified.png",
+    "tablet-dark-inbox-saved-view.png",
+    "tablet-dark-inbox-empty.png",
+    "tablet-dark-practice-records.png",
+    "tablet-dark-practice-draft.png",
+    "tablet-dark-passage-search.png",
+    "tablet-dark-passage-location.png",
+    "tablet-light-inbox-content.png",
+    "tablet-light-inbox-organized.png",
+    "tablet-light-inbox-verified.png",
+    "tablet-light-inbox-saved-view.png",
+    "tablet-light-inbox-empty.png",
+    "tablet-light-practice-records.png",
+    "tablet-light-practice-draft.png",
+    "tablet-light-passage-search.png",
+    "tablet-light-passage-location.png",
+    "mobile-dark-inbox-content.png",
+    "mobile-dark-inbox-organized.png",
+    "mobile-dark-inbox-verified.png",
+    "mobile-dark-inbox-saved-view.png",
+    "mobile-dark-inbox-empty.png",
+    "mobile-dark-practice-records.png",
+    "mobile-dark-practice-draft.png",
+    "mobile-dark-passage-search.png",
+    "mobile-dark-passage-location.png",
+    "mobile-light-inbox-content.png",
+    "mobile-light-inbox-organized.png",
+    "mobile-light-inbox-verified.png",
+    "mobile-light-inbox-saved-view.png",
+    "mobile-light-inbox-empty.png",
+    "mobile-light-practice-records.png",
+    "mobile-light-practice-draft.png",
+    "mobile-light-passage-search.png",
+    "mobile-light-passage-location.png"
+  ],
+  "browserErrors": [],
+  "failures": [
+    {
+      "state": "desktop-dark-practice-records",
+      "message": "Axe violations: label-content-name-mismatch"
+    },
+    {
+      "state": "desktop-light-practice-records",
+      "message": "Axe violations: label-content-name-mismatch"
+    },
+    {
+      "state": "desktop-light-practice-draft",
+      "message": "Axe violations: color-contrast"
+    },
+    {
+      "state": "tablet-dark-practice-records",
+      "message": "Axe violations: label-content-name-mismatch"
+    },
+    {
+      "state": "tablet-light-practice-records",
+      "message": "Axe violations: label-content-name-mismatch"
+    },
+    {
+      "state": "tablet-light-practice-draft",
+      "message": "Axe violations: color-contrast"
+    },
+    {
+      "state": "mobile-dark-practice-records",
+      "message": "Axe violations: label-content-name-mismatch"
+    },
+    {
+      "state": "mobile-light-practice-records",
+      "message": "Axe violations: label-content-name-mismatch"
+    },
+    {
+      "state": "mobile-light-practice-draft",
+      "message": "Axe violations: color-contrast"
+    }
+  ]
+}
