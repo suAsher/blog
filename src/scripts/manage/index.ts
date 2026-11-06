@@ -10,6 +10,11 @@ import {
 import { DocumentEditor, errorMessage, today } from "./editor";
 import { DocumentImporter } from "./import";
 import { RevisionDialogs } from "./history";
+import { setupWritingTemplates } from "./templates";
+import {
+  writingTemplateDraft,
+  type WritingTemplateKind,
+} from "../../lib/writing-templates";
 import type { SavedImportReport } from "../../lib/import-inbox";
 import {
   draftTemplate,
@@ -207,17 +212,27 @@ async function selectDocument(id: string) {
     editor.lock(false);
   }
 }
-async function createDocument(template?: DraftTemplate, requestedTitle = "") {
-  if (busy) return;
+async function createDocument(
+  template?: DraftTemplate,
+  requestedTitle = "",
+  writing?: WritingTemplateKind,
+): Promise<boolean> {
+  if (busy) return false;
   busy = true;
   editor.lock(true);
   const button = element<HTMLButtonElement>("new-document");
   button.disabled = true;
   try {
-    if (!(await editor.flush())) return;
-    const content = template
-      ? draftTemplate(template)
-      : { title: requestedTitle || "未命名文档", description: "", source: "" };
+    if (!(await editor.flush())) return false;
+    const content = writing
+      ? writingTemplateDraft(writing)
+      : template
+        ? draftTemplate(template)
+        : {
+            title: requestedTitle || "未命名文档",
+            description: "",
+            source: "",
+          };
     const doc = await requestJSON<DocumentDetail>(
       "/api/documents",
       jsonRequest("POST", {
@@ -238,18 +253,23 @@ async function createDocument(template?: DraftTemplate, requestedTitle = "") {
     element<HTMLInputElement>("document-title").focus();
     element<HTMLInputElement>("document-title").select();
     notice(
-      template
-        ? "演示模板已放入新草稿。替换为自己的内容，预览后即可发布。"
-        : "新文档已创建，接下来的修改会自动保存为草稿。",
+      writing && writing !== "blank"
+        ? "写作骨架已放入新草稿。替换编辑提示后，预览并发布自己的内容。"
+        : template
+          ? "演示模板已放入新草稿。替换为自己的内容，预览后即可发布。"
+          : "新文档已创建，接下来的修改会自动保存为草稿。",
     );
+    return true;
   } catch (error) {
     notice(errorMessage(error), true);
+    return false;
   } finally {
     busy = false;
     editor.lock(false);
     button.disabled = false;
   }
 }
+setupWritingTemplates((kind) => createDocument(undefined, "", kind));
 async function openImport() {
   if (busy || !(await editor.flush())) return;
   importer.open();

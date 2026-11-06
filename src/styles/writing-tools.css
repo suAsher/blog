@@ -1,0 +1,200 @@
+.authoring-dialog {
+  inset: 0;
+  margin: auto;
+  width: min(980px, calc(100vw - 32px));
+  max-height: calc(100dvh - 40px);
+  padding: clamp(20px, 4vw, 36px);
+  overflow: auto;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-raised);
+}
+.authoring-dialog::backdrop {
+  background: #030813c9;
+}
+.authoring-dialog-heading,
+.authoring-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+.authoring-dialog-heading h2 {
+  margin: 10px 0 0;
+  font-size: clamp(24px, 3vw, 32px);
+}
+.authoring-dialog-heading > button {
+  flex-shrink: 0;
+}
+.authoring-intro {
+  margin: 18px 0 26px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.template-workbench {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 24px;
+}
+.template-options {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.template-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  cursor: pointer;
+}
+.template-option:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.template-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.template-option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+.template-number {
+  align-self: flex-start;
+  margin-top: 2px;
+  font: 11px var(--mono);
+  color: var(--accent);
+}
+.template-option strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 15px;
+}
+.template-option small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.template-preview-pane {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+.template-preview-pane pre {
+  height: 360px;
+  margin: 20px 0 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 13px/1.9 var(--font-sans);
+  color: var(--muted);
+}
+.authoring-dialog-footer {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.authoring-dialog-footer p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.authoring-dialog-footer button {
+  flex-shrink: 0;
+}
+.explorer-config-fields {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 20px;
+}
+.explorer-config-fields > label,
+.explorer-config-field {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.explorer-config-fields label > span {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.explorer-config-fields input,
+.explorer-config-fields select {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--input);
+  color: var(--text);
+  font: inherit;
+}
+.explorer-config-preview {
+  min-width: 0;
+  margin-top: 26px;
+}
+.explorer-config-preview > .explore-widget {
+  margin: 0;
+}
+.explorer-config-preview:empty {
+  display: none;
+}
+.explorer-config-preview .widget-source pre {
+  overflow: auto;
+}
+@media (max-width: 700px) {
+  .authoring-dialog {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+    padding: 20px;
+  }
+  .template-workbench,
+  .explorer-config-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .template-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .template-option {
+    align-items: flex-start;
+    padding: 12px 10px;
+    gap: 8px;
+  }
+  .template-number {
+    display: none;
+  }
+  .template-preview-pane {
+    padding: 18px;
+  }
+  .template-preview-pane pre {
+    height: 180px;
+  }
+  .authoring-dialog-footer {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .authoring-dialog-heading {
+    gap: 12px;
+  }
+  .authoring-dialog-heading .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+}

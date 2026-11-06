@@ -4,10 +4,19 @@ import Icon from '../components/Icon.astro';
 import '../styles/article.css';
 import '../styles/manage.css';
 import '../styles/manage/history.css';
+import '../styles/writing-tools.css';
+import { writingTemplateOptions } from '../lib/writing-templates';
 ---
 <Layout title="写作空间" active="manage" description="写下想法，整理文档，让值得留下的知识慢慢生长。">
   <div class="writing-shell">
-    <header class="writing-heading"><div><span class="eyebrow">A PLACE TO THINK ON PAPER</span><h1>让思考，落在纸上<span>。</span></h1><p>从一段新想法开始，或接着已有的文档往下写。</p></div><div class="writing-heading-actions"><button class="button" id="open-import"><Icon name="download" size={16} /> 导入文档</button><button class="button button-primary" id="new-document"><span>＋</span> 新建文档</button></div></header>
+    <header class="writing-heading">
+      <div><span class="eyebrow">A PLACE TO THINK ON PAPER</span><h1>让思考，落在纸上<span>。</span></h1><p>从一段新想法开始，或接着已有的文档往下写。</p></div>
+      <div class="writing-heading-actions">
+        <button class="button" id="open-import"><Icon name="download" size={16} /> 导入文档</button>
+        <button class="button" id="open-writing-templates" aria-haspopup="dialog">从模板新建</button>
+        <button class="button button-primary" id="new-document"><span>＋</span> 新建文档</button>
+      </div>
+    </header>
     <div class="workspace-notice" id="workspace-notice" role="status" hidden></div>
     <div class="writing-layout">
       <aside class="document-sidebar" aria-label="我的文档">
@@ -66,13 +75,64 @@ import '../styles/manage/history.css';
             </details>
           </div>
           <div class="editor-modebar"><div class="editor-modes" role="group" aria-label="编辑视图"><button data-mode="write" aria-pressed="true" class="active">Markdown</button><button data-mode="split" aria-pressed="false">对照预览</button><button data-mode="preview" aria-pressed="false">预览</button></div><div class="editor-export"><button id="export-markdown" title="下载包含元数据的 Markdown">导出 .md</button><button id="export-bundle" title="下载 Markdown 与配套图片 ZIP">打包导出</button></div></div>
-          <div class="source-toolbar" id="source-toolbar" role="group" aria-label="Markdown 格式"><div class="insert-menu-anchor"><button type="button" id="open-insert-menu" aria-label="插入内容块" aria-haspopup="menu" aria-expanded="false" aria-controls="insert-menu">＋ 内容块 <kbd>/</kbd></button><div id="insert-menu" class="insert-menu" role="menu" aria-label="可插入的内容块" hidden></div></div><button data-insert="heading" title="插入二级标题">H₂</button><button data-insert="bold" title="插入粗体"><strong>B</strong></button><button data-insert="code" title="插入代码块">&lt;/&gt;</button><button data-insert="link" title="插入链接">↗ 链接</button><button id="upload-inline-image"><Icon name="download" size={14} /> 图片</button><span>空行输入 / · 可粘贴、拖入图片</span></div>
+          <div class="source-toolbar" id="source-toolbar" role="group" aria-label="Markdown 格式">
+            <div class="insert-menu-anchor"><button type="button" id="open-insert-menu" aria-label="插入内容块" aria-haspopup="menu" aria-expanded="false" aria-controls="insert-menu">＋ 内容块 <kbd>/</kbd></button><div id="insert-menu" class="insert-menu" role="menu" aria-label="可插入的内容块" hidden></div></div>
+            <button data-insert="heading" title="插入二级标题">H₂</button><button data-insert="bold" title="插入粗体"><strong>B</strong></button><button data-insert="code" title="插入代码块">&lt;/&gt;</button><button data-insert="link" title="插入链接">↗ 链接</button>
+            <button id="upload-inline-image"><Icon name="download" size={14} /> 图片</button>
+            <button id="configure-explorer" type="button" aria-haspopup="dialog">◇ 教学实验</button>
+            <span>空行输入 / · 可粘贴、拖入图片</span>
+          </div>
           <div class="editor-body" id="editor-body" data-mode="write"><div class="source-pane"><label class="sr-only" for="document-source">Markdown 正文</label><textarea id="document-source" spellcheck="false" placeholder="从这里开始，让一个想法慢慢清晰。&#10;输入 [[ 连接已有文档，空行输入 / 插入内容块。&#10;&#10;## 一个值得深入的问题&#10;&#10;写下观察、判断，以及下一步想验证的事…"></textarea><div id="wiki-link-suggestions" class="connection-suggestions wiki-link-suggestions" role="listbox" aria-label="知识链接建议" hidden></div></div><div class="preview-pane" id="preview-pane" hidden><div class="preview-caption"><span class="eyebrow">READING PREVIEW</span><span id="preview-status">与正式文章使用相同渲染</span></div><article class="prose writing-preview" id="document-preview"></article></div></div>
           <div class="editor-bottom"><span id="document-word-count">0 字符</span><span id="document-updated">草稿会自动保存到服务器</span></div>
         </div>
       </section>
     </div>
   </div>
+  <dialog id="writing-template-dialog" class="authoring-dialog" aria-labelledby="writing-template-title">
+    <form>
+      <header class="authoring-dialog-heading">
+        <div><span class="eyebrow">START WITH A QUESTION</span><h2 id="writing-template-title">给思考一个起点。</h2></div>
+        <button class="button" id="close-writing-template" type="button">关闭</button>
+      </header>
+      <p class="authoring-intro">选择适合这次表达的结构。每个提示都能修改，已有文档会先保存。</p>
+      <div class="template-workbench">
+        <fieldset class="template-options">
+          <legend class="sr-only">写作结构</legend>
+          {writingTemplateOptions.map((option) => (
+            <label class="template-option">
+              <input type="radio" name="writing-template" value={option.id} checked={option.id === 'tutorial'} />
+              <span class="template-number" aria-hidden="true">{option.number}</span>
+              <span><strong>{option.label}</strong><small>{option.hint}</small></span>
+            </label>
+          ))}
+        </fieldset>
+        <section class="template-preview-pane" aria-label="模板内容预览">
+          <span class="eyebrow">YOUR EDITABLE OUTLINE</span>
+          <pre id="writing-template-preview" tabindex="0" role="region" aria-label="Markdown 写作骨架，可滚动"></pre>
+        </section>
+      </div>
+      <footer class="authoring-dialog-footer"><p id="writing-template-status" role="status"></p><button id="create-from-template" class="button button-primary" type="submit">创建这份草稿</button></footer>
+    </form>
+  </dialog>
+  <dialog id="explorer-config-dialog" class="authoring-dialog explorer-config-dialog" aria-labelledby="explorer-config-title">
+    <form>
+      <header class="authoring-dialog-heading"><div><span class="eyebrow">EXPLAIN THROUGH EXPLORATION</span><h2 id="explorer-config-title">让读者动手理解。</h2></div><button class="button" id="close-explorer-config" type="button">关闭</button></header>
+      <p class="authoring-intro">选择本站教学模型，试用后插入正文。模型用于解释机制，数值不代表生产实测。</p>
+      <div class="explorer-config-fields">
+        <div class="explorer-config-field">
+          <label for="explorer-model">教学模型</label>
+          <select id="explorer-model">
+            <option value="inference">推理请求 · 排队与生成</option>
+            <option value="go-request">Go 请求 · 校验与超时</option>
+            <option value="network">网络请求 · 逐层排查</option>
+          </select>
+        </div>
+        <label><span>实验标题 <small>可选</small></span><input id="explorer-title" maxlength="120" placeholder="留空使用模型默认标题" /></label>
+      </div>
+      <div id="explorer-config-preview" class="prose explorer-config-preview" role="region" aria-label="教学实验预览"></div>
+      <footer class="authoring-dialog-footer"><p id="explorer-config-status" role="status"></p><button class="button button-primary" type="submit">插入到光标位置</button></footer>
+    </form>
+  </dialog>
   <dialog id="import-dialog" aria-labelledby="import-title">
     <div class="import-heading">
       <div><span class="eyebrow">BRING YOUR KNOWLEDGE HOME</span><h2 id="import-title">把已有的思考，带进来<span>。</span></h2></div>

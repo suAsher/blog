@@ -19,6 +19,7 @@ import { enhanceContent } from "../content-blocks";
 import { fields, relatedFields, setEditorFieldsLocked } from "./fields";
 import { setupInsertionMenu, setupWikiLinkCompletion } from "./link-completion";
 import { RelatedDocumentSelector } from "./related-selector";
+import { ExplorerBlockDialog } from "./block-config";
 import "../../styles/content-blocks.css";
 
 const input = <T extends HTMLElement>(id: string) =>
@@ -48,7 +49,41 @@ export class DocumentEditor {
   private closeInsertionMenu: () => void = () => undefined;
   private closeWikiCompletion: () => void = () => undefined;
   private relatedSelector: RelatedDocumentSelector;
+  private explorerDialog: ExplorerBlockDialog;
   constructor(private callbacks: Callbacks) {
+    this.explorerDialog = new ExplorerBlockDialog({
+      target: () => {
+        if (!this.current || this.current.status === "trash" || this.locked)
+          return;
+        return {
+          id: this.current.id,
+          source: fields.source.value,
+          start: fields.source.selectionStart,
+          end: fields.source.selectionEnd,
+        };
+      },
+      insert: (markdown, target) => {
+        if (
+          this.current?.id !== target.id ||
+          this.current.status === "trash" ||
+          this.locked
+        )
+          return false;
+        const selection = mapSelection(
+          target.source,
+          fields.source.value,
+          target,
+        );
+        fields.source.setRangeText(
+          markdown,
+          selection.start,
+          selection.end,
+          "end",
+        );
+        this.changed();
+        return true;
+      },
+    });
     Object.values(fields).forEach((field) =>
       field.addEventListener("input", () => this.changed()),
     );
@@ -174,6 +209,7 @@ export class DocumentEditor {
     };
   }
   open(doc: DocumentDetail) {
+    this.explorerDialog.close();
     clearTimeout(this.saveTimer);
     clearTimeout(this.previewTimer);
     ++this.previewVersion;
@@ -204,6 +240,7 @@ export class DocumentEditor {
     if (this.mode !== "write") void this.preview();
   }
   clear() {
+    this.explorerDialog.close();
     clearTimeout(this.saveTimer);
     clearTimeout(this.previewTimer);
     ++this.previewVersion;
