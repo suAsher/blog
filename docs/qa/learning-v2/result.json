@@ -1,0 +1,168 @@
+{
+  "measuredAt": "2026-11-06T12:15:51.365Z",
+  "generatedOnly": true,
+  "environment": "Local loopback HTTPS, real Go authentication and content store, ephemeral random credentials",
+  "chapters": 7,
+  "deepArticles": 6,
+  "existingGuide": 1,
+  "viewports": 3,
+  "themes": 2,
+  "importedDraftsPreserved": 6,
+  "arrangedRoutes": 2,
+  "audits": [
+    {
+      "view": "route",
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "deep-lesson",
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "route",
+      "device": "desktop",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "deep-lesson",
+      "device": "desktop",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "route",
+      "device": "tablet",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "deep-lesson",
+      "device": "tablet",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "route",
+      "device": "tablet",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "deep-lesson",
+      "device": "tablet",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "route",
+      "device": "mobile",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "deep-lesson",
+      "device": "mobile",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "route",
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "deep-lesson",
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "writing-templates",
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "experiment-authoring",
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "import-arrangement",
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "recall",
+      "device": "desktop",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "view": "writing-templates",
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "experiment-authoring",
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "import-arrangement",
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "view": "recall",
+      "device": "mobile",
+      "theme": "light",
+      "violations": []
+    }
+  ],
+  "screenshots": [
+    "desktop-dark-route-hero.png",
+    "desktop-dark-route-detail.png",
+    "desktop-dark-lesson-hero.png",
+    "desktop-dark-lesson-code.png",
+    "desktop-light-route-hero.png",
+    "desktop-light-route-detail.png",
+    "desktop-light-lesson-hero.png",
+    "desktop-light-lesson-code.png",
+    "tablet-dark-route-hero.png",
+    "tablet-dark-route-detail.png",
+    "tablet-dark-lesson-hero.png",
+    "tablet-dark-lesson-code.png",
+    "tablet-light-route-hero.png",
+    "tablet-light-route-detail.png",
+    "tablet-light-lesson-hero.png",
+    "tablet-light-lesson-code.png",
+    "mobile-dark-route-hero.png",
+    "mobile-dark-route-detail.png",
+    "mobile-dark-lesson-hero.png",
+    "mobile-dark-lesson-code.png",
+    "mobile-light-route-hero.png",
+    "mobile-light-route-detail.png",
+    "mobile-light-lesson-hero.png",
+    "mobile-light-lesson-code.png",
+    "desktop-dark-writing-templates.png",
+    "desktop-dark-experiment-authoring.png",
+    "desktop-dark-import-arrangement.png",
+    "desktop-dark-recall.png",
+    "mobile-light-writing-templates.png",
+    "mobile-light-experiment-authoring.png",
+    "mobile-light-import-arrangement.png",
+    "mobile-light-recall.png"
+  ]
+}

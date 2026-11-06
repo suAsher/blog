@@ -33,6 +33,11 @@ export default defineConfig({
         "src/lib/learning-navigation.ts",
         "src/lib/explorers.ts",
         "src/lib/editorial-reader.ts",
+        "src/lib/learning-practice.ts",
+        "src/lib/import-route.ts",
+        "src/lib/writing-templates.ts",
+        "src/lib/recall.ts",
+        "src/lib/optional-enhancement.ts",
       ],
       thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
       // Vitest's agent formatter otherwise hides fully covered modules in text output.
