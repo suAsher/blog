@@ -53,6 +53,7 @@ func renderMarkdownResolved(source string, aliases map[string]string, resolve wi
 	renderer := knowledgeMarkdown(resolve)
 	data := []byte(source)
 	document := renderer.Parser().Parse(text.NewReader(data))
+	passageBlocks(document, data, true)
 	headings := []Heading{}
 	_ = ast.Walk(document, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {

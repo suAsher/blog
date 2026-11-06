@@ -8,6 +8,7 @@ import { projectPublishedSnapshot } from '../lib/offline-snapshot';
 import { waitForOfflineShellReady } from '../lib/pwa-readiness';
 import { saveSnapshot, unlockVault, vaultExists, vaultUnlocked } from '../lib/offline-vault';
 import { optionalEnhancement } from '../lib/optional-enhancement';
+import { capturePassageNavigation, initPassageTarget, initPassageRecovery } from './passage-target';
 
 const root = document.getElementById('live-reader');
 const loading = document.getElementById('reader-loading');
@@ -166,6 +167,7 @@ function enableOfflineSave(data: DocumentDetail) {
 }
 async function openDocument() {
   if (inFlight || !root) return;
+  const passageNavigation = capturePassageNavigation();
   inFlight = true; if (loading) loading.hidden = false; if (failure) failure.hidden = true;
   try {
     if (!/^[a-f0-9]{32}$/.test(id)) throw new ApiError('文档地址无效，请从文章列表重新打开。', 404);
@@ -206,6 +208,7 @@ async function openDocument() {
     }
     root.hidden = false; if (loading) loading.hidden = true;
     initReader(); initEditorialReader(data, body); syncBookmarkButtons();
+    initPassageTarget(body, data.passageRevision, passageNavigation);
     void initLearningNavigation(data.id);
     // Highlighting is optional and must not delay the title, prose or controls.
     // Set up text anchors afterwards so highlights never replace an active range.
@@ -214,8 +217,9 @@ async function openDocument() {
       .then(() => { void initAnnotations(data.id, data.version); });
     void loadKnowledgeLinks(data.id);
   } catch (error) {
+    passageNavigation.dispose();
     if (loading) loading.hidden = true;
-    if (failure) failure.hidden = false;
+    if (failure) { failure.hidden = false; initPassageRecovery(failure); }
     text('reader-error-message', error instanceof ApiError ? error.status === 404 ? '这篇文档尚未发布、已撤回，或地址已经失效。你可以回到文章列表继续探索。' : error.message : '暂时无法读取文档，请检查连接后重试。');
   } finally { inFlight = false; }
 }

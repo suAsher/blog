@@ -50,10 +50,11 @@ type Heading struct {
 }
 type Detail struct {
 	Summary
-	Source     string    `json:"source"`
-	HTML       string    `json:"html"`
-	Headings   []Heading `json:"headings"`
-	SourcePath string    `json:"sourcePath,omitempty"`
+	Source          string    `json:"source"`
+	HTML            string    `json:"html"`
+	Headings        []Heading `json:"headings"`
+	SourcePath      string    `json:"sourcePath,omitempty"`
+	PassageRevision string    `json:"passageRevision,omitempty"`
 }
 type Quota struct {
 	UsedBytes      int64 `json:"usedBytes"`

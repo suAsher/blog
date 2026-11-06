@@ -25,6 +25,7 @@ export interface DocumentSummary extends SearchArticle {
 export interface DocumentDetail extends DocumentSummary {
   source: string;
   html: string;
+  passageRevision?: string;
   headings: { depth: number; slug: string; text: string }[];
   sourcePath?: string;
 }

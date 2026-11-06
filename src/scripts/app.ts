@@ -165,6 +165,18 @@ function commands(): Command[] {
       href: "/manage/?import=1",
     },
     {
+      title: "资料收件箱",
+      detail: "整理待验证资料，找到尚未归入路线的文档",
+      aliases: ["inbox", "整理", "收件箱", "验证"],
+      href: "/inbox/",
+    },
+    {
+      title: "段落检索",
+      detail: "定位已发布文章中的正文与代码",
+      aliases: ["passage", "search", "段落", "检索", "代码"],
+      href: "/search/",
+    },
+    {
       title: "技术学习路线",
       detail: "按方向、章节循序学习，回到上次读到的地方",
       aliases: ["learn", "course", "路线", "课程", "章节"],
@@ -367,6 +379,11 @@ async function quickSearch() {
     ) as HTMLAnchorElement;
     all.href = `/articles/?q=${encodeURIComponent(term)}${usingExamples() ? "&examples=1" : ""}`;
     results.append(all);
+    if (!usingExamples()) {
+      const passages = row(element("a", "quiet-link mint", "定位正文与代码中的段落 →"));
+      (passages as HTMLAnchorElement).href = `/search/?q=${encodeURIComponent(term)}`;
+      results.append(passages);
+    }
   } catch {
     if (version === searchVersion) {
       loading.remove();

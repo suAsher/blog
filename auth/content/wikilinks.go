@@ -105,7 +105,10 @@ func knowledgeMarkdown(resolve wikiResolver) goldmark.Markdown {
 	return goldmark.New(
 		goldmark.WithExtensions(extension.GFM),
 		goldmark.WithParserOptions(parser.WithAutoHeadingID(), parser.WithInlineParsers(util.Prioritized(&wikiParser{}, 150))),
-		goldmark.WithRendererOptions(renderer.WithNodeRenderers(util.Prioritized(&wikiRenderer{resolve}, 100))),
+		goldmark.WithRendererOptions(renderer.WithNodeRenderers(
+			util.Prioritized(&wikiRenderer{resolve}, 100),
+			util.Prioritized(&passageRenderer{}, 100),
+		)),
 	)
 }
 

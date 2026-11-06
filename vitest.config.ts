@@ -38,6 +38,9 @@ export default defineConfig({
         "src/lib/writing-templates.ts",
         "src/lib/recall.ts",
         "src/lib/optional-enhancement.ts",
+        "src/lib/inbox.ts",
+        "src/lib/practice-records.ts",
+        "src/lib/passage-search.ts",
       ],
       thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
       // Vitest's agent formatter otherwise hides fully covered modules in text output.

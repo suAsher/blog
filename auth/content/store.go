@@ -28,6 +28,7 @@ type Store struct {
 	capacityMu    sync.Mutex
 	reservedBytes int64
 	search        *searchCache
+	passages      *passageCache
 	freeBytes     func() (int64, error)
 	location      *time.Location
 	now           func() time.Time
@@ -77,7 +78,7 @@ func NewStore(root string) (*Store, error) {
 	default:
 		// A second Store in the same process must not erase a live import.
 	}
-	s := &Store{root: root, search: newSearchCache(searchCacheBudget), location: location, now: time.Now, links: newLinkCache(linkIndexBudget)}
+	s := &Store{root: root, search: newSearchCache(searchCacheBudget), passages: newPassageCache(passageCacheBudget), location: location, now: time.Now, links: newLinkCache(linkIndexBudget)}
 	s.freeBytes = func() (int64, error) {
 		var stat syscall.Statfs_t
 		if err := syscall.Statfs(root, &stat); err != nil {
@@ -345,7 +346,7 @@ func (s *Store) detail(d *record, view string) (Detail, error) {
 	if err != nil {
 		return Detail{}, err
 	}
-	return Detail{Summary: summary(d, c), Source: c.Source, HTML: rendered.HTML, Headings: rendered.Headings, SourcePath: d.SourcePath}, nil
+	return Detail{Summary: summary(d, c), Source: c.Source, HTML: rendered.HTML, Headings: rendered.Headings, SourcePath: d.SourcePath, PassageRevision: passageRevision(c.Source)}, nil
 }
 
 func (s *Store) Update(id string, c Content, version int) (Detail, error) {

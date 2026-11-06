@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import '../styles/passage-search.css';
+---
+
+<Layout
+  title="段落检索"
+  active="search"
+  description="从已发布的知识中找到具体段落，带着上下文回到正文。"
+>
+  <div class="shell passage-page">
+    <header class="passage-heading">
+      <div>
+        <span class="eyebrow">FIND THE THOUGHT</span>
+        <h1>找到那一段<span class="mint-dot">.</span></h1>
+        <p>
+          一个概念，一行代码，一段曾经读过的解释。<br class="passage-desktop-break" />带着上下文，回到知识发生的地方。
+        </p>
+      </div>
+      <div class="passage-heading-note">
+        <span class="passage-note-symbol" aria-hidden="true">↳</span>
+        <span>检索已发布正文<br /><strong>打开即到对应段落</strong></span>
+      </div>
+    </header>
+
+    <form
+      id="passage-search-form"
+      class="passage-search-form"
+      action="/search/"
+      role="search"
+      aria-label="段落检索"
+    >
+      <label for="passage-query">搜索正文中的关键词</label>
+      <div class="passage-input-row">
+        <Icon name="search" size={22} />
+        <input
+          id="passage-query"
+          name="q"
+          type="search"
+          placeholder="试试一个概念、代码符号或关键短语…"
+          autocomplete="off"
+          aria-describedby="passage-query-help"
+          aria-controls="passage-results"
+        />
+        <button id="passage-submit" class="button button-primary" type="submit">
+          查找段落 <Icon name="arrow" size={17} />
+        </button>
+      </div>
+      <p id="passage-query-help" class="passage-query-help">
+        多个关键词用空格分隔，同一段落需包含全部关键词。
+      </p>
+      <div class="passage-filters">
+        <label for="passage-tag">
+          标签
+          <select id="passage-tag" name="tag">
+            <option value="">全部标签</option>
+          </select>
+        </label>
+        <label for="passage-path">
+          学习路线
+          <select id="passage-path" name="pathId">
+            <option value="">全部路线</option>
+          </select>
+        </label>
+        <button class="quiet-link" id="passage-reset" type="button">
+          清除条件
+        </button>
+      </div>
+      <div class="passage-facet-notice">
+        <p id="passage-facet-status" role="status"></p>
+        <button
+          id="passage-facet-retry"
+          class="quiet-link"
+          type="button"
+          hidden
+        >
+          重新读取筛选
+        </button>
+      </div>
+    </form>
+
+    <section
+      class="passage-results-section"
+      aria-labelledby="passage-results-heading"
+    >
+      <div class="passage-results-header">
+        <h2 id="passage-results-heading" tabindex="-1">正文片段</h2>
+        <p
+          id="passage-status"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          输入关键词，开始寻找。
+        </p>
+      </div>
+      <p id="passage-budget" class="passage-budget" hidden></p>
+      <div id="passage-results" aria-busy="false"></div>
+      <div id="passage-empty" class="passage-empty">
+        <span class="passage-empty-symbol" aria-hidden="true">¶</span>
+        <h3 id="passage-empty-title">让一个关键词，带你回到上下文</h3>
+        <p id="passage-empty-description">
+          搜索正文段落、代码、列表与表格；标签和路线帮你缩小范围。
+        </p>
+      </div>
+      <div id="passage-error" class="passage-error" hidden>
+        <p id="passage-error-message" role="alert"></p>
+        <button id="passage-retry" class="button" type="button">重新搜索</button>
+      </div>
+      <nav
+        id="passage-pagination"
+        class="passage-pagination"
+        aria-label="段落结果分页"
+        hidden
+      >
+        <button id="passage-previous" class="button" type="button">← 上一页</button>
+        <span id="passage-page-label"></span>
+        <button id="passage-next" class="button" type="button">下一页 →</button>
+      </nav>
+    </section>
+
+    <p class="passage-footer-note">
+      片段来自当前已发布版本。未发布的编辑不会进入搜索。
+      <a href="/articles/">浏览全部文章 <span aria-hidden="true">↗</span></a>
+    </p>
+    <noscript>
+      <p class="passage-error">请开启 JavaScript 以搜索已发布段落。</p>
+    </noscript>
+  </div>
+  <script>
+    import '../scripts/passage-search';
+  </script>
+</Layout>

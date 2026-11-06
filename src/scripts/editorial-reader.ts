@@ -32,6 +32,14 @@ export function initEditorialReader(data: DocumentDetail, body: HTMLElement) {
   body.querySelectorAll<HTMLElement>(".code-container").forEach(enhanceCode);
 }
 
+/** Server-generated zero-text anchors must not interrupt visible Markdown relationships. */
+export function articleSibling(element: Element, direction: 'previous' | 'next'): Element | null {
+  const key = direction === 'previous' ? 'previousElementSibling' : 'nextElementSibling';
+  let sibling = element[key];
+  while (sibling?.matches('.passage-anchor[aria-hidden="true"]')) sibling = sibling[key];
+  return sibling;
+}
+
 function enhanceCode(container: HTMLElement) {
   if (container.dataset.editorialReady) return;
   const pre = container.querySelector("pre");
@@ -48,7 +56,7 @@ function enhanceCode(container: HTMLElement) {
   );
   const source = code.textContent || "";
   const lines = source.replace(/\n$/, "").split("\n").length;
-  const previous = container.previousElementSibling;
+  const previous = articleSibling(container, 'previous');
   const caption =
     previous?.tagName === "P"
       ? parseCodeCaption(previous.textContent || "", lines)
@@ -88,8 +96,8 @@ function enhanceCode(container: HTMLElement) {
 }
 
 function enhanceOutput(container: HTMLElement) {
-  const outputLabel = container.nextElementSibling;
-  const output = outputLabel?.nextElementSibling;
+  const outputLabel = articleSibling(container, 'next');
+  const output = outputLabel ? articleSibling(outputLabel, 'next') : null;
   if (
     outputLabel?.tagName !== "P" ||
     outputLabel.textContent?.trim() !== "运行输出：" ||
