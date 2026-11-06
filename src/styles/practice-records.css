@@ -1,0 +1,171 @@
+/* Practice evidence is a quiet extension of the chapter, not another dashboard. */
+.learn-records {
+  padding: 26px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(150deg, var(--blue-bg), transparent 62%);
+}
+.learn-record-heading,
+.learn-record {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.learn-record-heading h4 {
+  margin: 9px 0 0;
+  font-size: 17px;
+  font-weight: 550;
+}
+.learn-record-count {
+  color: var(--muted);
+  font: 11px var(--mono);
+  white-space: nowrap;
+}
+.learn-record-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+.learn-record-list:empty {
+  display: none;
+}
+.learn-record {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.learn-record-body {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+.learn-record-kind {
+  color: var(--muted);
+  font-size: 11px;
+}
+.learn-record-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 550;
+  line-height: 1.7;
+}
+.learn-record-title:hover {
+  color: var(--accent);
+}
+.learn-record-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.learn-record-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.learn-record-actions .quiet-link {
+  font-size: 12px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.learn-record-controls,
+.learn-record-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+.learn-record-controls {
+  margin: 20px 0 12px;
+}
+.learn-record-controls button {
+  min-height: 44px;
+  font-size: 12px;
+}
+.learn-record-controls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.learn-record-empty {
+  color: var(--muted);
+  margin: 18px 0;
+  line-height: 1.9;
+  font-size: 13px;
+}
+.learn-record-help {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+.learn-record-status {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+.learn-record-status:empty {
+  display: none;
+}
+.learn-records,
+.practice-record-dialog {
+  overflow-wrap: anywhere;
+}
+.practice-record-dialog {
+  width: min(620px, calc(100vw - 32px));
+  padding: 28px;
+  box-sizing: border-box;
+}
+.practice-record-dialog .learn-dialog-heading {
+  gap: 15px;
+}
+.practice-record-dialog .learn-dialog-heading h2 {
+  margin: 0;
+  font-size: 22px;
+}
+.practice-record-dialog label {
+  display: grid;
+  gap: 10px;
+  margin-block: 20px;
+  font-size: 13px;
+}
+.practice-record-dialog input,
+.practice-record-dialog select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font: inherit;
+}
+.practice-record-dialog label[hidden] {
+  display: none;
+}
+.practice-record-dialog .learn-record-links {
+  margin-block: 16px;
+}
+.practice-record-dialog button {
+  min-height: 44px;
+}
+@media (max-width: 700px) {
+  .learn-records {
+    padding: 22px 16px;
+  }
+  .learn-record {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .learn-record-controls {
+    align-items: stretch;
+  }
+  .learn-record-controls button {
+    flex: 1 1 auto;
+  }
+  .practice-record-dialog {
+    padding: 22px 18px;
+  }
+}

@@ -120,6 +120,9 @@ func learningDocumentSet(chapters []LearningChapter) map[string]bool {
 		for _, id := range chapter.DocumentIDs {
 			ids[id] = true
 		}
+		for _, id := range chapter.PracticeDocumentIDs {
+			ids[id] = true
+		}
 	}
 	return ids
 }
@@ -169,6 +172,10 @@ func (s *Store) writeLearning(id string, input learningRequest) (LearningPath, e
 		value.Version = old.Version + 1
 		value.CreatedAt = old.CreatedAt
 		previous = learningDocumentSet(old.Chapters)
+	}
+	// Validate the merged value as omitted optional fields can retain references.
+	if err := validateLearning(value); err != nil {
+		return LearningPath{}, err
 	}
 	for doc := range learningDocumentSet(value.Chapters) {
 		if err := s.researchDocumentLocked(doc, false); err != nil {

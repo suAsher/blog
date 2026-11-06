@@ -9,6 +9,7 @@ import { button, element, get } from "../workspaces/dom";
 import { editLearningPath } from "./editor";
 import { learningPractice } from "../../lib/learning-practice";
 import { pathContext, practicePanel } from "./practice";
+import { practiceRecords } from "./records";
 
 let paths: LearningPath[] = [];
 let documents: DocumentSummary[] = [];
@@ -296,6 +297,12 @@ function renderDetail() {
       renderPaths();
       renderDetail();
     }));
+    section.append(practiceRecords({ path, chapter, documents, onSaved: (saved, document) => {
+      paths = paths.map((item) => item.id === saved.id && item.version <= saved.version ? saved : item);
+      if (document && !documents.some((item) => item.id === document.id)) documents = [...documents, document];
+      renderPaths();
+      renderDetail();
+    } }));
     chapters.append(section);
   });
   if (!path.chapters.length)

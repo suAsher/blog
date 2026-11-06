@@ -8,13 +8,14 @@ import (
 const maxLearningBytes = 8 << 20
 
 type LearningChapter struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	DocumentIDs []string `json:"documentIds"`
-	Goal        string   `json:"goal,omitempty"`
-	Exercise    string   `json:"exercise,omitempty"`
-	Practiced   bool     `json:"practiced,omitempty"`
+	ID                  string   `json:"id"`
+	Title               string   `json:"title"`
+	Description         string   `json:"description"`
+	DocumentIDs         []string `json:"documentIds"`
+	Goal                string   `json:"goal,omitempty"`
+	Exercise            string   `json:"exercise,omitempty"`
+	Practiced           bool     `json:"practiced,omitempty"`
+	PracticeDocumentIDs []string `json:"practiceDocumentIds,omitempty"`
 }
 type LearningPath struct {
 	ID            string            `json:"id"`
@@ -40,13 +41,14 @@ type learningRequest struct {
 	Version       int64                    `json:"version,omitempty"`
 }
 type learningChapterRequest struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	DocumentIDs []string `json:"documentIds"`
-	Goal        *string  `json:"goal,omitempty"`
-	Exercise    *string  `json:"exercise,omitempty"`
-	Practiced   *bool    `json:"practiced,omitempty"`
+	ID                  string    `json:"id"`
+	Title               string    `json:"title"`
+	Description         string    `json:"description"`
+	DocumentIDs         []string  `json:"documentIds"`
+	Goal                *string   `json:"goal,omitempty"`
+	Exercise            *string   `json:"exercise,omitempty"`
+	Practiced           *bool     `json:"practiced,omitempty"`
+	PracticeDocumentIDs *[]string `json:"practiceDocumentIds,omitempty"`
 }
 type learningFile struct {
 	SchemaVersion int                     `json:"schemaVersion"`
@@ -69,12 +71,27 @@ func validateLearning(value LearningPath) error {
 	}
 	chapters := map[string]bool{}
 	documents := map[string]bool{}
+	practiceReferences := 0
 	for _, chapter := range value.Chapters {
 		if !researchQuestionID.MatchString(chapter.ID) || chapters[chapter.ID] || !learningTitle(chapter.Title) || !researchText(chapter.Description, 2000, false) || chapter.DocumentIDs == nil {
 			return bad(400, "章节格式无效或重复。")
 		}
 		if !researchText(chapter.Goal, 800, false) || !researchText(chapter.Exercise, 2000, false) {
 			return bad(400, "章节目标最多 800 字，实践任务最多 2000 字。")
+		}
+		if len(chapter.PracticeDocumentIDs) > 20 {
+			return bad(413, "每章最多关联 20 篇实践记录。")
+		}
+		practiceDocuments := map[string]bool{}
+		for _, id := range chapter.PracticeDocumentIDs {
+			if !documentID.MatchString(id) || practiceDocuments[id] {
+				return bad(400, "实践记录标识无效或章内重复。")
+			}
+			practiceDocuments[id] = true
+			practiceReferences++
+		}
+		if practiceReferences > 100 {
+			return bad(413, "每条路线最多包含 100 次实践记录引用。")
 		}
 		chapters[chapter.ID] = true
 		for _, id := range chapter.DocumentIDs {

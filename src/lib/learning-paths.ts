@@ -8,6 +8,7 @@ export interface LearningChapter {
   goal?: string;
   exercise?: string;
   practiced?: boolean;
+  practiceDocumentIds?: string[];
 }
 export interface LearningInput {
   title: string;
@@ -70,6 +71,17 @@ export function validateLearningPath(value: LearningInput): string {
       (chapter.practiced !== undefined && typeof chapter.practiced !== "boolean"))
       return "章节目标最多 800 字，实践任务最多 2000 字。";
   }
+  let practiceReferences = 0;
+  for (const chapter of value.chapters) {
+    const evidence = chapter.practiceDocumentIds;
+    if (evidence === undefined) continue;
+    if (!Array.isArray(evidence) || evidence.length > 20 ||
+      new Set(evidence).size !== evidence.length ||
+      evidence.some((id) => typeof id !== "string" || !/^[a-f0-9]{32}$/.test(id)))
+      return "每章最多关联 20 篇实践记录，标识必须有效且不能重复。";
+    practiceReferences += evidence.length;
+  }
+  if (practiceReferences > 100) return "每条路线最多包含 100 次实践记录引用。";
   const ids = value.chapters.flatMap((chapter) => chapter.documentIds);
   if (
     ids.length > 300 ||

@@ -37,9 +37,13 @@ func learningChapterValue(input learningChapterRequest, previous LearningChapter
 	value := LearningChapter{
 		ID: input.ID, Title: input.Title, Description: input.Description,
 		Goal: previous.Goal, Exercise: previous.Exercise, Practiced: previous.Practiced,
+		PracticeDocumentIDs: append([]string{}, previous.PracticeDocumentIDs...),
 	}
 	if input.DocumentIDs != nil {
 		value.DocumentIDs = append([]string{}, input.DocumentIDs...)
+	}
+	if input.PracticeDocumentIDs != nil {
+		value.PracticeDocumentIDs = append([]string{}, (*input.PracticeDocumentIDs)...)
 	}
 	if input.Goal != nil {
 		value.Goal = *input.Goal
@@ -64,6 +68,11 @@ func sameLearningCreation(existing, requested LearningPath) bool {
 		value.Version = 0
 		value.Objectives = append([]string{}, value.Objectives...)
 		value.Prerequisites = append([]string{}, value.Prerequisites...)
+		chapters := append([]LearningChapter{}, value.Chapters...)
+		for index, chapter := range chapters {
+			chapters[index].PracticeDocumentIDs = append([]string{}, chapter.PracticeDocumentIDs...)
+		}
+		value.Chapters = chapters
 		return value
 	}
 	return reflect.DeepEqual(normalize(existing), normalize(requested))

@@ -122,7 +122,7 @@
 }
 .document-tabs span {
   font: 10px var(--mono);
-  opacity: 0.7;
+  opacity: 1;
 }
 .document-list {
   display: flex;
@@ -168,7 +168,7 @@
   align-items: center;
   margin-top: 7px;
   font-size: 10px;
-  color: var(--faint);
+  color: var(--muted);
 }
 .document-list-meta .document-list-state {
   color: var(--muted);

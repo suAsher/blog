@@ -95,7 +95,7 @@
   margin-left: 4px;
 }
 .danger {
-  color: #cda08f;
+  color: var(--danger);
 }
 .publish-button {
   font-size: 11px;
