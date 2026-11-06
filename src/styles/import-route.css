@@ -1,0 +1,61 @@
+.import-route {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--blue-bg), var(--accent-bg));
+}
+.import-route > span {
+  color: var(--blue);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: .12em;
+}
+.import-route h3 { margin: 12px 0; }
+.import-route p { color: var(--muted); line-height: 1.8; }
+.import-route-form { display: grid; gap: var(--space-4); }
+.import-route-form label { display: grid; gap: var(--space-2); }
+.import-route-form input,
+.import-route-form textarea,
+.import-route-form select {
+  width: 100%;
+  min-width: 0;
+  color: var(--text);
+  background: var(--input);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font: inherit;
+}
+.import-route-form h4 { color: var(--accent); margin: 12px 0 0; }
+.import-route-chapters,
+.import-route-lessons { display: grid; gap: var(--space-3); }
+.import-route-chapter {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+}
+.import-route-chapter strong { color: var(--faint); font-family: var(--mono); font-size: 12px; }
+.import-route-lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 160px);
+  gap: 12px;
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.import-route-lesson strong,
+.import-route-lesson code { display: block; overflow-wrap: anywhere; }
+.import-route-lesson code { margin-top: 6px; color: var(--muted); font-size: 12px; }
+.import-route-moves { display: flex; gap: 8px; }
+.import-route button:disabled { opacity: .55; cursor: not-allowed; }
+.import-route-form > button { justify-self: start; }
+@media (max-width: 560px) {
+  .import-route { padding: var(--space-4); }
+  .import-route-chapter { grid-template-columns: 24px minmax(0, 1fr); }
+  .import-route-chapter > button { grid-column: 2; grid-row: 2; justify-self: start; }
+  .import-route-chapter > button:last-child { justify-self: end; }
+  .import-route-lesson { grid-template-columns: minmax(0, 1fr); }
+}

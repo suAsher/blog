@@ -11,6 +11,7 @@ import {
   type SelectedImport,
 } from "../../lib/import-inbox";
 import { errorMessage } from "./utilities";
+import { appendImportRoute } from "./import-route";
 
 const element = <T extends HTMLElement>(id: string) =>
   document.getElementById(id) as T;
@@ -362,6 +363,7 @@ export class DocumentImporter {
       for (const report of reports) {
         const button = document.createElement("button");
         button.type = "button";
+        button.dataset.importReport = report.id;
         button.textContent = `${new Date(report.createdAt).toLocaleString("zh-CN")} · 新增 ${report.imported.length} 篇 · 更新 ${report.updated?.length || 0} 篇`;
         button.addEventListener("click", () => this.renderReport(report));
         area.append(button);
@@ -403,6 +405,7 @@ export class DocumentImporter {
       );
     }
     if (report.warnings.length) this.lines(area, report.warnings);
+    appendImportRoute(area, report);
     const affected = [...report.imported, ...(report.updated || [])];
     if (affected.length) {
       const list = document.createElement("div");
