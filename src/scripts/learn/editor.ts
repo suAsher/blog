@@ -7,6 +7,7 @@ import {
 } from "../../lib/learning-paths";
 import { button, element, get } from "../workspaces/dom";
 import { availableDocuments, loadLearningPaths } from "./index";
+import { learningLines, updateLearningChapter } from "../../lib/learning-practice";
 
 const dialog = get<HTMLDialogElement>("learn-dialog");
 let original: LearningPath | undefined;
@@ -26,6 +27,8 @@ export function editLearningPath(path?: LearningPath) {
   get<HTMLInputElement>("learn-title").value = local.title;
   get<HTMLTextAreaElement>("learn-description").value = local.description;
   get<HTMLSelectElement>("learn-accent").value = local.accent;
+  get<HTMLTextAreaElement>("learn-objectives").value = (local.objectives || []).join("\n");
+  get<HTMLTextAreaElement>("learn-prerequisites").value = (local.prerequisites || []).join("\n");
   get("learn-delete").hidden = !path;
   get("learn-delete-confirm").hidden = true;
   get("learn-conflict").hidden = true;
@@ -42,7 +45,7 @@ function updateChapter(
   local = {
     ...local,
     chapters: local.chapters.map((chapter) =>
-      chapter.id === id ? { ...chapter, ...patch } : chapter,
+      chapter.id === id ? updateLearningChapter(chapter, patch) : chapter,
     ),
   };
   dirty = true;
@@ -118,6 +121,20 @@ function renderChapters() {
       );
       descLabel.append(desc);
       section.append(heading, label, descLabel);
+      for (const [key, caption, limit] of [
+        ["goal", "章节目标", 800], ["exercise", "实践任务与交付物", 2000],
+      ] as const) {
+        const fieldLabel = element("label", "", caption);
+        const field = element("textarea");
+        field.rows = 2;
+        field.maxLength = limit;
+        field.value = chapter[key] || "";
+        field.placeholder = key === "goal" ? "学完能够解释什么？" : "例如：提交可复现代码、预期输出与一条失败分析。";
+        field.addEventListener("input", () => updateChapter(chapter.id, { [key]: field.value }));
+        fieldLabel.append(field);
+        section.append(fieldLabel);
+      }
+      section.append(element("small", "learn-practice-note", "修改实践任务后，将重置这章的实践完成状态。"));
       const list = element("ol", "learn-edit-lessons");
       chapter.documentIds.forEach((id, lessonIndex) => {
         const row = element("li");
@@ -249,6 +266,8 @@ get("learn-form").addEventListener("submit", async (event) => {
     ...local,
     title: get<HTMLInputElement>("learn-title").value.trim(),
     description: get<HTMLTextAreaElement>("learn-description").value,
+    objectives: learningLines(get<HTMLTextAreaElement>("learn-objectives").value),
+    prerequisites: learningLines(get<HTMLTextAreaElement>("learn-prerequisites").value),
     accent: get<HTMLSelectElement>("learn-accent")
       .value as LearningInput["accent"],
   };
@@ -267,6 +286,8 @@ get("learn-form").addEventListener("submit", async (event) => {
         description: local.description,
         accent: local.accent,
         chapters: local.chapters,
+        objectives: local.objectives,
+        prerequisites: local.prerequisites,
         ...(original ? { version: original.version } : {}),
       }),
     );

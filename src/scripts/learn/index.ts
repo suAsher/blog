@@ -7,6 +7,8 @@ import { learningProgress, type LearningPath } from "../../lib/learning-paths";
 import { readState } from "../../lib/storage";
 import { button, element, get } from "../workspaces/dom";
 import { editLearningPath } from "./editor";
+import { learningPractice } from "../../lib/learning-practice";
+import { pathContext, practicePanel } from "./practice";
 
 let paths: LearningPath[] = [];
 let documents: DocumentSummary[] = [];
@@ -81,7 +83,7 @@ function renderPaths() {
     .value.trim()
     .toLowerCase();
   const visible = paths.filter((path) =>
-    `${path.title} ${path.description} ${path.chapters.map((chapter) => chapter.title).join(" ")}`
+    `${path.title} ${path.description} ${(path.objectives || []).join(" ")} ${path.chapters.map((chapter) => chapter.title).join(" ")}`
       .toLowerCase()
       .includes(query),
   );
@@ -124,6 +126,8 @@ function renderPaths() {
         `${path.title} 已读 ${progress.completed} / ${progress.total} 篇`,
       );
       card.append(meter);
+      const practice = learningPractice(path.chapters);
+      if (practice.total) card.append(element("span", "learn-path-practice", `${practice.completed} / ${practice.total} 项实践已完成`));
       return card;
     }),
   );
@@ -152,6 +156,7 @@ function renderDetail() {
   root.dataset.accent = path.accent;
   const state = readState(),
     progress = learningProgress(path.chapters, published(), state);
+  const practice = learningPractice(path.chapters);
   const overview = element("header", "learn-overview");
   const text = element("div");
   text.append(
@@ -176,6 +181,21 @@ function renderDetail() {
     actions.append(element("span", "", "这一程已读完，随时回来重温。"));
   actions.append(button("整理章节", () => editLearningPath(path), "整理章节"));
   overview.append(text, actions);
+  const practiceSummary = element("div", "learn-practice-summary");
+  practiceSummary.append(
+    element("span", "eyebrow", "LEARNING BY DOING"),
+    element("strong", "", practice.total ? `${practice.completed} / ${practice.total} 项实践已完成` : "为下一章留一个实践目标"),
+    element("span", "", "读过，与亲手做过，都值得记录。"),
+  );
+  if (practice.next) {
+    const next = element("a", "quiet-link", "前往下一项实践 ↘");
+    next.href = `#chapter-${practice.next}`;
+    next.addEventListener("click", () => {
+      const chapter = document.getElementById(`chapter-${practice.next}`) as HTMLDetailsElement | null;
+      if (chapter) chapter.open = true;
+    });
+    practiceSummary.append(next);
+  }
   const layout = element("div", "learn-curriculum");
   const navigation = element("nav", "learn-chapter-nav");
   navigation.setAttribute("aria-label", "章节目录");
@@ -185,6 +205,10 @@ function renderDetail() {
     const number = String(index + 1).padStart(2, "0");
     const anchor = element("a", "", `${number}　${chapter.title}`);
     anchor.href = `#chapter-${chapter.id}`;
+    anchor.addEventListener("click", () => {
+      const target = document.getElementById(`chapter-${chapter.id}`) as HTMLDetailsElement | null;
+      if (target) target.open = true;
+    });
     navigation.append(anchor);
     const section = element("details", "learn-chapter");
     section.id = `chapter-${chapter.id}`;
@@ -200,6 +224,11 @@ function renderDetail() {
       ),
     );
     section.append(summary);
+    if (chapter.goal) {
+      const goal = element("div", "learn-chapter-goal");
+      goal.append(element("span", "eyebrow", "本章目标"), element("p", "", chapter.goal));
+      section.append(goal);
+    }
     if (chapter.description)
       section.append(
         element("p", "learn-chapter-description", chapter.description),
@@ -262,6 +291,11 @@ function renderDetail() {
         ),
       );
     section.append(lessons);
+    if (chapter.exercise?.trim()) section.append(practicePanel(path, chapter, (saved) => {
+      paths = paths.map((item) => item.id === saved.id && item.version <= saved.version ? saved : item);
+      renderPaths();
+      renderDetail();
+    }));
     chapters.append(section);
   });
   if (!path.chapters.length)
@@ -269,7 +303,7 @@ function renderDetail() {
       element("p", "learn-empty", "先画出路线：点击「整理章节」，添加第一章。"),
     );
   layout.append(navigation, chapters);
-  root.append(overview, layout);
+  root.append(overview, pathContext(path), practiceSummary, layout);
 }
 get("learn-create").addEventListener("click", () => editLearningPath());
 get("learn-empty-create").addEventListener("click", () => editLearningPath());

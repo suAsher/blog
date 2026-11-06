@@ -5,12 +5,17 @@ export interface LearningChapter {
   title: string;
   description: string;
   documentIds: string[];
+  goal?: string;
+  exercise?: string;
+  practiced?: boolean;
 }
 export interface LearningInput {
   title: string;
   description: string;
   accent: "mint" | "blue" | "violet";
   chapters: LearningChapter[];
+  objectives?: string[];
+  prerequisites?: string[];
 }
 export interface LearningPath extends LearningInput {
   id: string;
@@ -53,6 +58,18 @@ export function validateLearningPath(value: LearningInput): string {
   if (!["mint", "blue", "violet"].includes(value.accent))
     return "请选择有效的主题色。";
   if (value.chapters.length > 30) return "一条路线最多 30 章。";
+  for (const items of [value.objectives, value.prerequisites]) {
+    if (items !== undefined && (!Array.isArray(items) || items.length > 8 ||
+      items.some((item) => typeof item !== "string" || !item.trim() ||
+        [...item].length > 240 || /[\u0000-\u001f\u007f]/u.test(item))))
+      return "学习目标和先修知识各最多 8 条，每条 1–240 字且不能换行。";
+  }
+  for (const chapter of value.chapters) {
+    if ((chapter.goal !== undefined && (typeof chapter.goal !== "string" || [...chapter.goal].length > 800)) ||
+      (chapter.exercise !== undefined && (typeof chapter.exercise !== "string" || [...chapter.exercise].length > 2000)) ||
+      (chapter.practiced !== undefined && typeof chapter.practiced !== "boolean"))
+      return "章节目标最多 800 字，实践任务最多 2000 字。";
+  }
   const ids = value.chapters.flatMap((chapter) => chapter.documentIds);
   if (
     ids.length > 300 ||
