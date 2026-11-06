@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { ContentHarness, sampleContent } from './content-helpers';
 
 test('only the selected article cover receives the shared transition name', async ({ page }) => {
   await page.goto('/articles/?examples=1');
@@ -37,5 +38,67 @@ test('published text becomes readable while an article image is still loading', 
     await expect(page.locator('#article-body')).toContainText('这段文字应该立即可读。');
   } finally {
     releaseImage();
+  }
+});
+
+test("article text is usable while optional code highlighting is still loading", async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  const content = new ContentHarness(context.request, baseURL!);
+  let release!: () => void;
+  const delayed = new Promise<void>((resolve) => { release = resolve; });
+  let requested = false;
+  await page.route("**/reader-highlight*.js", async (route) => {
+    requested = true;
+    await delayed;
+    await route.continue();
+  });
+  try {
+    const doc = await content.action(await content.create(sampleContent(
+      "progressive reading",
+      "## 先读问题\n\n代码高亮尚未到达时，这段正文也应该可以阅读。\n\n```python\nprint(42)\n```",
+    )), "publish");
+    await page.goto(`/articles/${doc.id}/`);
+    await expect(page.locator("#live-title")).toBeVisible();
+    await expect(page.locator("#article-body")).toContainText("这段正文也应该可以阅读");
+    await expect.poll(() => requested).toBe(true);
+    await expect(page.locator("#article-body code")).toHaveText("print(42)\n");
+    release();
+    await expect(page.locator("#article-body code.hljs")).toBeVisible();
+    await expect(page.locator("#annotations")).toBeVisible();
+    await expect(page.locator("#annotation-status")).toContainText("选中正文");
+  } finally {
+    release();
+    await content.cleanup();
+  }
+});
+
+test("stalled highlighting falls back to plain code without disabling annotations", async ({ page, context, baseURL }) => {
+  const content = new ContentHarness(context.request, baseURL!);
+  let release!: () => void;
+  const delayed = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/reader-highlight*.js", async (route) => {
+    await delayed;
+    await route.continue();
+  });
+  try {
+    const doc = await content.action(await content.create(sampleContent(
+      "plain code fallback", "## 原文\n\n仍然可以留下批注。\n\n```python\nprint(42)\n```",
+    )), "publish");
+    await page.goto(`/articles/${doc.id}/`);
+    await expect(page.locator("#article-body")).toContainText("仍然可以留下批注");
+    await expect(page.locator("#annotations")).toBeVisible();
+    await expect(page.locator("#annotation-status")).toContainText("选中正文");
+    const finished = page.waitForResponse(response => /\/reader-highlight[^/]+\.js$/.test(new URL(response.url()).pathname));
+    release();
+    await finished;
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+    await expect(page.locator("#article-body code")).toHaveText("print(42)\n");
+    await expect(page.locator("#article-body code.hljs")).toHaveCount(0);
+  } finally {
+    release();
+    await content.cleanup();
   }
 });

@@ -1,14 +1,3 @@
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-import typescript from 'highlight.js/lib/languages/typescript';
-import json from 'highlight.js/lib/languages/json';
-import bash from 'highlight.js/lib/languages/bash';
-import python from 'highlight.js/lib/languages/python';
-import go from 'highlight.js/lib/languages/go';
-import yaml from 'highlight.js/lib/languages/yaml';
-import xml from 'highlight.js/lib/languages/xml';
-import css from 'highlight.js/lib/languages/css';
-import sql from 'highlight.js/lib/languages/sql';
 import { ApiError, requestJSON, type DocumentDetail } from '../lib/documents';
 import { element, syncBookmarkButtons } from './shared';
 import { initReader } from './reader';
@@ -18,12 +7,8 @@ import { initAnnotations } from './annotations';
 import { projectPublishedSnapshot } from '../lib/offline-snapshot';
 import { waitForOfflineShellReady } from '../lib/pwa-readiness';
 import { saveSnapshot, unlockVault, vaultExists, vaultUnlocked } from '../lib/offline-vault';
+import { optionalEnhancement } from '../lib/optional-enhancement';
 
-for (const [name, language] of Object.entries({ javascript, typescript, json, bash, python, go, yaml, xml, css, sql })) hljs.registerLanguage(name, language);
-hljs.registerAliases(['js', 'jsx'], { languageName: 'javascript' });
-hljs.registerAliases(['ts', 'tsx'], { languageName: 'typescript' });
-hljs.registerAliases(['sh', 'shell'], { languageName: 'bash' });
-hljs.registerAliases(['yml'], { languageName: 'yaml' });
 const root = document.getElementById('live-reader');
 const loading = document.getElementById('reader-loading');
 const failure = document.getElementById('reader-error');
@@ -205,7 +190,6 @@ async function openDocument() {
     body.querySelectorAll<HTMLElement>('pre code').forEach(code => {
       const language = /(?:^|\s)language-([^\s]+)/.exec(code.className)?.[1] || 'text';
       if (code.parentElement) code.parentElement.dataset.language = language;
-      if ((code.textContent?.length || 0) <= 100_000 && hljs.getLanguage(language)) hljs.highlightElement(code);
     });
     toc(data);
     const images = [...body.querySelectorAll<HTMLImageElement>('img')];
@@ -223,7 +207,11 @@ async function openDocument() {
     root.hidden = false; if (loading) loading.hidden = true;
     initReader(); initEditorialReader(data, body); syncBookmarkButtons();
     void initLearningNavigation(data.id);
-    void initAnnotations(data.id, data.version);
+    // Highlighting is optional and must not delay the title, prose or controls.
+    // Set up text anchors afterwards so highlights never replace an active range.
+    void optionalEnhancement(import('./reader-highlight'),
+      ({ highlightArticle }) => highlightArticle(body))
+      .then(() => { void initAnnotations(data.id, data.version); });
     void loadKnowledgeLinks(data.id);
   } catch (error) {
     if (loading) loading.hidden = true;
