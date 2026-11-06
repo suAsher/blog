@@ -1,0 +1,49 @@
+.recall-widget {
+  margin-block: 2rem;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg, 20px);
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+.recall-widget .recall-eyebrow {
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .12em;
+  margin: 0 0 .8rem;
+}
+.recall-widget .recall-question { margin: 0; font-size: 1.25rem; }
+.recall-widget .recall-prompt { color: var(--muted); font-size: .85rem; }
+.recall-answer {
+  border-block: 1px solid var(--line);
+  padding-block: .9rem;
+  margin-block: 1.25rem;
+}
+.recall-widget summary { cursor: pointer; font-weight: 600; }
+.recall-widget summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+.recall-widget .recall-answer-text { white-space: pre-wrap; margin: 1rem 0 .25rem; }
+.recall-widget .recall-source { display: inline-block; font-size: .85rem; }
+.recall-definition { margin-top: 1rem; font-size: .8rem; color: var(--muted); }
+.recall-definition pre { text-align: left; }
+.recall-compose {
+  width: min(38rem, calc(100vw - 2rem));
+  max-height: calc(100svh - 3rem);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  color: var(--text);
+  background: var(--bg);
+}
+.recall-compose::backdrop { background: rgb(0 0 0 / .65); }
+.recall-compose h2 { margin: 0 0 .75rem; }
+.recall-compose p { color: var(--muted); font-size: .85rem; line-height: 1.7; }
+.recall-compose label { display: grid; gap: .5rem; margin-block: 1rem; }
+.recall-compose textarea {
+  width: 100%; box-sizing: border-box; resize: vertical;
+  padding: .8rem; border: 1px solid var(--line); border-radius: 10px;
+  color: var(--text); background: var(--surface); font: inherit;
+}
+.recall-compose-actions { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: flex-end; }
+.recall-compose .recall-compose-error { color: var(--text); }

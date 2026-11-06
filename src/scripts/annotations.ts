@@ -12,6 +12,7 @@ import {
   type QuoteSelector,
 } from "../lib/annotations";
 import { shanghaiToday } from "../lib/quick-note";
+import { openRecallComposer } from "./recall-composer";
 
 type TextSlice = { node: Text; start: number; end: number };
 type HighlightAPI = { highlights: Map<string, unknown> };
@@ -36,7 +37,7 @@ function textNodes(root: Node): Text[] {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(value) {
       return value.parentElement?.closest(
-        'button,script,style,[hidden],[aria-hidden="true"],.explore-widget',
+        'button,script,style,[hidden],[aria-hidden="true"],.explore-widget,.recall-widget',
       )
         ? NodeFilter.FILTER_REJECT
         : NodeFilter.FILTER_ACCEPT;
@@ -313,12 +314,24 @@ export function initAnnotations(
         excerpt.addEventListener("click", () => {
           void convert(annotation, excerpt, row);
         });
+        const recall = node("button", "制作问题卡");
+        recall.type = "button";
+        recall.addEventListener("click", () => {
+          openRecallComposer(annotation, recall, signal, (note) => {
+            const link = node("a", "打开问题卡草稿", "annotation-note-link");
+            link.href = `/manage/?id=${encodeURIComponent(note.id)}`;
+            row.append(link);
+            recall.hidden = true;
+            link.focus();
+            message("问题卡已保存为草稿。发布后可在阅读页加入回顾计划。");
+          });
+        });
         const deletion = node("button", "删除批注");
         deletion.type = "button";
         deletion.addEventListener("click", () => {
           void remove(annotation, deletion);
         });
-        actions.append(locate, edit, excerpt, deletion);
+        actions.append(locate, edit, excerpt, recall, deletion);
         row.append(actions);
         return row;
       }),
@@ -390,6 +403,14 @@ export function initAnnotations(
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed || !selection.rangeCount) return;
     const range = selection.getRangeAt(0);
+    if ([range.startContainer, range.endContainer].some((value) =>
+      (value instanceof Element ? value : value.parentElement)?.closest(".recall-widget,.explore-widget"),
+    )) {
+      selected = null;
+      capture.disabled = true;
+      capture.dataset.ready = "false";
+      return;
+    }
     if (
       !article.contains(range.startContainer) ||
       !article.contains(range.endContainer)
