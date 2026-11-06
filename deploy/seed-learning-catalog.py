@@ -16,7 +16,7 @@ DIRECTIONS = (
     'linux-network', 'python', 'git-engineering', 'containers-delivery',
     'distributed-systems', 'performance-observability', 'ai-inference',
 )
-LOCK_SCOPES = (*DIRECTIONS, 'field-guides-v1')
+LOCK_SCOPES = (*DIRECTIONS, 'field-guides-v1', 'ai-curriculum-v1')
 
 
 def helpers():
